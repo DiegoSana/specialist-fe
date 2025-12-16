@@ -4,15 +4,11 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useLogin } from '@/hooks/use-auth';
-import { UserRole } from '@/types';
 
 export default function LoginPage() {
   const t = useTranslations('auth.login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState<UserRole>(
-    UserRole.CLIENT
-  );
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -76,35 +72,6 @@ export default function LoginPage() {
             <h2 className="text-2xl font-bold text-gray-800">
               {t('title')}
             </h2>
-            <p className="mt-2 text-sm text-gray-500">
-              {t('subtitle')}
-            </p>
-          </div>
-
-          {/* Role Selection */}
-          <div className="flex gap-3 justify-center mb-6">
-            <button
-              type="button"
-              onClick={() => setSelectedRole(UserRole.CLIENT)}
-              className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all ${
-                selectedRole === UserRole.CLIENT
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
-            >
-              Cliente
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedRole(UserRole.PROFESSIONAL)}
-              className={`px-5 py-2.5 rounded-lg font-medium text-sm transition-all ${
-                selectedRole === UserRole.PROFESSIONAL
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
-            >
-              Profesional
-            </button>
           </div>
 
           {/* Social Login Buttons */}
