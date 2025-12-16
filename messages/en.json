@@ -487,6 +487,13 @@
       "title": "Want to contact this specialist?",
       "description": "To see the specialist's contact information, you first need to create a request describing the work you need done.",
       "createRequest": "Create Request"
+    },
+    "reviews": {
+      "loginRequired": {
+        "title": "Sign in to see reviews",
+        "description": "Reviews are only available to registered users",
+        "button": "Sign in"
+      }
     }
   },
   "navigation": {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchProfessionals } from '@/hooks/use-professionals';
 import { useProfessionalReviews } from '@/hooks/use-reviews';
@@ -8,6 +8,7 @@ import { Professional } from '@/types';
 import AppLayout from '@/components/layout/app-layout';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { isAuthenticated } from '@/lib/auth';
 
 export default function ProfessionalsPage() {
   const t = useTranslations('professionals');
@@ -16,6 +17,11 @@ export default function ProfessionalsPage() {
 
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
+  }, []);
 
   const { data: professionals, isLoading: loadingProfessionals } = useSearchProfessionals({
     search: searchTerm || undefined,
@@ -379,7 +385,6 @@ export default function ProfessionalsPage() {
                         <span className="ml-2 text-gray-500">
                           {selectedProfessional.city}
                           {selectedProfessional.zone && `, ${selectedProfessional.zone}`}
-                          {selectedProfessional.address && ` - ${selectedProfessional.address}`}
                         </span>
                       </div>
                       {selectedProfessional.averageRating > 0 && (
@@ -425,37 +430,89 @@ export default function ProfessionalsPage() {
                     {t('details.reviews')} ({reviews?.length || 0})
                   </h3>
                   {reviews && reviews.length > 0 ? (
-                    <div className="space-y-4">
-                      {reviews.map((review) => (
-                        <div key={review.id} className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <p className="font-medium text-gray-800">
-                                {review.reviewer?.firstName} {review.reviewer?.lastName}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {new Date(review.createdAt).toLocaleDateString()}
-                              </p>
+                    isLoggedIn ? (
+                      <div className="space-y-4">
+                        {reviews.map((review) => (
+                          <div key={review.id} className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-medium text-gray-800">
+                                  {review.reviewer?.firstName} {review.reviewer?.lastName}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  {new Date(review.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="flex items-center">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    className={`text-sm ${
+                                      star <= review.rating ? 'text-yellow-500' : 'text-gray-300'
+                                    }`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
                             </div>
-                            <div className="flex items-center">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <span
-                                  key={star}
-                                  className={`text-sm ${
-                                    star <= review.rating ? 'text-yellow-500' : 'text-gray-300'
-                                  }`}
-                                >
-                                  ★
-                                </span>
-                              ))}
-                            </div>
+                            {review.comment && (
+                              <p className="text-sm text-gray-700 mt-2">{review.comment}</p>
+                            )}
                           </div>
-                          {review.comment && (
-                            <p className="text-sm text-gray-700 mt-2">{review.comment}</p>
-                          )}
+                        ))}
+                      </div>
+                    ) : (
+                      /* Blurred reviews for non-logged users */
+                      <div className="relative">
+                        <div className="space-y-4 blur-sm select-none pointer-events-none" aria-hidden="true">
+                          {reviews.slice(0, 2).map((review) => (
+                            <div key={review.id} className="bg-gray-50 rounded-lg p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <p className="font-medium text-gray-800">
+                                    {review.reviewer?.firstName} {review.reviewer?.lastName}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {new Date(review.createdAt).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <div className="flex items-center">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <span 
+                                      key={star} 
+                                      className={`text-sm ${star <= review.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                                    >
+                                      ★
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                              {review.comment && (
+                                <p className="text-sm text-gray-700 mt-2">{review.comment}</p>
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-lg">
+                          <div className="text-center p-6">
+                            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                              </svg>
+                            </div>
+                            <p className="text-gray-700 font-medium mb-2">{t('reviews.loginRequired.title')}</p>
+                            <p className="text-sm text-gray-500 mb-4">{t('reviews.loginRequired.description')}</p>
+                            <Link
+                              href={`/${locale}/login`}
+                              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                            >
+                              {t('reviews.loginRequired.button')}
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    )
                   ) : (
                     <p className="text-gray-500">{t('details.noReviews')}</p>
                   )}

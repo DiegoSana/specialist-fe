@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import { useCreateRequest } from '@/hooks/use-requests';
@@ -15,6 +15,7 @@ export default function NewRequestPage() {
   const t = useTranslations('client.newRequest');
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const user = getUser();
 
   const [requestType, setRequestType] = useState<RequestType>(null);
@@ -40,6 +41,28 @@ export default function NewRequestPage() {
   const { data: trades } = useTradesWithProfessionals();
   const { data: allProfessionals } = useSearchProfessionals({});
   const createRequestMutation = useCreateRequest();
+
+  // Pre-select professional if professionalId is in URL
+  useEffect(() => {
+    const professionalId = searchParams.get('professionalId');
+    if (professionalId && allProfessionals && allProfessionals.length > 0) {
+      const professional = allProfessionals.find((p) => p.id === professionalId);
+      if (professional) {
+        setSelectedProfessional(professional);
+        setRequestType('direct');
+        // Set the primary trade from the professional
+        if (professional.trades && professional.trades.length > 0) {
+          const primaryTrade = professional.trades.find((t) => t.isPrimary) || professional.trades[0];
+          if (trades) {
+            const trade = trades.find((t) => t.id === primaryTrade.id);
+            if (trade) {
+              setSelectedTrade(trade);
+            }
+          }
+        }
+      }
+    }
+  }, [searchParams, allProfessionals, trades]);
 
   // Close dropdown when clicking outside
   useEffect(() => {

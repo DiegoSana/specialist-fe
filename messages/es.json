@@ -452,6 +452,13 @@
       "title": "¿Querés contactar a este especialista?",
       "description": "Para ver los datos de contacto del especialista, primero necesitás crear una solicitud describiendo el trabajo que necesitás.",
       "createRequest": "Crear Solicitud"
+    },
+    "reviews": {
+      "loginRequired": {
+        "title": "Inicia sesión para ver las reseñas",
+        "description": "Las reseñas están disponibles solo para usuarios registrados",
+        "button": "Iniciar sesión"
+      }
     }
   },
   "navigation": {
