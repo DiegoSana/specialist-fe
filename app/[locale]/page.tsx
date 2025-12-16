@@ -1,10 +1,11 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import MainNav from '@/components/navigation/main-nav';
 
-export default function Home({ params: { locale } }: { params: { locale: string } }) {
-  const t = useTranslations('home');
-  const tFooter = useTranslations('footer');
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations('home');
+  const tFooter = await getTranslations('footer');
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
