@@ -9,7 +9,7 @@ import { useTrades } from '@/hooks/use-professionals';
 import apiClient from '@/lib/api-client';
 
 export default function ProfessionalSetupPage() {
-  const t = useTranslations('professional.setup');
+  const t = useTranslations('specialist.setup');
   const router = useRouter();
   const pathname = usePathname();
   const user = getUser();
