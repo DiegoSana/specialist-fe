@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import MainNav from '@/components/navigation/main-nav';
+import SpecialistCtaButton from '@/components/cta/specialist-cta-button';
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -35,12 +36,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  href={`/${locale}/register?role=professional`}
+                <SpecialistCtaButton
+                  locale={locale}
                   className="px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
                 >
                   {t('hero.ctaProfessional')}
-                </Link>
+                </SpecialistCtaButton>
                 <Link
                   href={`/${locale}/professionals`}
                   className="px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-colors"
@@ -156,15 +157,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </div>
 
             <div className="text-center mt-12">
-              <Link
-                href={`/${locale}/register?role=professional`}
+              <SpecialistCtaButton
+                locale={locale}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+                showArrow
               >
                 {t('forProfessionals.cta')}
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </Link>
+              </SpecialistCtaButton>
             </div>
           </div>
         </section>

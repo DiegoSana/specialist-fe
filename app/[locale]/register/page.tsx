@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRegister } from '@/hooks/use-auth';
@@ -11,7 +11,22 @@ export default function RegisterPage() {
   const t = useTranslations('auth.register');
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
+  // Read role from URL query parameter
+  const roleFromUrl = searchParams.get('role');
+  
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  
+  // Set role from URL on mount
+  useEffect(() => {
+    if (roleFromUrl === 'professional') {
+      setSelectedRole(UserRole.PROFESSIONAL);
+    } else if (roleFromUrl === 'client') {
+      setSelectedRole(UserRole.CLIENT);
+    }
+  }, [roleFromUrl]);
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
