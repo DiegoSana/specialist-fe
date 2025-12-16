@@ -432,6 +432,7 @@
       "hint": "Busca por nombre del especialista o tipo de oficio (ej: electricista, plomero, Juan)"
     },
     "viewDetails": "Ver Detalles",
+    "createRequest": "Solicitar",
     "reviews": "reseñas",
     "noSpecialists": "No se encontraron especialistas",
     "details": {
@@ -446,6 +447,11 @@
       "noReviews": "Aún no hay reseñas para este especialista",
       "gallery": "Galería",
       "morePhotos": "y {{count}} fotos más"
+    },
+    "contactInfo": {
+      "title": "¿Querés contactar a este especialista?",
+      "description": "Para ver los datos de contacto del especialista, primero necesitás crear una solicitud describiendo el trabajo que necesitás.",
+      "createRequest": "Crear Solicitud"
     }
   },
   "navigation": {

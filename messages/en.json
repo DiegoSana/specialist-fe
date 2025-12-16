@@ -467,6 +467,7 @@
       "hint": "Search by specialist name or trade type (e.g.: electrician, plumber, John)"
     },
     "viewDetails": "View Details",
+    "createRequest": "Request",
     "reviews": "reviews",
     "noProfessionals": "No specialists found",
     "details": {
@@ -481,6 +482,11 @@
       "noReviews": "No reviews yet for this specialist",
       "gallery": "Gallery",
       "morePhotos": "and {{count}} more photos"
+    },
+    "contactInfo": {
+      "title": "Want to contact this specialist?",
+      "description": "To see the specialist's contact information, you first need to create a request describing the work you need done.",
+      "createRequest": "Create Request"
     }
   },
   "navigation": {
