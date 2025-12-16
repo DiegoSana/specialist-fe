@@ -466,8 +466,16 @@ export default function ProfilePage() {
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${user?.hasProfessionalProfile ? 'bg-green-100' : 'bg-gray-100'}`}>
-                  <svg className={`w-5 h-5 ${user?.hasProfessionalProfile ? 'text-green-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  professionalProfile?.status === 'VERIFIED' ? 'bg-green-100' :
+                  professionalProfile?.status === 'PENDING_VERIFICATION' ? 'bg-yellow-100' :
+                  user?.hasProfessionalProfile ? 'bg-red-100' : 'bg-gray-100'
+                }`}>
+                  <svg className={`w-5 h-5 ${
+                    professionalProfile?.status === 'VERIFIED' ? 'text-green-600' :
+                    professionalProfile?.status === 'PENDING_VERIFICATION' ? 'text-yellow-600' :
+                    user?.hasProfessionalProfile ? 'text-red-600' : 'text-gray-400'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -476,9 +484,17 @@ export default function ProfilePage() {
                   <p className="text-xs text-gray-500">Ofrecer tus servicios profesionales</p>
                 </div>
               </div>
-              {user?.hasProfessionalProfile && (
-                <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-                  ✓ Activo
+              {user?.hasProfessionalProfile && professionalProfile && (
+                <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  professionalProfile.status === 'VERIFIED' 
+                    ? 'bg-green-100 text-green-700'
+                    : professionalProfile.status === 'PENDING_VERIFICATION'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-red-100 text-red-700'
+                }`}>
+                  {professionalProfile.status === 'VERIFIED' ? '✓ Verificado' :
+                   professionalProfile.status === 'PENDING_VERIFICATION' ? '⏳ Pendiente' :
+                   '✗ Rechazado'}
                 </span>
               )}
             </div>
@@ -490,27 +506,14 @@ export default function ProfilePage() {
                 </div>
               ) : user?.hasProfessionalProfile && professionalProfile ? (
                 <div className="space-y-4">
-                  {/* Status badge */}
-                  <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      professionalProfile.status === 'VERIFIED' 
-                        ? 'bg-green-100 text-green-700'
-                        : professionalProfile.status === 'PENDING_VERIFICATION'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}>
-                      {professionalProfile.status === 'VERIFIED' ? '✓ Verificado' :
-                       professionalProfile.status === 'PENDING_VERIFICATION' ? '⏳ Pendiente de verificación' :
-                       '✗ Rechazado'}
-                    </span>
-                    {professionalProfile.averageRating > 0 && (
-                      <span className="flex items-center gap-1 text-sm text-gray-600">
-                        <span className="text-yellow-500">★</span>
-                        {professionalProfile.averageRating.toFixed(1)}
-                        <span className="text-gray-400">({professionalProfile.totalReviews})</span>
-                      </span>
-                    )}
-                  </div>
+                  {/* Rating */}
+                  {professionalProfile.averageRating > 0 && (
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <span className="text-yellow-500">★</span>
+                      <span className="font-medium">{professionalProfile.averageRating.toFixed(1)}</span>
+                      <span className="text-gray-400">({professionalProfile.totalReviews} reseñas)</span>
+                    </div>
+                  )}
 
                   {/* Trades */}
                   {professionalProfile.trades && professionalProfile.trades.length > 0 && (
