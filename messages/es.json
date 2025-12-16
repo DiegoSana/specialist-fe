@@ -1,0 +1,635 @@
+{
+  "common": {
+    "welcome": "Bienvenido",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "submit": "Enviar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "close": "Cerrar",
+    "or": "o"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Selecciona tu rol para continuar",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "signIn": "Iniciar sesión",
+      "signingIn": "Iniciando sesión...",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUp": "Regístrate",
+      "invalidCredentials": "Correo o contraseña inválidos",
+      "emailRequired": "El correo es requerido",
+      "emailInvalid": "El correo no es válido",
+      "passwordRequired": "La contraseña es requerida",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "subtitle": "Selecciona tu rol para continuar",
+      "subtitleForm": "Regístrate como",
+      "backToSelection": "Volver a selección de rol",
+      "note": "Nota: Todos los usuarios se registran como clientes automáticamente. Puedes crear tu perfil de especialista después del registro.",
+      "client": "Cliente",
+      "professional": "Especialista",
+      "clientDescription": "Busco servicios de especialistas",
+      "professionalDescription": "Ofrezco servicios como especialista",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "phoneRequired": "(requerido)",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "createAccount": "Crear cuenta",
+      "creatingAccount": "Creando cuenta...",
+      "hasAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Inicia sesión",
+      "emailRequired": "El correo es requerido",
+      "emailInvalid": "El correo no es válido",
+      "emailExists": "El correo ya está registrado",
+      "passwordRequired": "La contraseña es requerida",
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "confirmPasswordRequired": "Por favor confirma tu contraseña",
+      "passwordsNotMatch": "Las contraseñas no coinciden",
+      "firstNameRequired": "El nombre es requerido",
+      "lastNameRequired": "El apellido es requerido",
+      "phoneRequired": "El teléfono es requerido",
+      "phoneInvalid": "El número de teléfono no es válido",
+      "error": "Ocurrió un error. Por favor intenta de nuevo."
+    }
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "welcome": "Bienvenido",
+    "loggedInAs": "Has iniciado sesión como",
+    "userInfo": "Información del usuario",
+    "email": "Correo",
+    "name": "Nombre",
+    "role": "Rol",
+    "status": "Estado",
+    "profiles": "Perfiles",
+    "client": "Cliente",
+    "professional": "Especialista",
+    "admin": "Administrador",
+    "noProfiles": "Sin perfiles"
+  },
+  "client": {
+    "dashboard": {
+      "title": "Mis Solicitudes",
+      "subtitle": "Gestiona tus solicitudes de servicio",
+      "newRequest": "Crear Solicitud",
+      "with": "Con",
+      "sections": {
+        "pending": "Pendientes",
+        "inProgress": "En curso",
+        "completed": "Finalizados"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "accepted": "Aceptado",
+        "inProgress": "En progreso",
+        "done": "Finalizado",
+        "cancelled": "Cancelado"
+      },
+      "empty": {
+        "title": "No tienes solicitudes",
+        "description": "Comienza creando tu primera solicitud"
+      }
+    },
+    "newRequest": {
+      "title": "Crear Solicitud",
+      "subtitle": "Elige cómo quieres publicar tu solicitud",
+      "back": "Volver",
+      "requestTypeTitle": "¿Cómo quieres crear tu solicitud?",
+      "publicRequest": {
+        "title": "Publicar en Bolsa de Trabajo",
+        "description": "Tu trabajo será visible para todos los especialistas de tu zona. Ellos te contactarán con sus propuestas.",
+        "benefits": [
+          "Recibí múltiples propuestas",
+          "Compará precios y perfiles",
+          "Elegí al que más te convenga"
+        ],
+        "button": "Publicar en Bolsa de Trabajo"
+      },
+      "directRequest": {
+        "title": "Solicitud Directa",
+        "description": "Elegí un especialista específico y enviale tu solicitud directamente.",
+        "benefits": [
+          "Contactá a quien ya conocés",
+          "Respuesta más rápida",
+          "Comunicación directa"
+        ],
+        "button": "Elegir especialista"
+      },
+      "searchLabel": "Buscar especialidad o especialista",
+      "searchPlaceholder": "Ej: Electricista, Plomero, Juan García...",
+      "specialties": "Especialidades",
+      "specialists": "Especialistas",
+      "noResults": "No se encontraron resultados",
+      "selectedTrade": "Especialidad seleccionada",
+      "selectedSpecialist": "Especialista seleccionado",
+      "browseByTrade": "Explorar por especialidad",
+      "requestDetails": "Detalles de la solicitud",
+      "selectTrade": "Selecciona el tipo de oficio",
+      "selectSpecialist": "Selecciona un especialista",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe el trabajo que necesitas realizar...",
+      "address": "Dirección",
+      "addressPlaceholder": "Ej: Av. San Martín 123, Bariloche",
+      "availability": "Disponibilidad",
+      "availabilityPlaceholder": "Ej: Lunes a Viernes, 9:00 - 18:00",
+      "photos": "Fotos",
+      "optional": "Opcional",
+      "photosNote": "Funcionalidad de subida de fotos próximamente",
+      "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el especialista pueden agregar fotos.",
+      "addPhoto": "Agregar foto/video",
+      "removePhoto": "Eliminar",
+      "noPhotos": "Aún no hay fotos. Agrega la primera foto del trabajo.",
+      "uploadError": "Error al subir la imagen",
+      "removeError": "Error al eliminar la imagen",
+      "cancel": "Cancelar",
+      "create": "Crear solicitud",
+      "createPublic": "Publicar en Bolsa de Trabajo",
+      "createDirect": "Enviar al especialista",
+      "creating": "Creando...",
+      "noTrades": "No hay oficios disponibles",
+      "noSpecialists": "No hay especialistas disponibles para este oficio",
+      "reviews": "reseñas",
+      "selected": "Seleccionado",
+      "changeSpecialist": "Cambiar especialista",
+      "errors": {
+        "selectSpecialist": "Debes seleccionar un especialista",
+        "descriptionRequired": "La descripción es requerida",
+        "descriptionMinLength": "La descripción debe tener al menos 10 caracteres",
+        "addressRequired": "La dirección es requerida",
+        "general": "Ocurrió un error. Por favor intenta de nuevo."
+      }
+    },
+    "requestDetail": {
+      "accepting": "Aceptando...",
+      "reviewTitle": "Calificar Trabajo",
+      "reviewDescription": "El trabajo ha sido completado. ¿Cómo fue tu experiencia?",
+      "leaveReview": "Dejar Calificación",
+      "reviewAlreadySubmitted": "Ya calificaste este trabajo",
+      "yourRating": "Tu calificación",
+      "yourComment": "Tu comentario",
+      "reviewedOn": "Calificado el",
+      "rating": "Calificación",
+      "selectedRating": "Calificación seleccionada",
+      "stars": "estrellas",
+      "comment": "Comentario",
+      "commentPlaceholder": "Comparte tu experiencia con este especialista...",
+      "submitReview": "Enviar Calificación",
+      "submitting": "Enviando...",
+      "reviewErrors": {
+        "general": "Ocurrió un error al enviar la calificación. Por favor intenta de nuevo.",
+        "onlyClients": "Solo los clientes pueden crear calificaciones",
+        "alreadyReviewed": "Ya has calificado a este especialista",
+        "requestNotFound": "Solicitud no encontrada",
+        "notRequestOwner": "Solo puedes calificar solicitudes que creaste",
+        "requestNotCompleted": "La solicitud debe estar completada antes de calificar",
+        "requestAlreadyReviewed": "Esta solicitud ya tiene una calificación",
+        "specialistNotFound": "Especialista no encontrado"
+      },
+      "title": "Detalle de solicitud",
+      "back": "Volver",
+      "requestStatus": "Estado de la solicitud",
+      "requestType": "Tipo de solicitud",
+      "publicRequest": "Bolsa de Trabajo",
+      "directRequest": "Directa",
+      "created": "Creada",
+      "description": "Descripción",
+      "specialist": "Especialista",
+      "noSpecialistYet": "Aún sin especialista asignado",
+      "waitingForProposals": "Esperando propuestas de especialistas...",
+      "reviews": "reseñas",
+      "contactWhatsApp": "Contactar por WhatsApp",
+      "quote": "Presupuesto",
+      "amount": "Monto",
+      "notes": "Notas",
+      "messages": "Mensajes",
+      "messagesNote": "Funcionalidad de mensajería próximamente",
+      "acceptQuote": "Aceptar presupuesto",
+      "cancel": "Cancelar",
+      "confirmCancel": "Confirmar cancelación",
+      "no": "No",
+      "status": {
+        "pending": "Pendiente",
+        "accepted": "Aceptado",
+        "inProgress": "En progreso",
+        "done": "Finalizado",
+        "cancelled": "Cancelado"
+      },
+      "notFound": "Solicitud no encontrada",
+      "backToDashboard": "Volver al panel",
+      "photos": "Fotos del trabajo",
+      "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el especialista pueden agregar fotos.",
+      "addPhoto": "Agregar foto/video",
+      "removePhoto": "Eliminar",
+      "noPhotos": "Aún no hay fotos. Agrega la primera foto del trabajo.",
+      "uploadError": "Error al subir la imagen",
+      "removeError": "Error al eliminar la imagen",
+      "interests": {
+        "title": "Especialistas Interesados",
+        "description": "Estos especialistas han mostrado interés en tu solicitud. Contactá por WhatsApp para coordinar detalles y elegí al que mejor te convenga.",
+        "publicRequest": "Solicitud Pública",
+        "waitingForInterest": "Esperando especialistas interesados",
+        "noInterested": "Aún no hay especialistas interesados",
+        "noInterestedDescription": "Los especialistas que trabajen en tu zona verán tu solicitud y podrán mostrar interés.",
+        "assign": "Elegir",
+        "assigning": "Asignando...",
+        "interestedSince": "Interesado desde"
+      }
+    }
+  },
+  "specialist": {
+    "setup": {
+      "title": "Completar perfil de especialista",
+      "subtitle": "Completa tu información para comenzar a ofrecer servicios",
+      "trade": "Oficio",
+      "trades": "Oficios",
+      "selectTrade": "Selecciona tu oficio",
+      "selectMultiple": "(puedes seleccionar varios)",
+      "primary": "Principal",
+      "selectedTrades": "Oficios seleccionados",
+      "firstIsPrimary": "El primero será el oficio principal",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe tu experiencia y servicios que ofreces...",
+      "experienceYears": "Años de experiencia",
+      "experienceYearsPlaceholder": "Ej: 5",
+      "city": "Ciudad",
+      "zone": "Zona",
+      "zonePlaceholder": "Ej: Centro, Barrio Norte",
+      "address": "Dirección",
+      "addressPlaceholder": "Ej: Av. San Martín 123",
+      "whatsapp": "WhatsApp",
+      "create": "Crear perfil",
+      "creating": "Creando...",
+      "skip": "Omitir por ahora",
+      "errors": {
+        "tradeRequired": "Debes seleccionar un oficio",
+        "general": "Ocurrió un error. Por favor intenta de nuevo."
+      }
+    },
+    "jobBoard": {
+      "title": "Bolsa de Trabajo",
+      "subtitle": "Trabajos disponibles que coinciden con tus habilidades",
+      "empty": {
+        "title": "No hay trabajos disponibles",
+        "description": "Los trabajos publicados por clientes en tu zona aparecerán aquí"
+      },
+      "filters": {
+        "all": "Todas",
+        "myTrades": "Mis oficios",
+        "nearby": "Cercanas"
+      },
+      "viewDetails": "Ver detalles",
+      "sendProposal": "Enviar propuesta",
+      "postedBy": "Publicado por",
+      "postedOn": "Publicado el",
+      "expressInterest": "Me interesa",
+      "interested": "Interesado",
+      "removeInterest": "Quitar interés"
+    },
+    "dashboard": {
+      "title": "Mis Trabajos",
+      "subtitle": "Gestiona tus trabajos y solicitudes",
+      "profileStatus": "Estado del perfil",
+      "viewPublicRequests": "Ver solicitudes públicas",
+      "sections": {
+        "available": "Trabajos disponibles",
+        "pending": "Pendientes",
+        "inProgress": "En curso",
+        "completed": "Finalizados"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "accepted": "Aceptado",
+        "inProgress": "En progreso",
+        "done": "Finalizado",
+        "cancelled": "Cancelado",
+        "verified": "Verificado",
+        "pendingVerification": "Pendiente de verificación",
+        "rejected": "Rechazado"
+      },
+      "requestFrom": "Solicitud de",
+      "quote": "Presupuesto",
+      "new": "Nuevo",
+      "empty": {
+        "title": "No tienes solicitudes asignadas",
+        "description": "Explorá las solicitudes públicas para encontrar trabajos"
+      }
+    },
+    "requestDetail": {
+      "title": "Detalle de Solicitud",
+      "back": "Volver",
+      "backToDashboard": "Volver al panel",
+      "notFound": "Solicitud no encontrada",
+      "requestStatus": "Estado de la solicitud",
+      "created": "Creada",
+      "client": "Cliente",
+      "requestFrom": "Solicitud de",
+      "description": "Descripción",
+      "address": "Dirección",
+      "availability": "Disponibilidad",
+      "photos": "Fotos",
+      "quoteSent": "Presupuesto enviado",
+      "sendQuote": "Enviar Presupuesto",
+      "sending": "Enviando...",
+      "amount": "Monto",
+      "notes": "Notas",
+      "notesPlaceholder": "Detalles adicionales del presupuesto, tiempo estimado, etc.",
+      "actions": "Acciones",
+      "markInProgress": "Marcar como En Progreso",
+      "markCompleted": "Marcar como Completado",
+      "updating": "Actualizando...",
+      "completedMessage": "¡Trabajo completado! El cliente podrá calificar tu trabajo.",
+      "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el cliente pueden agregar fotos.",
+      "addPhoto": "Agregar foto/video",
+      "removePhoto": "Eliminar",
+      "noPhotos": "Aún no hay fotos. Agrega la primera foto del trabajo.",
+      "uploadError": "Error al subir la imagen",
+      "removeError": "Error al eliminar la imagen",
+      "cancel": "Cancelar",
+      "status": {
+        "pending": "Pendiente",
+        "accepted": "Aceptado",
+        "inProgress": "En Progreso",
+        "done": "Completado",
+        "cancelled": "Cancelado"
+      },
+      "errors": {
+        "amountRequired": "El monto es requerido",
+        "general": "Ocurrió un error. Por favor intenta de nuevo."
+      }
+    },
+    "profile": {
+      "title": "Mi Perfil de Especialista",
+      "subtitle": "Gestiona tu información como especialista",
+      "edit": "Editar perfil",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "profileStatus": "Estado del perfil",
+      "statusDescription": "Tu perfil debe estar verificado para recibir solicitudes",
+      "trades": "Oficios",
+      "selectMultiple": "(puedes seleccionar varios)",
+      "primary": "Principal",
+      "selectedTrades": "Oficios seleccionados",
+      "firstIsPrimary": "El primero será el oficio principal",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe tu experiencia y servicios que ofreces...",
+      "experienceYears": "Años de experiencia",
+      "experienceYearsPlaceholder": "Ej: 5",
+      "years": "años",
+      "city": "Ciudad",
+      "zone": "Zona",
+      "zonePlaceholder": "Ej: Centro, Barrio Norte",
+      "address": "Dirección",
+      "addressPlaceholder": "Ej: Av. San Martín 123",
+      "whatsapp": "WhatsApp",
+      "website": "Sitio web",
+      "gallery": {
+        "label": "Galería de trabajos",
+        "description": "Sube fotos y videos de tus trabajos realizados para mostrar tu experiencia",
+        "addPhoto": "Agregar foto/video",
+        "remove": "Eliminar",
+        "uploadError": "Error al subir la imagen",
+        "removeError": "Error al eliminar la imagen"
+      },
+      "location": "Ubicación",
+      "contact": "Contacto",
+      "noContact": "No hay información de contacto",
+      "rating": "Calificación",
+      "reviews": "reseñas",
+      "noTrades": "No hay oficios seleccionados",
+      "status": {
+        "verified": "Verificado",
+        "pendingVerification": "Pendiente de verificación",
+        "rejected": "Rechazado"
+      },
+      "errors": {
+        "tradeRequired": "Debes seleccionar al menos un oficio",
+        "general": "Ocurrió un error. Por favor intenta de nuevo."
+      }
+    }
+  },
+  "professionals": {
+    "title": "Especialistas",
+    "subtitle": "Encuentra el especialista que necesitas",
+    "search": {
+      "title": "Buscar",
+      "placeholder": "Buscar por nombre o especialidad...",
+      "hint": "Busca por nombre del especialista o tipo de oficio (ej: electricista, plomero, Juan)"
+    },
+    "viewDetails": "Ver Detalles",
+    "reviews": "reseñas",
+    "noSpecialists": "No se encontraron especialistas",
+    "details": {
+      "info": "Información",
+      "trades": "Oficios",
+      "experience": "Experiencia",
+      "years": "años",
+      "location": "Ubicación",
+      "rating": "Calificación",
+      "description": "Descripción",
+      "reviews": "Reseñas",
+      "noReviews": "Aún no hay reseñas para este especialista",
+      "gallery": "Galería",
+      "morePhotos": "y {{count}} fotos más"
+    }
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "client": {
+      "dashboard": "Mis Solicitudes",
+      "newRequest": "Crear Solicitud",
+      "badge": "Cliente"
+    },
+    "specialist": {
+      "dashboard": "Mis Trabajos",
+      "jobBoard": "Bolsa de Trabajo",
+      "badge": "Especialista"
+    },
+    "specialists": "Especialistas",
+    "profile": "Mi Perfil",
+    "admin": {
+      "dashboard": "Panel Admin",
+      "badge": "Admin"
+    },
+    "logout": "Cerrar sesión",
+    "loginButton": "Iniciar sesión",
+    "registerButton": "Registrarse"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "subtitle": "Gestiona tu información personal y perfiles",
+    "edit": "Editar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "status": {
+      "label": "Estado",
+      "active": "Activo",
+      "pending": "Pendiente",
+      "suspended": "Suspendido",
+      "banned": "Baneado"
+    },
+    "profiles": {
+      "label": "Perfiles",
+      "client": "Cliente",
+      "specialist": "Especialista",
+      "admin": "Administrador",
+      "none": "Sin perfiles"
+    },
+    "tabs": {
+      "user": "Usuario",
+      "client": "Cliente",
+      "specialist": "Especialista"
+    },
+    "user": {
+      "title": "Información Personal",
+      "subtitle": "Datos básicos de tu cuenta",
+      "email": "Correo electrónico",
+      "emailCannotChange": "El correo electrónico no se puede cambiar",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "phone": "Teléfono",
+      "profilePicture": {
+        "label": "Foto de perfil",
+        "hint": "JPEG, PNG, WebP o GIF. Máximo 10MB",
+        "invalidType": "Solo se permiten archivos de imagen",
+        "tooLarge": "El archivo es demasiado grande. Máximo 10MB",
+        "uploadError": "Error al subir la imagen. Por favor intenta de nuevo"
+      }
+    },
+    "client": {
+      "title": "Perfil de Cliente",
+      "subtitle": "Configuración de tu perfil como cliente",
+      "noSettings": "No hay configuraciones adicionales disponibles para el perfil de cliente"
+    },
+    "specialist": {
+      "title": "Perfil de Especialista",
+      "subtitle": "Gestiona tu información como especialista",
+      "statusLabel": "Estado del perfil",
+      "trades": "Oficios",
+      "selectMultiple": "(puedes seleccionar varios)",
+      "primary": "Principal",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Describe tu experiencia y servicios que ofreces...",
+      "experienceYears": "Años de experiencia",
+      "years": "años",
+      "city": "Ciudad",
+      "zone": "Zona",
+      "address": "Dirección",
+      "whatsapp": "WhatsApp",
+      "website": "Sitio web",
+      "location": "Ubicación",
+      "contact": "Contacto",
+      "rating": "Calificación",
+      "reviews": "reseñas",
+      "noProfile": "No tienes un perfil de especialista creado",
+      "createProfile": "Crear perfil de especialista",
+      "status": {
+        "verified": "Verificado",
+        "pendingVerification": "Pendiente de verificación",
+        "rejected": "Rechazado"
+      }
+    },
+    "errors": {
+      "firstNameRequired": "El nombre es requerido",
+      "lastNameRequired": "El apellido es requerido",
+      "tradeRequired": "Debes seleccionar al menos un oficio",
+      "general": "Ocurrió un error. Por favor intenta de nuevo."
+    }
+  },
+  "home": {
+    "title": "Specialist",
+    "subtitle": "Elegí tus trabajos en Bariloche",
+    "hero": {
+      "titlePro": "Dejá de correr. Empezá a elegir.",
+      "subtitlePro": "Mirá los trabajos disponibles en tu zona y decidí cuáles te convienen. Sin presiones, sin obligaciones.",
+      "titleClient": "Encontrá al especialista que necesitás",
+      "subtitleClient": "Publicá tu trabajo y recibí respuestas de especialistas verificados. Simple y seguro.",
+      "ctaClient": "Buscar Especialista",
+      "ctaProfessional": "Quiero elegir mis trabajos",
+      "ctaViewJobs": "Ver trabajos disponibles"
+    },
+    "forProfessionals": {
+      "title": "Para Especialistas",
+      "mainMessage": "No te vendemos más trabajo. Te damos el poder de elegir mejor.",
+      "pain1": "¿Cansado de clientes que cancelan?",
+      "pain2": "¿Trabajos lejos que no te rinden?",
+      "pain3": "¿\"Arreglitos\" que terminan siendo quilombos?",
+      "solution": "Con Specialist, vos mirás los trabajos publicados y decidís cuáles tomar.",
+      "benefit1": {
+        "title": "Elegí tu zona",
+        "desc": "Filtrá trabajos cerca tuyo. No más viajes al pedo."
+      },
+      "benefit2": {
+        "title": "Toda la info antes de aceptar",
+        "desc": "Fotos del problema, descripción clara, ubicación exacta. Sabés a qué vas."
+      },
+      "benefit3": {
+        "title": "Clientes calificados",
+        "desc": "Mirá el puntaje del cliente. Evitá los problemáticos."
+      },
+      "benefit4": {
+        "title": "Sin obligaciones",
+        "desc": "No te asignamos nada. Vos elegís qué, cuándo y dónde."
+      },
+      "cta": "Registrarme como Especialista"
+    },
+    "forClients": {
+      "title": "Para Clientes",
+      "mainMessage": "Publicá tu solicitud y dejá que los especialistas te contacten",
+      "benefit1": {
+        "title": "Publicá en minutos",
+        "desc": "Describí el problema, subí fotos y listo."
+      },
+      "benefit2": {
+        "title": "Especialistas verificados",
+        "desc": "Perfiles con calificaciones reales de otros clientes."
+      },
+      "benefit3": {
+        "title": "Vos elegís",
+        "desc": "Recibí propuestas y elegí al que más te convenga."
+      },
+      "cta": "Crear mi solicitud"
+    },
+    "howItWorks": {
+      "title": "¿Cómo funciona?",
+      "forPro": "Si sos Especialista",
+      "forClient": "Si sos Cliente",
+      "proStep1": "Registrate",
+      "proStep1Desc": "Creá tu perfil con tus oficios y zonas de trabajo.",
+      "proStep2": "Explorá trabajos",
+      "proStep2Desc": "Mirá las solicitudes publicadas por clientes en tu zona.",
+      "proStep3": "Elegí y contactá",
+      "proStep3Desc": "Si te interesa, contactá al cliente. Si no, seguí de largo.",
+      "clientStep1": "Publicá",
+      "clientStep1Desc": "Describí qué necesitás, agregá fotos y tu ubicación.",
+      "clientStep2": "Recibí propuestas",
+      "clientStep2Desc": "Los especialistas interesados te van a contactar.",
+      "clientStep3": "Elegí y calificá",
+      "clientStep3Desc": "Elegí al que más te guste. Al terminar, dejá tu reseña."
+    },
+    "finalCta": {
+      "title": "¿Listo para elegir tus trabajos?",
+      "subtitle": "Registrate gratis y empezá a ver las solicitudes disponibles.",
+      "button": "Crear cuenta gratis"
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 Specialist. Todos los derechos reservados."
+  }
+}

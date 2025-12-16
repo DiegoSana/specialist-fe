@@ -1,0 +1,675 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "close": "Close"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "subtitle": "Select your role to continue",
+      "email": "Email address",
+      "password": "Password",
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "invalidCredentials": "Invalid email or password",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Select your role to continue",
+      "subtitleForm": "Register as",
+      "backToSelection": "Back to role selection",
+      "note": "Note: All users are automatically registered as clients. You can create your professional profile after registration.",
+      "client": "Client",
+      "professional": "Professional",
+      "clientDescription": "I'm looking for professional services",
+      "professionalDescription": "I offer professional services",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email address",
+      "phone": "Phone",
+      "phoneOptional": "(optional)",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "createAccount": "Create account",
+      "creatingAccount": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "emailExists": "Email is already registered",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordsNotMatch": "Passwords do not match",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "phoneInvalid": "Phone number is invalid",
+      "error": "An error occurred. Please try again."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "loggedInAs": "You are logged in as",
+    "userInfo": "User Information:",
+    "email": "Email",
+    "name": "Name",
+    "role": "Role",
+    "status": "Status",
+    "profiles": "Profiles",
+    "client": "Client",
+    "professional": "Professional",
+    "admin": "Admin",
+    "noProfiles": "No profiles"
+  },
+  "client": {
+    "dashboard": {
+      "title": "My Requests",
+      "subtitle": "Manage your work requests",
+      "newRequest": "Request a job",
+      "with": "With",
+      "sections": {
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      },
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "empty": {
+        "title": "You have no requests",
+        "description": "Get started by creating your first work request"
+      }
+    },
+    "newRequest": {
+      "title": "Request a job",
+      "subtitle": "Search for a specialist or browse by specialty",
+      "back": "Back",
+      "searchLabel": "Search specialty or specialist",
+      "searchPlaceholder": "E.g.: Electrician, Plumber, John Smith...",
+      "specialties": "Specialties",
+      "specialists": "Specialists",
+      "noResults": "No results found",
+      "selectedTrade": "Selected specialty",
+      "selectedProfessional": "Selected specialist",
+      "browseByTrade": "Browse by specialty",
+      "requestDetails": "Job details",
+      "selectTrade": "Select trade type",
+      "selectProfessional": "Select a professional",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the work you need done...",
+      "address": "Address",
+      "addressPlaceholder": "E.g.: Av. San Martín 123, Bariloche",
+      "availability": "Availability",
+      "availabilityPlaceholder": "E.g.: Monday to Friday, 9:00 AM - 6:00 PM",
+      "photos": "Photos",
+      "optional": "Optional",
+      "photosNote": "Photo upload functionality coming soon",
+      "photosDescription": "Share photos and videos of the work. Both you and the professional can add photos.",
+      "addPhoto": "Add photo/video",
+      "removePhoto": "Remove",
+      "noPhotos": "No photos yet. Add the first photo of the work.",
+      "uploadError": "Error uploading image",
+      "removeError": "Error removing image",
+      "cancel": "Cancel",
+      "create": "Create request",
+      "creating": "Creating...",
+      "noTrades": "No trades available",
+      "noProfessionals": "No professionals available for this trade",
+      "reviews": "reviews",
+      "selected": "Selected",
+      "errors": {
+        "selectProfessional": "You must select a professional",
+        "descriptionRequired": "Description is required",
+        "descriptionMinLength": "Description must be at least 10 characters",
+        "addressRequired": "Address is required",
+        "general": "An error occurred. Please try again."
+      }
+    },
+    "requestDetail": {
+      "accepting": "Accepting...",
+      "reviewTitle": "Rate Work",
+      "reviewDescription": "The work has been completed. How was your experience?",
+      "leaveReview": "Leave Review",
+      "reviewAlreadySubmitted": "You have already rated this work",
+      "yourRating": "Your rating",
+      "yourComment": "Your comment",
+      "reviewedOn": "Rated on",
+      "rating": "Rating",
+      "selectedRating": "Selected rating",
+      "stars": "stars",
+      "comment": "Comment",
+      "commentPlaceholder": "Share your experience with this professional...",
+      "submitReview": "Submit Review",
+      "submitting": "Submitting...",
+      "reviewErrors": {
+        "general": "An error occurred while submitting the review. Please try again.",
+        "onlyClients": "Only clients can create reviews",
+        "alreadyReviewed": "You have already reviewed this professional",
+        "requestNotFound": "Request not found",
+        "notRequestOwner": "You can only review requests you created",
+        "requestNotCompleted": "Request must be completed before reviewing",
+        "requestAlreadyReviewed": "This request already has a review",
+        "professionalNotFound": "Professional not found"
+      },
+      "title": "Request details",
+      "back": "Back",
+      "requestStatus": "Request status",
+      "created": "Created",
+      "description": "Description",
+      "professional": "Professional",
+      "reviews": "reviews",
+      "contactWhatsApp": "Contact via WhatsApp",
+      "quote": "Quote",
+      "amount": "Amount",
+      "notes": "Notes",
+      "messages": "Messages",
+      "messagesNote": "Messaging functionality coming soon",
+      "acceptQuote": "Accept quote",
+      "cancel": "Cancel",
+      "confirmCancel": "Confirm cancellation",
+      "no": "No",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "notFound": "Request not found",
+      "backToDashboard": "Back to dashboard",
+      "photos": "Work Photos",
+      "photosDescription": "Share photos and videos of the work. Both you and the professional can add photos.",
+      "addPhoto": "Add photo/video",
+      "removePhoto": "Remove",
+      "noPhotos": "No photos yet. Add the first photo of the work.",
+      "uploadError": "Error uploading image",
+      "removeError": "Error removing image",
+      "interests": {
+        "title": "Interested Specialists",
+        "description": "These specialists have shown interest in your request. Contact them via WhatsApp to discuss details and choose the best one for you.",
+        "publicRequest": "Public Request",
+        "waitingForInterest": "Waiting for interested specialists",
+        "noInterested": "No interested specialists yet",
+        "noInterestedDescription": "Specialists working in your area will see your request and can express interest.",
+        "assign": "Choose",
+        "assigning": "Assigning...",
+        "interestedSince": "Interested since"
+      }
+    }
+  },
+  "professional": {
+    "setup": {
+      "title": "Complete professional profile",
+      "subtitle": "Fill in your information to start offering services",
+      "trade": "Trade",
+      "trades": "Trades",
+      "selectTrade": "Select your trade",
+      "selectMultiple": "(you can select multiple)",
+      "primary": "Primary",
+      "selectedTrades": "Selected trades",
+      "firstIsPrimary": "The first one will be the primary trade",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your experience and services you offer...",
+      "experienceYears": "Years of experience",
+      "experienceYearsPlaceholder": "E.g.: 5",
+      "city": "City",
+      "zone": "Zone",
+      "zonePlaceholder": "E.g.: Downtown, North District",
+      "address": "Address",
+      "addressPlaceholder": "E.g.: Av. San Martín 123",
+      "whatsapp": "WhatsApp",
+      "create": "Create profile",
+      "creating": "Creating...",
+      "skip": "Skip for now",
+      "errors": {
+        "tradeRequired": "You must select a trade",
+        "general": "An error occurred. Please try again."
+      }
+    },
+    "dashboard": {
+      "title": "My Jobs",
+      "subtitle": "Manage your jobs and requests",
+      "profileStatus": "Profile status",
+      "sections": {
+        "available": "Available jobs",
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      },
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled",
+        "verified": "Verified",
+        "pendingVerification": "Pending verification",
+        "rejected": "Rejected"
+      },
+      "requestFrom": "Request from",
+      "quote": "Quote",
+      "new": "New",
+      "empty": {
+        "title": "You have no requests",
+        "description": "Client requests will appear here when they contact you"
+      }
+    },
+    "requestDetail": {
+      "title": "Request Details",
+      "back": "Back",
+      "backToDashboard": "Back to dashboard",
+      "notFound": "Request not found",
+      "requestStatus": "Request status",
+      "created": "Created",
+      "client": "Client",
+      "requestFrom": "Request from",
+      "description": "Description",
+      "address": "Address",
+      "availability": "Availability",
+      "photos": "Photos",
+      "quoteSent": "Quote sent",
+      "sendQuote": "Send Quote",
+      "sending": "Sending...",
+      "amount": "Amount",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional quote details, estimated time, etc.",
+      "actions": "Actions",
+      "markInProgress": "Mark as In Progress",
+      "markCompleted": "Mark as Completed",
+      "updating": "Updating...",
+      "completedMessage": "Work completed! The client can now rate your work.",
+      "photos": "Work Photos",
+      "photosDescription": "Share photos and videos of the work. Both you and the client can add photos.",
+      "addPhoto": "Add photo/video",
+      "removePhoto": "Remove",
+      "noPhotos": "No photos yet. Add the first photo of the work.",
+      "uploadError": "Error uploading image",
+      "removeError": "Error removing image",
+      "cancel": "Cancel",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "errors": {
+        "amountRequired": "Amount is required",
+        "general": "An error occurred. Please try again."
+      }
+    },
+    "profile": {
+      "title": "My Professional Profile",
+      "subtitle": "Manage your professional information",
+      "edit": "Edit profile",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "profileStatus": "Profile status",
+      "statusDescription": "Your profile must be verified to receive requests",
+      "trades": "Trades",
+      "selectMultiple": "(you can select multiple)",
+      "primary": "Primary",
+      "selectedTrades": "Selected trades",
+      "firstIsPrimary": "The first one will be the primary trade",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your experience and services you offer...",
+      "experienceYears": "Years of experience",
+      "experienceYearsPlaceholder": "E.g.: 5",
+      "years": "years",
+      "city": "City",
+      "zone": "Zone",
+      "zonePlaceholder": "E.g.: Downtown, North District",
+      "address": "Address",
+      "addressPlaceholder": "E.g.: Av. San Martín 123",
+      "whatsapp": "WhatsApp",
+      "website": "Website",
+      "location": "Location",
+      "contact": "Contact",
+      "noContact": "No contact information",
+      "rating": "Rating",
+      "reviews": "reviews",
+      "noTrades": "No trades selected",
+      "status": {
+        "verified": "Verified",
+        "pendingVerification": "Pending verification",
+        "rejected": "Rejected"
+      },
+      "errors": {
+        "tradeRequired": "You must select at least one trade",
+        "general": "An error occurred. Please try again."
+      }
+    }
+  },
+  "specialist": {
+    "jobBoard": {
+      "title": "Job Board",
+      "subtitle": "Available jobs matching your skills",
+      "empty": {
+        "title": "No jobs available",
+        "description": "Jobs posted by clients in your area will appear here"
+      },
+      "filters": {
+        "all": "All",
+        "myTrades": "My trades",
+        "nearby": "Nearby"
+      },
+      "viewDetails": "View details",
+      "sendProposal": "Send proposal",
+      "postedBy": "Posted by",
+      "postedOn": "Posted on",
+      "expressInterest": "I'm interested",
+      "interested": "Interested",
+      "removeInterest": "Remove interest"
+    },
+    "dashboard": {
+      "title": "My Jobs",
+      "subtitle": "Manage your jobs and requests",
+      "profileStatus": "Profile status",
+      "viewPublicRequests": "View public requests",
+      "sections": {
+        "available": "Available jobs",
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      },
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled",
+        "verified": "Verified",
+        "pendingVerification": "Pending verification",
+        "rejected": "Rejected"
+      },
+      "requestFrom": "Request from",
+      "quote": "Quote",
+      "new": "New",
+      "empty": {
+        "title": "You have no requests",
+        "description": "Client requests will appear here when they contact you"
+      }
+    },
+    "requestDetail": {
+      "title": "Request Details",
+      "back": "Back",
+      "backToDashboard": "Back to dashboard",
+      "notFound": "Request not found",
+      "requestStatus": "Request status",
+      "created": "Created",
+      "client": "Client",
+      "requestFrom": "Request from",
+      "description": "Description",
+      "address": "Address",
+      "availability": "Availability",
+      "photos": "Photos",
+      "quoteSent": "Quote sent",
+      "sendQuote": "Send Quote",
+      "sending": "Sending...",
+      "amount": "Amount",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional quote details, estimated time, etc.",
+      "actions": "Actions",
+      "markInProgress": "Mark as In Progress",
+      "markCompleted": "Mark as Completed",
+      "updating": "Updating...",
+      "completedMessage": "Work completed! The client can now rate your work.",
+      "photosDescription": "Share photos and videos of the work. Both you and the client can add photos.",
+      "addPhoto": "Add photo/video",
+      "removePhoto": "Remove",
+      "noPhotos": "No photos yet. Add the first photo of the work.",
+      "uploadError": "Error uploading image",
+      "removeError": "Error removing image",
+      "cancel": "Cancel",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "inProgress": "In Progress",
+        "done": "Done",
+        "cancelled": "Cancelled"
+      },
+      "errors": {
+        "amountRequired": "Amount is required",
+        "general": "An error occurred. Please try again."
+      }
+    }
+  },
+  "professionals": {
+    "title": "Specialists",
+    "subtitle": "Find the specialist you need",
+    "search": {
+      "title": "Search",
+      "placeholder": "Search by name or trade...",
+      "hint": "Search by specialist name or trade type (e.g.: electrician, plumber, John)"
+    },
+    "viewDetails": "View Details",
+    "reviews": "reviews",
+    "noProfessionals": "No specialists found",
+    "details": {
+      "info": "Information",
+      "trades": "Trades",
+      "experience": "Experience",
+      "years": "years",
+      "location": "Location",
+      "rating": "Rating",
+      "description": "Description",
+      "reviews": "Reviews",
+      "noReviews": "No reviews yet for this specialist",
+      "gallery": "Gallery",
+      "morePhotos": "and {{count}} more photos"
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "client": {
+      "dashboard": "My Requests",
+      "newRequest": "New Request",
+      "badge": "Client"
+    },
+    "professional": {
+      "dashboard": "My Jobs",
+      "badge": "Professional"
+    },
+    "specialist": {
+      "dashboard": "My Jobs",
+      "jobBoard": "Job Board",
+      "badge": "Specialist"
+    },
+    "professionals": "Specialists",
+    "profile": "My Profile",
+    "admin": {
+      "dashboard": "Admin Dashboard",
+      "badge": "Admin"
+    },
+    "logout": "Logout",
+    "loginButton": "Sign in",
+    "registerButton": "Sign up"
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Manage your personal information and profiles",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "pending": "Pending",
+      "suspended": "Suspended",
+      "banned": "Banned"
+    },
+    "profiles": {
+      "label": "Profiles",
+      "client": "Client",
+      "professional": "Professional",
+      "admin": "Admin",
+      "none": "No profiles"
+    },
+    "tabs": {
+      "user": "User",
+      "client": "Client",
+      "professional": "Professional"
+    },
+    "user": {
+      "title": "Personal Information",
+      "subtitle": "Basic account information",
+      "email": "Email",
+      "emailCannotChange": "Email cannot be changed",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "profilePicture": {
+        "label": "Profile picture",
+        "hint": "JPEG, PNG, WebP or GIF. Maximum 10MB",
+        "invalidType": "Only image files are allowed",
+        "tooLarge": "File is too large. Maximum 10MB",
+        "uploadError": "Error uploading image. Please try again"
+      }
+    },
+    "client": {
+      "title": "Client Profile",
+      "subtitle": "Your client profile settings",
+      "noSettings": "No additional settings available for client profile"
+    },
+    "professional": {
+      "title": "Professional Profile",
+      "subtitle": "Manage your professional information",
+      "statusLabel": "Profile status",
+      "trades": "Trades",
+      "selectMultiple": "(you can select multiple)",
+      "primary": "Primary",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your experience and services you offer...",
+      "experienceYears": "Years of experience",
+      "years": "years",
+      "city": "City",
+      "zone": "Zone",
+      "address": "Address",
+      "whatsapp": "WhatsApp",
+      "website": "Website",
+      "location": "Location",
+      "contact": "Contact",
+      "rating": "Rating",
+      "reviews": "reviews",
+      "noProfile": "You don't have a professional profile created",
+      "createProfile": "Create professional profile",
+      "status": {
+        "verified": "Verified",
+        "pendingVerification": "Pending verification",
+        "rejected": "Rejected"
+      }
+    },
+    "errors": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "tradeRequired": "You must select at least one trade",
+      "general": "An error occurred. Please try again."
+    }
+  },
+  "home": {
+    "title": "Specialist",
+    "subtitle": "Choose your jobs in Bariloche",
+    "hero": {
+      "titlePro": "Stop running. Start choosing.",
+      "subtitlePro": "Browse available jobs in your area and decide which ones suit you. No pressure, no obligations.",
+      "titleClient": "Find the professional you need",
+      "subtitleClient": "Post your job and get responses from verified specialists. Simple and secure.",
+      "ctaClient": "Find Specialist",
+      "ctaProfessional": "I want to choose my jobs",
+      "ctaViewJobs": "View available jobs"
+    },
+    "forProfessionals": {
+      "title": "For Professionals",
+      "mainMessage": "We're not selling you more work. We're giving you the power to choose better.",
+      "pain1": "Tired of clients who cancel?",
+      "pain2": "Jobs far away that don't pay off?",
+      "pain3": "\"Quick fixes\" that turn into disasters?",
+      "solution": "With Specialist, you browse posted jobs and decide which ones to take.",
+      "benefit1": {
+        "title": "Choose your zone",
+        "desc": "Filter jobs near you. No more wasted trips."
+      },
+      "benefit2": {
+        "title": "All info before accepting",
+        "desc": "Photos of the problem, clear description, exact location. You know what you're getting into."
+      },
+      "benefit3": {
+        "title": "Rated clients",
+        "desc": "Check the client's score. Avoid the troublemakers."
+      },
+      "benefit4": {
+        "title": "No obligations",
+        "desc": "We don't assign you anything. You choose what, when, and where."
+      },
+      "cta": "Register as Professional"
+    },
+    "forClients": {
+      "title": "For Clients",
+      "mainMessage": "Post your job and let professionals contact you",
+      "benefit1": {
+        "title": "Post in minutes",
+        "desc": "Describe the problem, upload photos, and done."
+      },
+      "benefit2": {
+        "title": "Verified professionals",
+        "desc": "Profiles with real ratings from other clients."
+      },
+      "benefit3": {
+        "title": "You choose",
+        "desc": "Receive proposals and pick the one that suits you best."
+      },
+      "cta": "Post my job"
+    },
+    "howItWorks": {
+      "title": "How it works?",
+      "forPro": "If you're a Professional",
+      "forClient": "If you're a Client",
+      "proStep1": "Sign up",
+      "proStep1Desc": "Create your profile with your trades and work zones.",
+      "proStep2": "Browse jobs",
+      "proStep2Desc": "Check out requests posted by clients in your area.",
+      "proStep3": "Choose and contact",
+      "proStep3Desc": "If interested, contact the client. If not, move on.",
+      "clientStep1": "Post",
+      "clientStep1Desc": "Describe what you need, add photos and your location.",
+      "clientStep2": "Receive proposals",
+      "clientStep2Desc": "Interested professionals will contact you.",
+      "clientStep3": "Choose and rate",
+      "clientStep3Desc": "Pick the one you like best. When done, leave your review."
+    },
+    "finalCta": {
+      "title": "Ready to choose your jobs?",
+      "subtitle": "Sign up free and start browsing available requests.",
+      "button": "Create free account"
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 Specialist. All rights reserved."
+  }
+}
+
