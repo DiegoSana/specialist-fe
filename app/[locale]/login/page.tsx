@@ -110,7 +110,7 @@ export default function LoginPage() {
           {/* Social Login Buttons */}
           <div className="space-y-3">
             <a
-              href="http://localhost:5000/api/auth/google"
+              href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/google`}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -135,7 +135,7 @@ export default function LoginPage() {
             </a>
             
             <a
-              href="http://localhost:5000/api/auth/facebook"
+              href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/auth/facebook`}
               className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-[#1877F2] text-white hover:bg-[#166FE5] transition-all"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
