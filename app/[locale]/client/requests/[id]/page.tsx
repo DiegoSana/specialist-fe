@@ -388,7 +388,7 @@ export default function RequestDetailPage() {
                       </div>
                       {interest.message && (
                         <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-600 italic">"{interest.message}"</p>
+                          <p className="text-sm text-gray-600 italic">&ldquo;{interest.message}&rdquo;</p>
                         </div>
                       )}
                       <p className="text-xs text-gray-400 mt-2">
