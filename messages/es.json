@@ -360,6 +360,17 @@
       "uploadError": "Error al subir la imagen",
       "removeError": "Error al eliminar la imagen",
       "cancel": "Cancelar",
+      "interestedInJob": "¿Te interesa este trabajo?",
+      "interestedDescription": "Muestra tu interés al cliente y podrás contactarlo si te elige",
+      "expressInterest": "Me interesa",
+      "expressInterestTitle": "Expresar interés",
+      "messageOptional": "Mensaje (opcional)",
+      "messagePlaceholder": "Preséntate al cliente o comparte información relevante sobre tu experiencia...",
+      "confirmInterest": "Confirmar interés",
+      "interestExpressed": "¡Has expresado interés!",
+      "interestExpressedDescription": "El cliente ha sido notificado. Te contactará si te elige.",
+      "removeInterest": "Quitar interés",
+      "removing": "Quitando...",
       "status": {
         "pending": "Pendiente",
         "accepted": "Aceptado",
@@ -368,7 +379,6 @@
         "cancelled": "Cancelado"
       },
       "errors": {
-        "amountRequired": "El monto es requerido",
         "general": "Ocurrió un error. Por favor intenta de nuevo."
       }
     },
@@ -640,6 +650,45 @@
       "title": "¿Listo para elegir tus trabajos?",
       "subtitle": "Registrate gratis y empezá a ver las solicitudes disponibles.",
       "button": "Crear cuenta gratis"
+    }
+  },
+  "components": {
+    "timeline": {
+      "title": "Progreso de la solicitud",
+      "updated": "Actualizado",
+      "pending": "Pendiente",
+      "accepted": "Aceptado",
+      "inProgress": "En progreso",
+      "done": "Completado",
+      "cancelled": "Cancelada",
+      "cancelledDescription": "Esta solicitud fue cancelada",
+      "descriptions": {
+        "pending": "Esperando respuesta del especialista",
+        "accepted": "El especialista aceptó la solicitud. Preparando para comenzar",
+        "in_progress": "El especialista está trabajando en tu solicitud",
+        "done": "¡Trabajo completado! No olvides dejar una reseña"
+      }
+    },
+    "receivedRating": {
+      "ratingFromSpecialist": "Calificación recibida",
+      "ratingFromClient": "Calificación recibida",
+      "ratedYou": "te calificó"
+    },
+    "reviewCta": {
+      "rateSpecialist": "¡Califica al especialista!",
+      "rateClient": "¡Califica al cliente!",
+      "helpOthers": "Tu opinión sobre {name} ayuda a otros usuarios a tomar mejores decisiones",
+      "rateYourExperience": "Comparte tu experiencia trabajando con {name}",
+      "leaveReview": "Dejar mi reseña",
+      "reviewImportance": "Las reseñas son fundamentales para mantener la calidad de nuestra comunidad",
+      "yourRating": "Tu calificación",
+      "yourComment": "Tu comentario (opcional)",
+      "commentPlaceholder": "Cuéntanos cómo fue tu experiencia...",
+      "cancel": "Cancelar",
+      "submitReview": "Enviar reseña",
+      "submitting": "Enviando...",
+      "alreadyReviewed": "¡Gracias por tu reseña!",
+      "thankYou": "Tu opinión ayuda a mejorar nuestra comunidad"
     }
   },
   "footer": {

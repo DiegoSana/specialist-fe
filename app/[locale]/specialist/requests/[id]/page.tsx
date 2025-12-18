@@ -5,13 +5,17 @@ import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
-import { useRequest, useUpdateRequest } from '@/hooks/use-requests';
+import { useRequest, useUpdateRequest, useExpressInterest, useRemoveInterest, useMyInterest, useRateClient } from '@/hooks/use-requests';
+import { useReviewByRequestId } from '@/hooks/use-reviews';
 import { useAddRequestPhoto, useRemoveRequestPhoto } from '@/hooks/use-completed-work-photos';
 import { useUploadFile } from '@/hooks/use-file-upload';
 import { RequestStatus } from '@/types';
 import AppLayout from '@/components/layout/app-layout';
 import AuthenticatedImage from '@/components/images/authenticated-image';
 import AuthenticatedVideo from '@/components/videos/authenticated-video';
+import RequestTimeline from '@/components/requests/request-timeline';
+import ReviewCtaCard from '@/components/requests/review-cta-card';
+import ReceivedRatingCard from '@/components/requests/received-rating-card';
 
 export default function SpecialistRequestDetailPage() {
   const t = useTranslations('specialist.requestDetail');
@@ -22,16 +26,18 @@ export default function SpecialistRequestDetailPage() {
   const requestId = params.id as string;
 
   const { data: request, isLoading } = useRequest(requestId);
+  const { data: clientReview } = useReviewByRequestId(requestId);
   const updateRequestMutation = useUpdateRequest();
   const uploadFileMutation = useUploadFile();
   const addRequestPhotoMutation = useAddRequestPhoto();
   const removeRequestPhotoMutation = useRemoveRequestPhoto();
+  const rateClientMutation = useRateClient();
+  const expressInterestMutation = useExpressInterest();
+  const removeInterestMutation = useRemoveInterest();
+  const { data: myInterest } = useMyInterest(requestId);
 
-  const [showQuoteForm, setShowQuoteForm] = useState(false);
-  const [quoteData, setQuoteData] = useState({
-    quoteAmount: '',
-    quoteNotes: '',
-  });
+  const [showInterestForm, setShowInterestForm] = useState(false);
+  const [interestMessage, setInterestMessage] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
@@ -82,27 +88,31 @@ export default function SpecialistRequestDetailPage() {
     }
   };
 
-  const handleSendQuote = async (e: React.FormEvent) => {
+  const handleExpressInterest = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
-
-    if (!quoteData.quoteAmount || parseFloat(quoteData.quoteAmount) <= 0) {
-      setErrors({ quoteAmount: t('errors.amountRequired') });
-      return;
-    }
 
     if (!request) return;
 
     try {
-      await updateRequestMutation.mutateAsync({
-        id: request.id,
-        data: {
-          quoteAmount: parseFloat(quoteData.quoteAmount),
-          quoteNotes: quoteData.quoteNotes || undefined,
-        },
+      await expressInterestMutation.mutateAsync({
+        requestId: request.id,
+        data: interestMessage ? { message: interestMessage } : undefined,
       });
-      setShowQuoteForm(false);
-      setQuoteData({ quoteAmount: '', quoteNotes: '' });
+      setShowInterestForm(false);
+      setInterestMessage('');
+    } catch (error: any) {
+      setErrors({
+        general: error.response?.data?.message || t('errors.general'),
+      });
+    }
+  };
+
+  const handleRemoveInterest = async () => {
+    if (!request) return;
+
+    try {
+      await removeInterestMutation.mutateAsync(request.id);
     } catch (error: any) {
       setErrors({
         general: error.response?.data?.message || t('errors.general'),
@@ -170,7 +180,12 @@ export default function SpecialistRequestDetailPage() {
     );
   }
 
-  const canSendQuote = request.status === RequestStatus.PENDING && !request.quoteAmount;
+  // For public requests that are still pending and not yet assigned to this professional
+  const isPublicRequest = request.isPublic;
+  const hasAlreadyExpressedInterest = myInterest?.hasInterest === true;
+  const canExpressInterest = isPublicRequest && request.status === RequestStatus.PENDING && !request.professionalId;
+  
+  // For requests assigned to this professional
   const canMarkInProgress = request.status === RequestStatus.ACCEPTED;
   const canMarkCompleted = request.status === RequestStatus.IN_PROGRESS;
   const locale = pathname?.split('/')[1] || 'es';
@@ -199,26 +214,51 @@ export default function SpecialistRequestDetailPage() {
         </div>
 
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Status Card */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                  {t('requestStatus')}
-                </h2>
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeColor(
-                    request.status
-                  )}`}
-                >
-                  {getStatusLabel(request.status)}
-                </span>
-              </div>
-              <p className="text-sm text-gray-500">
-                {t('created')}: {new Date(request.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
+          {/* Timeline Progress Bar */}
+          <RequestTimeline 
+            status={request.status} 
+            createdAt={request.createdAt} 
+            updatedAt={request.updatedAt} 
+          />
+
+          {/* Rate Client - Prominent CTA when request is DONE */}
+          {request.status === RequestStatus.DONE && request.client && (
+            <ReviewCtaCard
+              hasExistingReview={request.clientRating !== null && request.clientRating !== undefined}
+              existingReview={request.clientRating ? {
+                rating: request.clientRating,
+                comment: request.clientRatingComment,
+              } : undefined}
+              onSubmitReview={async (rating, comment) => {
+                try {
+                  await rateClientMutation.mutateAsync({
+                    requestId: request.id,
+                    rating,
+                    comment: comment || undefined,
+                  });
+                } catch (error: any) {
+                  console.error('Error rating client:', error);
+                  throw error;
+                }
+              }}
+              isPending={rateClientMutation.isPending}
+              type="professional-to-client"
+              recipientName={`${request.client.firstName} ${request.client.lastName}`}
+            />
+          )}
+
+          {/* Show rating received from client - only when both have rated */}
+          {request.status === RequestStatus.DONE && 
+           request.clientRating && 
+           clientReview && 
+           request.client && (
+            <ReceivedRatingCard
+              rating={clientReview.rating}
+              comment={clientReview.comment}
+              reviewerName={`${request.client.firstName} ${request.client.lastName}`}
+              type="from-client"
+            />
+          )}
 
           {/* Client Info */}
           <div className="bg-white rounded-lg shadow p-6">
@@ -301,141 +341,124 @@ export default function SpecialistRequestDetailPage() {
             </div>
           )}
 
-          {/* Quote Section */}
-          {request.quoteAmount !== null ? (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('quoteSent')}
-              </h2>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">{t('amount')}:</span>
-                  <span className="text-2xl font-bold text-green-600">
-                    ${request.quoteAmount?.toLocaleString() || '0'}
-                  </span>
+          {/* Interest Section - For public requests */}
+          {canExpressInterest && (
+            hasAlreadyExpressedInterest ? (
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-green-800">{t('interestExpressed')}</h3>
+                    <p className="text-sm text-green-600">{t('interestExpressedDescription')}</p>
+                  </div>
                 </div>
-                {request.quoteNotes && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">
-                      {t('notes')}:
-                    </p>
-                    <p className="text-gray-500 whitespace-pre-wrap">
-                      {request.quoteNotes}
-                    </p>
-                  </div>
-                )}
+                <button
+                  onClick={handleRemoveInterest}
+                  disabled={removeInterestMutation.isPending}
+                  className="text-sm text-red-600 hover:text-red-700 underline disabled:opacity-50"
+                >
+                  {removeInterestMutation.isPending ? t('removing') : t('removeInterest')}
+                </button>
               </div>
-            </div>
-          ) : showQuoteForm ? (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('sendQuote')}
-              </h2>
-              <form onSubmit={handleSendQuote} className="space-y-4">
-                {errors.general && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-sm text-red-800">{errors.general}</p>
-                  </div>
-                )}
+            ) : showInterestForm ? (
+              <div className="bg-white rounded-xl border-2 border-blue-200 shadow-lg overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4">
+                  <h3 className="text-lg font-bold text-white">{t('expressInterestTitle')}</h3>
+                </div>
+                <form onSubmit={handleExpressInterest} className="p-6 space-y-4">
+                  {errors.general && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-sm text-red-800">{errors.general}</p>
+                    </div>
+                  )}
 
-                <div>
-                  <label
-                    htmlFor="quoteAmount"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    {t('amount')} *
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      $
-                    </span>
-                    <input
-                      id="quoteAmount"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      required
-                      value={quoteData.quoteAmount}
-                      onChange={(e) => {
-                        setQuoteData((prev) => ({ ...prev, quoteAmount: e.target.value }));
-                        if (errors.quoteAmount) {
-                          const { quoteAmount, ...rest } = errors;
-                          setErrors(rest);
-                        }
-                      }}
-                      className={`w-full pl-8 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.quoteAmount
-                          ? 'border-red-300'
-                          : 'border-gray-300'
-                      } bg-white text-gray-800`}
-                      placeholder="0.00"
+                  <div>
+                    <label
+                      htmlFor="interestMessage"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      {t('messageOptional')}
+                    </label>
+                    <textarea
+                      id="interestMessage"
+                      rows={4}
+                      value={interestMessage}
+                      onChange={(e) => setInterestMessage(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
+                      placeholder={t('messagePlaceholder')}
                     />
                   </div>
-                  {errors.quoteAmount && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.quoteAmount}
-                    </p>
-                  )}
-                </div>
 
-                <div>
-                  <label
-                    htmlFor="quoteNotes"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    {t('notes')}
-                  </label>
-                  <textarea
-                    id="quoteNotes"
-                    rows={4}
-                    value={quoteData.quoteNotes}
-                    onChange={(e) =>
-                      setQuoteData((prev) => ({ ...prev, quoteNotes: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
-                    placeholder={t('notesPlaceholder')}
-                  />
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowInterestForm(false);
+                        setInterestMessage('');
+                        setErrors({});
+                      }}
+                      className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                    >
+                      {t('cancel')}
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={expressInterestMutation.isPending}
+                      className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {expressInterestMutation.isPending ? t('sending') : t('confirmInterest')}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            ) : (
+              <div className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-xl p-6 shadow-lg">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
+                      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </div>
+                    
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-white mb-1">
+                        {t('interestedInJob')}
+                      </h3>
+                      <p className="text-white/90 text-sm mb-4">
+                        {t('interestedDescription')}
+                      </p>
+                      
+                      <button
+                        onClick={() => setShowInterestForm(true)}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition-colors shadow-md hover:shadow-lg"
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        {t('expressInterest')}
+                      </button>
+                    </div>
+                  </div>
                 </div>
+              </div>
+            )
+          )}
 
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowQuoteForm(false);
-                      setQuoteData({ quoteAmount: '', quoteNotes: '' });
-                      setErrors({});
-                    }}
-                    className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                  >
-                    {t('cancel')}
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={updateRequestMutation.isPending}
-                    className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {updateRequestMutation.isPending ? t('sending') : t('sendQuote')}
-                  </button>
-                </div>
-              </form>
-            </div>
-          ) : null}
-
-          {/* Actions */}
+          {/* Actions - Only show when professional is assigned */}
+          {(canMarkInProgress || canMarkCompleted) && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
               {t('actions')}
             </h2>
             <div className="flex flex-col gap-3">
-              {canSendQuote && (
-                <button
-                  onClick={() => setShowQuoteForm(true)}
-                  className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  {t('sendQuote')}
-                </button>
-              )}
-
               {canMarkInProgress && (
                 <button
                   onClick={handleMarkInProgress}
@@ -572,6 +595,7 @@ export default function SpecialistRequestDetailPage() {
               )}
             </div>
           </div>
+          )}
         </div>
       </div>
     </AppLayout>

@@ -14,6 +14,9 @@ import { RequestStatus } from '@/types';
 import AppLayout from '@/components/layout/app-layout';
 import AuthenticatedImage from '@/components/images/authenticated-image';
 import AuthenticatedVideo from '@/components/videos/authenticated-video';
+import RequestTimeline from '@/components/requests/request-timeline';
+import ReviewCtaCard from '@/components/requests/review-cta-card';
+import ReceivedRatingCard from '@/components/requests/received-rating-card';
 
 export default function RequestDetailPage() {
   const t = useTranslations('client.requestDetail');
@@ -216,6 +219,53 @@ export default function RequestDetailPage() {
           </h1>
         </div>
         <div className="max-w-4xl mx-auto space-y-6">
+          {/* Timeline Progress Bar */}
+          <RequestTimeline 
+            status={request.status} 
+            createdAt={request.createdAt} 
+            updatedAt={request.updatedAt} 
+          />
+
+          {/* Review Section - Prominent CTA when request is DONE */}
+          {request.status === RequestStatus.DONE && request.professional && (
+            <ReviewCtaCard
+              hasExistingReview={!!existingReview}
+              existingReview={existingReview ? {
+                rating: existingReview.rating,
+                comment: existingReview.comment,
+              } : undefined}
+              onSubmitReview={async (rating, comment) => {
+                try {
+                  await createReviewMutation.mutateAsync({
+                    professionalId: request.professional!.id,
+                    rating,
+                    comment: comment || undefined,
+                    requestId: request.id,
+                  });
+                } catch (error: any) {
+                  console.error('Error creating review:', error);
+                  throw error;
+                }
+              }}
+              isPending={createReviewMutation.isPending}
+              type="client-to-professional"
+              recipientName={`${request.professional.user?.firstName} ${request.professional.user?.lastName}`}
+            />
+          )}
+
+          {/* Show rating received from specialist - only when both have rated */}
+          {request.status === RequestStatus.DONE && 
+           existingReview && 
+           request.clientRating && 
+           request.professional && (
+            <ReceivedRatingCard
+              rating={request.clientRating}
+              comment={request.clientRatingComment}
+              reviewerName={`${request.professional.user?.firstName} ${request.professional.user?.lastName}`}
+              type="from-professional"
+            />
+          )}
+
           {/* Status and Professional Info - Combined */}
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -571,153 +621,6 @@ export default function RequestDetailPage() {
                   <p className="text-sm">{t('noPhotos')}</p>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* Review Section */}
-          {existingReview && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('reviewAlreadySubmitted')}
-              </h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">{t('yourRating')}:</span>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={`text-xl ${
-                          star <= existingReview.rating
-                            ? 'text-yellow-500'
-                            : 'text-gray-300'
-                        }`}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                {existingReview.comment && (
-                  <div>
-                    <span className="text-sm font-medium text-gray-700">{t('yourComment')}:</span>
-                    <p className="text-sm text-gray-500 mt-1">{existingReview.comment}</p>
-                  </div>
-                )}
-                <p className="text-xs text-gray-500">
-                  {t('reviewedOn')} {new Date(existingReview.createdAt).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {canReview && !showReviewForm && !existingReview && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('reviewTitle')}
-              </h2>
-              <p className="text-sm text-gray-500 mb-4">
-                {t('reviewDescription')}
-              </p>
-              <button
-                onClick={() => setShowReviewForm(true)}
-                className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
-              >
-                {t('leaveReview')}
-              </button>
-            </div>
-          )}
-
-          {showReviewForm && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('leaveReview')}
-              </h2>
-              <form onSubmit={handleSubmitReview} className="space-y-4">
-                {reviewErrors.general && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-sm text-red-800">{reviewErrors.general}</p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('rating')} *
-                  </label>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => {
-                          setReviewData((prev) => ({ ...prev, rating: star }));
-                          if (reviewErrors.rating) {
-                            setReviewErrors((prev) => {
-                              const newErrors = { ...prev };
-                              delete newErrors.rating;
-                              return newErrors;
-                            });
-                          }
-                        }}
-                        className={`text-3xl ${
-                          star <= reviewData.rating
-                            ? 'text-yellow-500'
-                            : 'text-gray-300'
-                        } hover:scale-110 transition-transform`}
-                      >
-                        ★
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t('selectedRating')}: {reviewData.rating} {t('stars')}
-                  </p>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="reviewComment"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    {t('comment')}
-                  </label>
-                  <textarea
-                    id="reviewComment"
-                    rows={4}
-                    value={reviewData.comment}
-                    onChange={(e) =>
-                      setReviewData((prev) => ({ ...prev, comment: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
-                    placeholder={t('commentPlaceholder')}
-                  />
-                </div>
-
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowReviewForm(false);
-                      setReviewData({ rating: 5, comment: '' });
-                      setReviewErrors({});
-                    }}
-                    className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                  >
-                    {t('cancel')}
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={createReviewMutation.isPending}
-                    className="flex-1 px-6 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {createReviewMutation.isPending ? t('submitting') : t('submitReview')}
-                  </button>
-                </div>
-              </form>
             </div>
           )}
 

@@ -309,6 +309,17 @@
       "uploadError": "Error uploading image",
       "removeError": "Error removing image",
       "cancel": "Cancel",
+      "interestedInJob": "Interested in this job?",
+      "interestedDescription": "Show your interest to the client and you can contact them if they choose you",
+      "expressInterest": "I'm interested",
+      "expressInterestTitle": "Express interest",
+      "messageOptional": "Message (optional)",
+      "messagePlaceholder": "Introduce yourself to the client or share relevant information about your experience...",
+      "confirmInterest": "Confirm interest",
+      "interestExpressed": "You've expressed interest!",
+      "interestExpressedDescription": "The client has been notified. They will contact you if they choose you.",
+      "removeInterest": "Remove interest",
+      "removing": "Removing...",
       "status": {
         "pending": "Pending",
         "accepted": "Accepted",
@@ -317,7 +328,6 @@
         "cancelled": "Cancelled"
       },
       "errors": {
-        "amountRequired": "Amount is required",
         "general": "An error occurred. Please try again."
       }
     },
@@ -679,6 +689,45 @@
       "title": "Ready to choose your jobs?",
       "subtitle": "Sign up free and start browsing available requests.",
       "button": "Create free account"
+    }
+  },
+  "components": {
+    "timeline": {
+      "title": "Request Progress",
+      "updated": "Updated",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "inProgress": "In Progress",
+      "done": "Completed",
+      "cancelled": "Cancelled",
+      "cancelledDescription": "This request was cancelled",
+      "descriptions": {
+        "pending": "Waiting for specialist response",
+        "accepted": "Specialist accepted the request. Preparing to start",
+        "in_progress": "Specialist is working on your request",
+        "done": "Work completed! Don't forget to leave a review"
+      }
+    },
+    "receivedRating": {
+      "ratingFromSpecialist": "Rating received",
+      "ratingFromClient": "Rating received",
+      "ratedYou": "rated you"
+    },
+    "reviewCta": {
+      "rateSpecialist": "Rate the specialist!",
+      "rateClient": "Rate the client!",
+      "helpOthers": "Your opinion about {name} helps other users make better decisions",
+      "rateYourExperience": "Share your experience working with {name}",
+      "leaveReview": "Leave my review",
+      "reviewImportance": "Reviews are essential to maintaining the quality of our community",
+      "yourRating": "Your rating",
+      "yourComment": "Your comment (optional)",
+      "commentPlaceholder": "Tell us about your experience...",
+      "cancel": "Cancel",
+      "submitReview": "Submit review",
+      "submitting": "Submitting...",
+      "alreadyReviewed": "Thanks for your review!",
+      "thankYou": "Your feedback helps improve our community"
     }
   },
   "footer": {

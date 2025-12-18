@@ -218,3 +218,29 @@ export function useAssignProfessional() {
   });
 }
 
+export function useRateClient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      requestId,
+      rating,
+      comment,
+    }: {
+      requestId: string;
+      rating: number;
+      comment?: string;
+    }): Promise<Request> => {
+      const response = await apiClient.post<Request>(
+        `/requests/${requestId}/rate-client`,
+        { rating, comment }
+      );
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      queryClient.invalidateQueries({ queryKey: ['request', variables.requestId] });
+    },
+  });
+}
+

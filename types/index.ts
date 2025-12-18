@@ -108,6 +108,9 @@ export interface Request {
   status: RequestStatus;
   quoteAmount?: number;
   quoteNotes?: string;
+  // Client rating by professional
+  clientRating?: number;
+  clientRatingComment?: string;
   createdAt: string;
   updatedAt: string;
   professional?: Professional;
