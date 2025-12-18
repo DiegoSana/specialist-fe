@@ -13,7 +13,7 @@ export function useMyProfessionalProfile() {
     queryKey: ['professional', 'me'],
     queryFn: async (): Promise<Professional | null> => {
       try {
-        const response = await apiClient.get<Professional>('/service/professionals/me/profile');
+        const response = await apiClient.get<Professional>('/professionals/me/profile');
         return response.data;
       } catch (error: any) {
         // If 404, user doesn't have a professional profile yet - that's ok

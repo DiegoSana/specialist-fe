@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
-import { usePublicRequests, useExpressInterest, useRemoveInterest, useMyInterest } from '@/hooks/use-requests';
+import { useAvailableRequests, useExpressInterest, useRemoveInterest, useMyInterest } from '@/hooks/use-requests';
 import AppLayout from '@/components/layout/app-layout';
 import { Request } from '@/types';
 
@@ -83,8 +83,8 @@ export default function JobBoardPage() {
     }
   }, [router, user, pathname, isLoadingUser]);
 
-  // Fetch public requests
-  const { data: requests, isLoading } = usePublicRequests();
+  // Fetch available requests for professionals
+  const { data: requests, isLoading } = useAvailableRequests();
 
   const locale = pathname?.split('/')[1] || 'es';
 

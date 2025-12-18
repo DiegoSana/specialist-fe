@@ -88,7 +88,7 @@ export default function ProfessionalSetupPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await apiClient.post<{ professional: any; user: any }>('/service/professionals/me/profile', {
+      const response = await apiClient.post<{ professional: any; user: any }>('/professionals/me', {
         tradeIds: formData.tradeIds,
         description: formData.description || undefined,
         experienceYears: formData.experienceYears ? parseInt(formData.experienceYears) : undefined,

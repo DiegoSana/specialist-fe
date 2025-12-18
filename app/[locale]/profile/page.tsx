@@ -45,7 +45,7 @@ export default function ProfilePage() {
   const { data: userProfile, isLoading: loadingUser } = useQuery({
     queryKey: ['user', 'profile'],
     queryFn: async () => {
-      const response = await apiClient.get('/users/profile');
+      const response = await apiClient.get('/users/me');
       return response.data;
     },
     enabled: isAuthenticated(),
@@ -66,7 +66,7 @@ export default function ProfilePage() {
       if (data.phone && data.phone.trim() !== '') payload.phone = data.phone;
       if (data.profilePictureUrl && data.profilePictureUrl.trim() !== '') payload.profilePictureUrl = data.profilePictureUrl;
       
-      const response = await apiClient.put('/users/profile', payload);
+      const response = await apiClient.patch('/users/me', payload);
       return response.data;
     },
     onSuccess: (data) => {
@@ -90,7 +90,7 @@ export default function ProfilePage() {
   // Activate client profile mutation
   const activateClientMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiClient.post('/users/profile/client');
+      const response = await apiClient.post('/users/me/client-profile');
       return response.data;
     },
     onSuccess: () => {

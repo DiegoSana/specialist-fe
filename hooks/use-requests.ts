@@ -8,7 +8,7 @@ export function useClientRequests() {
   return useQuery({
     queryKey: ['requests', 'client'],
     queryFn: async (): Promise<Request[]> => {
-      const response = await apiClient.get<Request[]>('/service/requests');
+      const response = await apiClient.get<Request[]>('/requests');
       return response.data;
     },
   });
@@ -18,17 +18,7 @@ export function useProfessionalRequests() {
   return useQuery({
     queryKey: ['requests', 'professional'],
     queryFn: async (): Promise<Request[]> => {
-      const response = await apiClient.get<Request[]>('/service/requests');
-      return response.data;
-    },
-  });
-}
-
-export function usePublicRequests() {
-  return useQuery({
-    queryKey: ['requests', 'public'],
-    queryFn: async (): Promise<Request[]> => {
-      const response = await apiClient.get<Request[]>('/service/requests/public');
+      const response = await apiClient.get<Request[]>('/requests');
       return response.data;
     },
   });
@@ -42,7 +32,7 @@ export function useAvailableRequests(city?: string, zone?: string) {
       if (city) params.append('city', city);
       if (zone) params.append('zone', zone);
       const response = await apiClient.get<Request[]>(
-        `/service/requests/available?${params.toString()}`
+        `/requests/available?${params.toString()}`
       );
       return response.data;
     },
@@ -54,7 +44,7 @@ export function useRequest(id: string) {
   return useQuery({
     queryKey: ['request', id],
     queryFn: async (): Promise<Request> => {
-      const response = await apiClient.get<Request>(`/service/requests/${id}`);
+      const response = await apiClient.get<Request>(`/requests/${id}`);
       return response.data;
     },
     enabled: !!id,
@@ -66,7 +56,7 @@ export function useCreateRequest() {
 
   return useMutation({
     mutationFn: async (data: CreateRequestDto): Promise<Request> => {
-      const response = await apiClient.post<Request>('/service/requests', data);
+      const response = await apiClient.post<Request>('/requests', data);
       return response.data;
     },
     onSuccess: () => {
@@ -86,8 +76,8 @@ export function useUpdateRequest() {
       id: string;
       data: UpdateRequestDto;
     }): Promise<Request> => {
-      const response = await apiClient.put<Request>(
-        `/service/requests/${id}/status`,
+      const response = await apiClient.patch<Request>(
+        `/requests/${id}`,
         data
       );
       return response.data;
@@ -104,7 +94,7 @@ export function useAcceptQuote() {
 
   return useMutation({
     mutationFn: async (id: string): Promise<Request> => {
-      const response = await apiClient.put<Request>(`/service/requests/${id}/accept`);
+      const response = await apiClient.post<Request>(`/requests/${id}/accept`);
       return response.data;
     },
     onSuccess: (_, id) => {
@@ -125,8 +115,8 @@ export function useUpdateRequestByClient() {
       id: string;
       data: UpdateRequestDto;
     }): Promise<Request> => {
-      const response = await apiClient.put<Request>(
-        `/service/requests/${id}/client-status`,
+      const response = await apiClient.patch<Request>(
+        `/requests/${id}`,
         data
       );
       return response.data;
@@ -144,7 +134,7 @@ export function useRequestInterests(requestId: string) {
     queryKey: ['request-interests', requestId],
     queryFn: async (): Promise<RequestInterest[]> => {
       const response = await apiClient.get<RequestInterest[]>(
-        `/service/requests/${requestId}/interests`
+        `/requests/${requestId}/interests`
       );
       return response.data;
     },
@@ -157,7 +147,7 @@ export function useMyInterest(requestId: string) {
     queryKey: ['my-interest', requestId],
     queryFn: async (): Promise<{ hasInterest: boolean }> => {
       const response = await apiClient.get<{ hasInterest: boolean }>(
-        `/service/requests/${requestId}/my-interest`
+        `/requests/${requestId}/interest`
       );
       return response.data;
     },
@@ -177,14 +167,14 @@ export function useExpressInterest() {
       data?: ExpressInterestDto;
     }): Promise<RequestInterest> => {
       const response = await apiClient.post<RequestInterest>(
-        `/service/requests/${requestId}/interest`,
+        `/requests/${requestId}/interest`,
         data || {}
       );
       return response.data;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['my-interest', variables.requestId] });
-      queryClient.invalidateQueries({ queryKey: ['requests', 'public'] });
+      queryClient.invalidateQueries({ queryKey: ['requests', 'available'] });
     },
   });
 }
@@ -194,11 +184,11 @@ export function useRemoveInterest() {
 
   return useMutation({
     mutationFn: async (requestId: string): Promise<void> => {
-      await apiClient.delete(`/service/requests/${requestId}/interest`);
+      await apiClient.delete(`/requests/${requestId}/interest`);
     },
     onSuccess: (_, requestId) => {
       queryClient.invalidateQueries({ queryKey: ['my-interest', requestId] });
-      queryClient.invalidateQueries({ queryKey: ['requests', 'public'] });
+      queryClient.invalidateQueries({ queryKey: ['requests', 'available'] });
     },
   });
 }
@@ -215,7 +205,7 @@ export function useAssignProfessional() {
       professionalId: string;
     }): Promise<Request> => {
       const response = await apiClient.post<Request>(
-        `/service/requests/${requestId}/assign`,
+        `/requests/${requestId}/assign`,
         { professionalId }
       );
       return response.data;

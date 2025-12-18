@@ -32,7 +32,7 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (data: CreateReviewDto): Promise<Review> => {
-      const response = await apiClient.post<Review>('/reputation/reviews', data);
+      const response = await apiClient.post<Review>('/reviews', data);
       return response.data;
     },
     onSuccess: (data) => {
@@ -50,7 +50,7 @@ export function useProfessionalReviews(professionalId: string) {
   return useQuery({
     queryKey: ['reviews', 'professional', professionalId],
     queryFn: async (): Promise<Review[]> => {
-      const response = await apiClient.get<Review[]>(`/reputation/professionals/${professionalId}/reviews`);
+      const response = await apiClient.get<Review[]>(`/professionals/${professionalId}/reviews`);
       return response.data;
     },
     enabled: !!professionalId,
@@ -62,7 +62,7 @@ export function useReviewByRequestId(requestId: string) {
     queryKey: ['review', 'request', requestId],
     queryFn: async (): Promise<Review | null> => {
       try {
-        const response = await apiClient.get<Review>(`/reputation/reviews/request/${requestId}`);
+        const response = await apiClient.get<Review>(`/reviews?requestId=${requestId}`);
         return response.data;
       } catch (error: any) {
         if (error.response?.status === 404) {

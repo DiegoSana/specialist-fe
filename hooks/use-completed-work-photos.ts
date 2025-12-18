@@ -8,7 +8,7 @@ export function useAddRequestPhoto() {
 
   return useMutation({
     mutationFn: async ({ requestId, url }: { requestId: string; url: string }) => {
-      const response = await apiClient.post(`/service/requests/${requestId}/photos`, { url });
+      const response = await apiClient.post(`/requests/${requestId}/photos`, { url });
       return response.data;
     },
     onSuccess: (data, variables) => {
@@ -38,7 +38,7 @@ export function useRemoveRequestPhoto() {
 
   return useMutation({
     mutationFn: async ({ requestId, url }: { requestId: string; url: string }) => {
-      const response = await apiClient.delete(`/service/requests/${requestId}/photos`, { data: { url } });
+      const response = await apiClient.delete(`/requests/${requestId}/photos`, { data: { url } });
       return response.data;
     },
     onSuccess: (_, variables) => {

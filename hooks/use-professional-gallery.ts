@@ -8,7 +8,7 @@ export function useAddGalleryItem() {
 
   return useMutation({
     mutationFn: async (url: string) => {
-      const response = await apiClient.post('/service/professionals/me/profile/gallery', { url });
+      const response = await apiClient.post('/professionals/me/gallery', { url });
       return response.data;
     },
     onSuccess: () => {
@@ -23,7 +23,7 @@ export function useRemoveGalleryItem() {
 
   return useMutation({
     mutationFn: async (url: string) => {
-      const response = await apiClient.delete('/service/professionals/me/profile/gallery', { data: { url } });
+      const response = await apiClient.delete('/professionals/me/gallery', { data: { url } });
       return response.data;
     },
     onSuccess: () => {
