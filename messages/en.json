@@ -15,6 +15,24 @@
     "filter": "Filter",
     "close": "Close"
   },
+  "profileSetup": {
+    "title": "Welcome to Specialist!",
+    "subtitle": "How do you want to use the platform?",
+    "clientTitle": "I'm looking for a specialist",
+    "clientDescription": "I need to hire professionals for work at my home or business.",
+    "clientBenefit1": "Post job requests",
+    "clientBenefit2": "Browse specialist profiles",
+    "clientBenefit3": "Contact directly",
+    "selectClient": "Continue as client",
+    "professionalTitle": "I'm a specialist",
+    "professionalDescription": "I offer professional services and looking for new clients.",
+    "professionalBenefit1": "Receive job requests",
+    "professionalBenefit2": "Showcase your experience",
+    "professionalBenefit3": "Build your reputation",
+    "selectProfessional": "Register as specialist",
+    "creating": "Creating profile...",
+    "note": "You can add the other profile later from your account."
+  },
   "auth": {
     "login": {
       "title": "Sign in to your account",
@@ -618,53 +636,55 @@
     "title": "Specialist",
     "subtitle": "Choose your jobs in Bariloche",
     "hero": {
-      "titlePro": "Stop running. Start choosing.",
-      "subtitlePro": "Browse available jobs in your area and decide which ones suit you. No pressure, no obligations.",
-      "titleClient": "Find the professional you need",
-      "subtitleClient": "Post your job and get responses from verified specialists. Simple and secure.",
-      "ctaClient": "Find Specialist",
-      "ctaProfessional": "I want to choose my jobs",
-      "ctaViewJobs": "View available jobs"
+      "badge": "Bariloche and surroundings",
+      "title": "Connecting specialists with those who need them",
+      "subtitle": "The Bariloche job board. Specialists who choose their projects. Clients who find the ideal professional.",
+      "ctaJobBoard": "Job Board",
+      "ctaFindSpecialist": "Find Specialist",
+      "ctaPostJob": "Post a Job",
+      "trust1": "No hidden fees",
+      "trust2": "Verified professionals",
+      "trust3": "100% free"
     },
     "forProfessionals": {
       "title": "For Professionals",
-      "mainMessage": "We're not selling you more work. We're giving you the power to choose better.",
-      "pain1": "Tired of clients who cancel?",
-      "pain2": "Jobs far away that don't pay off?",
-      "pain3": "\"Quick fixes\" that turn into disasters?",
-      "solution": "With Specialist, you browse posted jobs and decide which ones to take.",
+      "mainMessage": "Choose your jobs or receive direct requests",
+      "highlight1": "Jobs you actually want to do",
+      "highlight2": "Projects that match your expertise",
+      "highlight3": "Receive direct requests from clients",
+      "highlight4": "The area that suits you",
       "benefit1": {
-        "title": "Choose your zone",
-        "desc": "Filter jobs near you. No more wasted trips."
+        "title": "Browse the job board",
+        "desc": "Check posted jobs and choose the ones that interest you."
       },
       "benefit2": {
-        "title": "All info before accepting",
-        "desc": "Photos of the problem, clear description, exact location. You know what you're getting into."
+        "title": "Receive requests",
+        "desc": "Clients can also contact you directly."
       },
       "benefit3": {
         "title": "Rated clients",
-        "desc": "Check the client's score. Avoid the troublemakers."
+        "desc": "Check the client's score before accepting."
       },
       "benefit4": {
         "title": "No obligations",
-        "desc": "We don't assign you anything. You choose what, when, and where."
+        "desc": "You decide which jobs to take and which to skip."
       },
       "cta": "Register as Professional"
     },
     "forClients": {
       "title": "For Clients",
-      "mainMessage": "Post your job and let professionals contact you",
+      "mainMessage": "Two ways to find the ideal specialist",
       "benefit1": {
-        "title": "Post in minutes",
-        "desc": "Describe the problem, upload photos, and done."
+        "title": "Post to the job board",
+        "desc": "Describe your problem and let interested specialists contact you."
       },
       "benefit2": {
-        "title": "Verified professionals",
-        "desc": "Profiles with real ratings from other clients."
+        "title": "Or choose directly",
+        "desc": "Browse profiles and contact the specialist you like best."
       },
       "benefit3": {
-        "title": "You choose",
-        "desc": "Receive proposals and pick the one that suits you best."
+        "title": "Verified profiles",
+        "desc": "Real ratings from other clients to choose with confidence."
       },
       "cta": "Post my job"
     },
@@ -674,16 +694,16 @@
       "forClient": "If you're a Client",
       "proStep1": "Sign up",
       "proStep1Desc": "Create your profile with your trades and work zones.",
-      "proStep2": "Browse jobs",
-      "proStep2Desc": "Check out requests posted by clients in your area.",
-      "proStep3": "Choose and contact",
-      "proStep3Desc": "If interested, contact the client. If not, move on.",
-      "clientStep1": "Post",
-      "clientStep1Desc": "Describe what you need, add photos and your location.",
-      "clientStep2": "Receive proposals",
-      "clientStep2Desc": "Interested professionals will contact you.",
-      "clientStep3": "Choose and rate",
-      "clientStep3Desc": "Pick the one you like best. When done, leave your review."
+      "proStep2": "Choose or receive jobs",
+      "proStep2Desc": "Browse the job board or receive direct requests from clients.",
+      "proStep3": "Work and grow",
+      "proStep3Desc": "Complete jobs and build your reputation with reviews.",
+      "clientStep1": "Post or contact",
+      "clientStep1Desc": "Post to the job board or contact a specialist directly.",
+      "clientStep2": "Coordinate the work",
+      "clientStep2Desc": "Agree on details with your chosen specialist.",
+      "clientStep3": "Rate",
+      "clientStep3Desc": "When done, leave a review to help other clients."
     },
     "finalCta": {
       "title": "Ready to choose your jobs?",

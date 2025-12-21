@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useLogin } from '@/hooks/use-auth';
+import { isAuthenticated, getUser } from '@/lib/auth';
 
 export default function LoginPage() {
   const t = useTranslations('auth.login');
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{
@@ -16,6 +19,23 @@ export default function LoginPage() {
   }>({});
 
   const loginMutation = useLogin();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const user = getUser();
+      if (user) {
+        // If no profile, go to profile setup
+        if (!user.hasClientProfile && !user.hasProfessionalProfile) {
+          router.push('/es/profile-setup');
+        } else if (user.hasProfessionalProfile) {
+          router.push('/es/specialist/dashboard');
+        } else {
+          router.push('/es/professionals');
+        }
+      }
+    }
+  }, [router]);
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; password?: string } = {};
@@ -223,6 +243,66 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
+        </div>
+
+        {/* Beta Test Credentials */}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-amber-600 text-lg">🧪</span>
+            <h3 className="font-semibold text-amber-800">Versión Beta - Cuentas de prueba</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Specialists */}
+            <div>
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Especialistas</p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => { setEmail('electricista@test.com'); setPassword('123456'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">electricista@test.com</p>
+                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmail('plomero@test.com'); setPassword('123456'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">plomero@test.com</p>
+                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Clients */}
+            <div>
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Clientes</p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => { setEmail('cliente1@test.com'); setPassword('123456'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">cliente1@test.com</p>
+                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmail('cliente2@test.com'); setPassword('123456'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">cliente2@test.com</p>
+                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-xs text-amber-600 mt-3 text-center">
+            Hacé clic en una cuenta para auto-completar
+          </p>
         </div>
       </div>
     </div>

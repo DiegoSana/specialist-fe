@@ -1,56 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getUser, isAuthenticated } from '@/lib/auth';
 import { useClientRequests } from '@/hooks/use-requests';
 import { RequestStatus } from '@/types';
-import AppLayout from '@/components/layout/app-layout';
+import ProtectedLayout from '@/components/layout/protected-layout';
 
 export default function ClientDashboardPage() {
   const t = useTranslations('client.dashboard');
-  const router = useRouter();
   const pathname = usePathname();
-  const [user, setUserState] = useState<any | null>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   const { data: requests, isLoading } = useClientRequests();
-
-  // Initialize user state on client side only
-  useEffect(() => {
-    const initialUser = getUser();
-    if (initialUser) {
-      setUserState(initialUser);
-    }
-    setIsLoadingUser(false);
-  }, []);
-
-  useEffect(() => {
-    // Only redirect if we've finished loading and user is not authenticated
-    if (!isLoadingUser && (!isAuthenticated() || !user)) {
-      const locale = pathname?.split('/')[1] || 'es';
-      router.push(`/${locale}/login`);
-    }
-  }, [router, user, pathname, isLoadingUser]);
-
-  // Show loading state while checking authentication
-  if (isLoadingUser) {
-    return (
-      <AppLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center">Loading...</div>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
 
   const getStatusBadgeColor = (status: RequestStatus) => {
     switch (status) {
@@ -98,9 +59,9 @@ export default function ClientDashboardPage() {
   const locale = pathname?.split('/')[1] || 'es';
 
   return (
-    <AppLayout>
+    <ProtectedLayout>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex justify-between items-center">
+        <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
               {t('title')}
@@ -111,8 +72,11 @@ export default function ClientDashboardPage() {
           </div>
           <Link
             href={`/${locale}/client/requests/new`}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base whitespace-nowrap"
           >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
             {t('newRequest')}
           </Link>
         </div>
@@ -276,7 +240,7 @@ export default function ClientDashboardPage() {
           </div>
         )}
       </div>
-    </AppLayout>
+    </ProtectedLayout>
   );
 }
 

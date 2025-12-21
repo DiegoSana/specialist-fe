@@ -6,12 +6,29 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRegister } from '@/hooks/use-auth';
 import { UserRole } from '@/types';
+import { isAuthenticated, getUser } from '@/lib/auth';
 
 export default function RegisterPage() {
   const t = useTranslations('auth.register');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const user = getUser();
+      if (user) {
+        if (!user.hasClientProfile && !user.hasProfessionalProfile) {
+          router.push('/es/profile-setup');
+        } else if (user.hasProfessionalProfile) {
+          router.push('/es/specialist/dashboard');
+        } else {
+          router.push('/es/professionals');
+        }
+      }
+    }
+  }, [router]);
   
   // Read role from URL query parameter
   const roleFromUrl = searchParams.get('role');

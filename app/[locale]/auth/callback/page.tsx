@@ -19,10 +19,11 @@ export default function AuthCallbackPage() {
         const user = JSON.parse(decodeURIComponent(userParam));
         setUser(user);
         
-        if (user.hasProfessionalProfile) {
+        // If user has no profile, redirect to profile setup
+        if (!user.hasClientProfile && !user.hasProfessionalProfile) {
+          router.push('/es/profile-setup');
+        } else if (user.hasProfessionalProfile) {
           router.push('/es/specialist/dashboard');
-        } else if (user.hasClientProfile) {
-          router.push('/es/professionals');
         } else {
           router.push('/es/professionals');
         }

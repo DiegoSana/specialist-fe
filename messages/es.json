@@ -16,6 +16,24 @@
     "close": "Cerrar",
     "or": "o"
   },
+  "profileSetup": {
+    "title": "¡Bienvenido a Specialist!",
+    "subtitle": "¿Cómo querés usar la plataforma?",
+    "clientTitle": "Busco un especialista",
+    "clientDescription": "Necesito contratar profesionales para trabajos en mi hogar o negocio.",
+    "clientBenefit1": "Publicá solicitudes de trabajo",
+    "clientBenefit2": "Explorá perfiles de especialistas",
+    "clientBenefit3": "Contactá directamente",
+    "selectClient": "Continuar como cliente",
+    "professionalTitle": "Soy especialista",
+    "professionalDescription": "Ofrezco mis servicios profesionales y busco nuevos clientes.",
+    "professionalBenefit1": "Recibí solicitudes de trabajo",
+    "professionalBenefit2": "Mostrá tu experiencia",
+    "professionalBenefit3": "Construí tu reputación",
+    "selectProfessional": "Registrarme como especialista",
+    "creating": "Creando perfil...",
+    "note": "Podés agregar el otro perfil más adelante desde tu cuenta."
+  },
   "auth": {
     "login": {
       "title": "Iniciar sesión",
@@ -579,53 +597,55 @@
     "title": "Specialist",
     "subtitle": "Elegí tus trabajos en Bariloche",
     "hero": {
-      "titlePro": "Dejá de correr. Empezá a elegir.",
-      "subtitlePro": "Mirá los trabajos disponibles en tu zona y decidí cuáles te convienen. Sin presiones, sin obligaciones.",
-      "titleClient": "Encontrá al especialista que necesitás",
-      "subtitleClient": "Publicá tu trabajo y recibí respuestas de especialistas verificados. Simple y seguro.",
-      "ctaClient": "Buscar Especialista",
-      "ctaProfessional": "Quiero elegir mis trabajos",
-      "ctaViewJobs": "Ver trabajos disponibles"
+      "badge": "Bariloche y alrededores",
+      "title": "Conectamos especialistas con quienes los necesitan",
+      "subtitle": "La bolsa de trabajo de Bariloche. Especialistas que eligen sus proyectos. Clientes que encuentran al profesional ideal.",
+      "ctaJobBoard": "Bolsa de Trabajo",
+      "ctaFindSpecialist": "Buscar Especialista",
+      "ctaPostJob": "Publicar Trabajo",
+      "trust1": "Sin costos ocultos",
+      "trust2": "Profesionales verificados",
+      "trust3": "100% gratis"
     },
     "forProfessionals": {
       "title": "Para Especialistas",
-      "mainMessage": "No te vendemos más trabajo. Te damos el poder de elegir mejor.",
-      "pain1": "¿Cansado de clientes que cancelan?",
-      "pain2": "¿Trabajos lejos que no te rinden?",
-      "pain3": "¿\"Arreglitos\" que terminan siendo quilombos?",
-      "solution": "Con Specialist, vos mirás los trabajos publicados y decidís cuáles tomar.",
+      "mainMessage": "Elegí tus trabajos o recibí solicitudes directas",
+      "highlight1": "Trabajos que realmente querés hacer",
+      "highlight2": "Proyectos que se adaptan a tu expertise",
+      "highlight3": "Recibí solicitudes directas de clientes",
+      "highlight4": "La zona que te conviene",
       "benefit1": {
-        "title": "Elegí tu zona",
-        "desc": "Filtrá trabajos cerca tuyo. No más viajes al pedo."
+        "title": "Explorá la bolsa",
+        "desc": "Mirá los trabajos publicados y elegí los que te interesen."
       },
       "benefit2": {
-        "title": "Toda la info antes de aceptar",
-        "desc": "Fotos del problema, descripción clara, ubicación exacta. Sabés a qué vas."
+        "title": "Recibí solicitudes",
+        "desc": "Los clientes también pueden contactarte directamente."
       },
       "benefit3": {
         "title": "Clientes calificados",
-        "desc": "Mirá el puntaje del cliente. Evitá los problemáticos."
+        "desc": "Mirá el puntaje del cliente antes de aceptar."
       },
       "benefit4": {
         "title": "Sin obligaciones",
-        "desc": "No te asignamos nada. Vos elegís qué, cuándo y dónde."
+        "desc": "Vos decidís qué trabajos tomar y cuáles no."
       },
       "cta": "Registrarme como Especialista"
     },
     "forClients": {
       "title": "Para Clientes",
-      "mainMessage": "Publicá tu solicitud y dejá que los especialistas te contacten",
+      "mainMessage": "Dos formas de encontrar al especialista ideal",
       "benefit1": {
-        "title": "Publicá en minutos",
-        "desc": "Describí el problema, subí fotos y listo."
+        "title": "Publicá en la bolsa",
+        "desc": "Describí tu problema y dejá que los especialistas interesados te contacten."
       },
       "benefit2": {
-        "title": "Especialistas verificados",
-        "desc": "Perfiles con calificaciones reales de otros clientes."
+        "title": "O elegí directamente",
+        "desc": "Explorá perfiles y contactá al especialista que más te guste."
       },
       "benefit3": {
-        "title": "Vos elegís",
-        "desc": "Recibí propuestas y elegí al que más te convenga."
+        "title": "Perfiles verificados",
+        "desc": "Calificaciones reales de otros clientes para elegir con confianza."
       },
       "cta": "Crear mi solicitud"
     },
@@ -635,16 +655,16 @@
       "forClient": "Si sos Cliente",
       "proStep1": "Registrate",
       "proStep1Desc": "Creá tu perfil con tus oficios y zonas de trabajo.",
-      "proStep2": "Explorá trabajos",
-      "proStep2Desc": "Mirá las solicitudes publicadas por clientes en tu zona.",
-      "proStep3": "Elegí y contactá",
-      "proStep3Desc": "Si te interesa, contactá al cliente. Si no, seguí de largo.",
-      "clientStep1": "Publicá",
-      "clientStep1Desc": "Describí qué necesitás, agregá fotos y tu ubicación.",
-      "clientStep2": "Recibí propuestas",
-      "clientStep2Desc": "Los especialistas interesados te van a contactar.",
-      "clientStep3": "Elegí y calificá",
-      "clientStep3Desc": "Elegí al que más te guste. Al terminar, dejá tu reseña."
+      "proStep2": "Elegí o recibí trabajos",
+      "proStep2Desc": "Explorá la bolsa de trabajo o recibí solicitudes directas de clientes.",
+      "proStep3": "Trabajá y crecé",
+      "proStep3Desc": "Completá trabajos y construí tu reputación con reseñas.",
+      "clientStep1": "Publicá o contactá",
+      "clientStep1Desc": "Publicá en la bolsa de trabajo o contactá directamente a un especialista.",
+      "clientStep2": "Coordiná el trabajo",
+      "clientStep2Desc": "Acordá los detalles con el especialista elegido.",
+      "clientStep3": "Calificá",
+      "clientStep3Desc": "Al terminar, dejá tu reseña para ayudar a otros clientes."
     },
     "finalCta": {
       "title": "¿Listo para elegir tus trabajos?",
