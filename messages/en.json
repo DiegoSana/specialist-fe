@@ -327,6 +327,10 @@
       "uploadError": "Error uploading image",
       "removeError": "Error removing image",
       "cancel": "Cancel",
+      "directRequestReceived": "You have a direct request!",
+      "directRequestDescription": "The client has chosen you specifically. Accept the request to start working.",
+      "acceptRequest": "Accept Request",
+      "accepting": "Accepting...",
       "interestedInJob": "Interested in this job?",
       "interestedDescription": "Show your interest to the client and you can contact them if they choose you",
       "expressInterest": "I'm interested",
@@ -473,6 +477,21 @@
       "uploadError": "Error uploading image",
       "removeError": "Error removing image",
       "cancel": "Cancel",
+      "directRequestReceived": "You have a direct request!",
+      "directRequestDescription": "The client has chosen you specifically. Accept the request to start working.",
+      "acceptRequest": "Accept Request",
+      "accepting": "Accepting...",
+      "interestedInJob": "Interested in this job?",
+      "interestedDescription": "Show your interest to the client and you can contact them if they choose you",
+      "expressInterest": "I'm interested",
+      "expressInterestTitle": "Express interest",
+      "messageOptional": "Message (optional)",
+      "messagePlaceholder": "Introduce yourself to the client or share relevant information about your experience...",
+      "confirmInterest": "Confirm interest",
+      "interestExpressed": "You've expressed interest!",
+      "interestExpressedDescription": "The client has been notified. They will contact you if they choose you.",
+      "removeInterest": "Remove interest",
+      "removing": "Removing...",
       "status": {
         "pending": "Pending",
         "accepted": "Accepted",
@@ -481,7 +500,6 @@
         "cancelled": "Cancelled"
       },
       "errors": {
-        "amountRequired": "Amount is required",
         "general": "An error occurred. Please try again."
       }
     }
@@ -541,6 +559,7 @@
       "badge": "Specialist"
     },
     "professionals": "Specialists",
+    "specialists": "Specialists",
     "profile": "My Profile",
     "admin": {
       "dashboard": "Admin Dashboard",
