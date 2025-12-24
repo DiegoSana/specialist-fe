@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated, removeAuthToken, removeUser, USER_KEY } from '@/lib/auth';
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
+import NotificationBell from '@/components/notifications/notification-bell';
 
 export default function MainNav() {
   const t = useTranslations('navigation');
@@ -219,8 +220,13 @@ export default function MainNav() {
           ))}
         </div>
 
-        {/* User Menu Dropdown or Login Buttons */}
-        <div className="hidden md:block relative" ref={userMenuRef}>
+        {/* Notifications Bell + User Menu */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* Notification Bell - only show when logged in */}
+          {user && <NotificationBell />}
+          
+          {/* User Menu Dropdown or Login Buttons */}
+          <div className="relative" ref={userMenuRef}>
           {user ? (
             <>
               <button
@@ -345,6 +351,7 @@ export default function MainNav() {
               </Link>
             </div>
           )}
+          </div>
         </div>
 
         {/* Mobile menu button */}
@@ -459,6 +466,21 @@ export default function MainNav() {
                     />
                   </svg>
                   {t('profile')}
+                </Link>
+                <Link
+                  href={`/${locale}/notifications`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-sm text-gray-500 hover:bg-gray-100 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                    />
+                  </svg>
+                  {t('notifications')}
                 </Link>
                 <button
                   onClick={handleLogout}

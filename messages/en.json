@@ -15,6 +15,16 @@
     "filter": "Filter",
     "close": "Close"
   },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "You have no notifications",
+    "markAllRead": "Mark all as read",
+    "viewAll": "View all notifications",
+    "unread": "Unread",
+    "all": "All",
+    "noMoreNotifications": "No more notifications",
+    "loadMore": "Load more"
+  },
   "profileSetup": {
     "title": "Welcome to Specialist!",
     "subtitle": "How do you want to use the platform?",
@@ -561,6 +571,7 @@
     "professionals": "Specialists",
     "specialists": "Specialists",
     "profile": "My Profile",
+    "notifications": "Notifications",
     "admin": {
       "dashboard": "Admin Dashboard",
       "badge": "Admin"
