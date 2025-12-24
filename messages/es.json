@@ -16,6 +16,16 @@
     "close": "Cerrar",
     "or": "o"
   },
+  "notifications": {
+    "title": "Notificaciones",
+    "empty": "No tenés notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "viewAll": "Ver todas las notificaciones",
+    "unread": "Sin leer",
+    "all": "Todas",
+    "noMoreNotifications": "No hay más notificaciones",
+    "loadMore": "Cargar más"
+  },
   "profileSetup": {
     "title": "¡Bienvenido a Specialist!",
     "subtitle": "¿Cómo querés usar la plataforma?",
@@ -507,6 +517,7 @@
     },
     "specialists": "Especialistas",
     "profile": "Mi Perfil",
+    "notifications": "Notificaciones",
     "admin": {
       "dashboard": "Panel Admin",
       "badge": "Admin"
