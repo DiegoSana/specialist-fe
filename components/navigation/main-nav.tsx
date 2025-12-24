@@ -354,11 +354,13 @@ export default function MainNav() {
           </div>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100"
-        >
+        {/* Mobile: Notification Bell + Menu button */}
+        <div className="md:hidden flex items-center gap-1">
+          {user && <NotificationBell />}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100"
+          >
           {mobileMenuOpen ? (
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -379,6 +381,7 @@ export default function MainNav() {
             </svg>
           )}
         </button>
+        </div>
       </div>
 
       {/* Mobile Navigation */}
