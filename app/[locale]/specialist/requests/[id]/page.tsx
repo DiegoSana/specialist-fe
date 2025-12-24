@@ -150,6 +150,23 @@ export default function SpecialistRequestDetailPage() {
     }
   };
 
+  const handleAcceptDirectRequest = async () => {
+    if (!request) return;
+
+    try {
+      await updateRequestMutation.mutateAsync({
+        id: request.id,
+        data: {
+          status: RequestStatus.ACCEPTED,
+        },
+      });
+    } catch (error: any) {
+      setErrors({
+        general: error.response?.data?.message || t('errors.general'),
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <AppLayout>
@@ -188,6 +205,11 @@ export default function SpecialistRequestDetailPage() {
   // For requests assigned to this professional
   const canMarkInProgress = request.status === RequestStatus.ACCEPTED;
   const canMarkCompleted = request.status === RequestStatus.IN_PROGRESS;
+  
+  // For direct requests - professional can accept
+  const isDirectRequest = !isPublicRequest && request.professionalId;
+  const canAcceptDirectRequest = isDirectRequest && request.status === RequestStatus.PENDING;
+  
   const locale = pathname?.split('/')[1] || 'es';
 
   return (
@@ -450,6 +472,50 @@ export default function SpecialistRequestDetailPage() {
                 </div>
               </div>
             )
+          )}
+
+          {/* Accept Direct Request Section */}
+          {canAcceptDirectRequest && (
+            <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 rounded-xl p-6 shadow-lg">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12" />
+              
+              <div className="relative z-10">
+                {errors.general && (
+                  <div className="bg-red-100 border border-red-300 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-red-800">{errors.general}</p>
+                  </div>
+                )}
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center flex-shrink-0">
+                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">
+                      {t('directRequestReceived')}
+                    </h3>
+                    <p className="text-white/90 text-sm mb-4">
+                      {t('directRequestDescription')}
+                    </p>
+                    
+                    <button
+                      onClick={handleAcceptDirectRequest}
+                      disabled={updateRequestMutation.isPending}
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-emerald-600 font-semibold rounded-lg hover:bg-emerald-50 transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {updateRequestMutation.isPending ? t('accepting') : t('acceptRequest')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Actions - Only show when professional is assigned */}
