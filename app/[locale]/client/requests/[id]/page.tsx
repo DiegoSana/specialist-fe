@@ -5,7 +5,7 @@ import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
-import { useRequest, useUpdateRequest, useAcceptQuote, useUpdateRequestByClient, useRequestInterests, useAssignProfessional } from '@/hooks/use-requests';
+import { useRequest, useUpdateRequest, useUpdateRequestByClient, useRequestInterests, useAssignProfessional } from '@/hooks/use-requests';
 import { useCreateReview, useReviewByRequestId } from '@/hooks/use-reviews';
 import { RequestInterest } from '@/types';
 import { useAddRequestPhoto, useRemoveRequestPhoto } from '@/hooks/use-completed-work-photos';
@@ -30,7 +30,6 @@ export default function RequestDetailPage() {
   const { data: request, isLoading } = useRequest(requestId);
   const { data: existingReview } = useReviewByRequestId(requestId);
   const { data: interestedProfessionals, isLoading: isLoadingInterests } = useRequestInterests(requestId);
-  const acceptQuoteMutation = useAcceptQuote();
   const updateRequestByClientMutation = useUpdateRequestByClient();
   const createReviewMutation = useCreateReview();
   const assignProfessionalMutation = useAssignProfessional();
@@ -91,16 +90,6 @@ export default function RequestDetailPage() {
     }
   };
 
-  const handleAcceptQuote = async () => {
-    if (!request) return;
-
-    try {
-      await acceptQuoteMutation.mutateAsync(request.id);
-    } catch (error) {
-      console.error('Error accepting quote:', error);
-    }
-  };
-
   const handleCancel = async () => {
     if (!request) return;
 
@@ -149,8 +138,6 @@ export default function RequestDetailPage() {
     );
   }
 
-  const canAcceptQuote =
-    request.status === RequestStatus.PENDING && request.quoteAmount !== null;
   const canCancel = request.status !== RequestStatus.DONE && request.status !== RequestStatus.CANCELLED;
   const canReview = request.status === RequestStatus.DONE && request.professionalId && !existingReview;
 
@@ -625,45 +612,32 @@ export default function RequestDetailPage() {
           )}
 
           {/* Actions */}
-          {(canAcceptQuote || canCancel) && (
+          {canCancel && (
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex gap-4">
-                {canAcceptQuote && (
+                {!showCancelConfirm ? (
                   <button
-                    onClick={handleAcceptQuote}
-                    disabled={acceptQuoteMutation.isPending}
-                    className="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => setShowCancelConfirm(true)}
+                    className="px-6 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50"
                   >
-                    {acceptQuoteMutation.isPending ? t('accepting') : t('acceptQuote')}
+                    {t('cancel')}
                   </button>
-                )}
-                {canCancel && (
-                  <>
-                    {!showCancelConfirm ? (
-                      <button
-                        onClick={() => setShowCancelConfirm(true)}
-                        className="px-6 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50"
-                      >
-                        {t('cancel')}
-                      </button>
-                    ) : (
-                      <div className="flex-1 flex gap-2">
-                        <button
-                          onClick={() => setShowCancelConfirm(false)}
-                          className="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                        >
-                          {t('no')}
-                        </button>
-                        <button
-                          onClick={handleCancel}
-                          disabled={updateRequestByClientMutation.isPending}
-                          className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-                        >
-                          {t('confirmCancel')}
-                        </button>
-                      </div>
-                    )}
-                  </>
+                ) : (
+                  <div className="flex-1 flex gap-2">
+                    <button
+                      onClick={() => setShowCancelConfirm(false)}
+                      className="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    >
+                      {t('no')}
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      disabled={updateRequestByClientMutation.isPending}
+                      className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                    >
+                      {t('confirmCancel')}
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

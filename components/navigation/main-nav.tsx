@@ -224,8 +224,8 @@ export default function MainNav() {
         <div className="hidden md:flex items-center gap-2">
           {/* Notification Bell - only show when logged in */}
           {user && <NotificationBell />}
-          
-          {/* User Menu Dropdown or Login Buttons */}
+
+        {/* User Menu Dropdown or Login Buttons */}
           <div className="relative" ref={userMenuRef}>
           {user ? (
             <>
@@ -357,10 +357,10 @@ export default function MainNav() {
         {/* Mobile: Notification Bell + Menu button */}
         <div className="md:hidden flex items-center gap-1">
           {user && <NotificationBell />}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-lg text-gray-500 hover:bg-gray-100"
-          >
+        >
           {mobileMenuOpen ? (
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
