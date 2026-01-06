@@ -1,6 +1,6 @@
 # 🎨 Tareas Pendientes - Specialist Frontend
 
-> Última actualización: 2026-01-06
+> Última actualización: 2026-01-06 (actualizado)
 
 ---
 
@@ -26,14 +26,23 @@
   - Causa: Hook `useProfessionalRequests` no pasaba `role=professional`
   - Fix: Agregar `?role=professional` y `?role=client` a los hooks
   - Archivo: `hooks/use-requests.ts`
+  - PR: #4
 
 - [x] **Botón "Aceptar Presupuesto" visible (no es MVP)**
   - Fix: Removido de `client/requests/[id]/page.tsx`
   - Eliminado: import de `useAcceptQuote`, variable `canAcceptQuote`, botón
+  - PR: #4
 
 - [x] **Campanita de notificaciones rota en 360px**
   - Fix: Dropdown responsive con `fixed` positioning en mobile
   - Archivo: `components/notifications/notification-bell.tsx`
+  - PR: #3
+
+- [x] **Edición de perfil profesional creaba en lugar de editar**
+  - Causa: Setup page siempre hacía POST en lugar de PATCH
+  - Fix: Detectar edit mode y usar PATCH, pre-rellenar form
+  - Archivo: `app/[locale]/specialist/setup/page.tsx`
+  - PR: #4
 
 ### ⬜ Pendiente
 
@@ -67,10 +76,16 @@
 
 ## 📝 Pull Requests
 
-| PR | Estado | Descripción |
-|----|--------|-------------|
-| #3 | 🟡 Pendiente merge | fix: Campanita mobile responsive |
-| - | 🔴 Por crear | fix: Role param en hooks + remover Accept Quote |
+### ✅ Mergeados
+
+| PR | Descripción |
+|----|-------------|
+| #3 | fix: Campanita mobile responsive |
+| #4 | fix: Professional profile edit + permissions |
+
+### 🟡 Pendiente Merge
+
+_Ninguno por ahora_
 
 ---
 
@@ -155,8 +170,8 @@ specialist.requestDetail.removeInterest
 ## 📅 Prioridades
 
 ### Esta Semana
-1. Crear PR con fixes de hooks + Accept Quote
-2. Merge PR #3 (campanita mobile)
+1. ~~Crear PR con fixes de hooks + Accept Quote~~ ✅ PR #4
+2. ~~Merge PR #3 (campanita mobile)~~ ✅
 3. Verificar manejo de 403
 
 ### Próxima Semana
