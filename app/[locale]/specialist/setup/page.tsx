@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated, setUser } from '@/lib/auth';
 import { useTrades } from '@/hooks/use-professionals';
+import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
 import apiClient from '@/lib/api-client';
 
 export default function ProfessionalSetupPage() {
@@ -13,6 +14,12 @@ export default function ProfessionalSetupPage() {
   const router = useRouter();
   const pathname = usePathname();
   const user = getUser();
+
+  // Check if this is edit mode (user already has professional profile)
+  const isEditMode = user?.hasProfessionalProfile || false;
+  
+  // Fetch existing profile if in edit mode
+  const { data: existingProfile, isLoading: loadingProfile } = useMyProfessionalProfile();
 
   const [formData, setFormData] = useState({
     tradeIds: [] as string[],
@@ -30,8 +37,25 @@ export default function ProfessionalSetupPage() {
   }>({});
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const { data: trades, isLoading: loadingTrades } = useTrades();
+
+  // Pre-fill form with existing data when in edit mode
+  useEffect(() => {
+    if (isEditMode && existingProfile && !isInitialized) {
+      setFormData({
+        tradeIds: existingProfile.trades?.map((t) => t.id) || [],
+        description: existingProfile.description || '',
+        experienceYears: existingProfile.experienceYears?.toString() || '',
+        zone: existingProfile.zone || '',
+        city: existingProfile.city || 'Bariloche',
+        address: existingProfile.address || '',
+        whatsapp: existingProfile.whatsapp || '',
+      });
+      setIsInitialized(true);
+    }
+  }, [isEditMode, existingProfile, isInitialized]);
 
   useEffect(() => {
     if (!isAuthenticated() || !user) {
@@ -42,6 +66,15 @@ export default function ProfessionalSetupPage() {
 
   if (!user) {
     return null;
+  }
+
+  // Show loading while fetching existing profile in edit mode
+  if (isEditMode && loadingProfile) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   const handleChange = (
@@ -88,7 +121,7 @@ export default function ProfessionalSetupPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await apiClient.post<{ professional: any; user: any }>('/professionals/me', {
+      const payload = {
         tradeIds: formData.tradeIds,
         description: formData.description || undefined,
         experienceYears: formData.experienceYears ? parseInt(formData.experienceYears) : undefined,
@@ -96,18 +129,27 @@ export default function ProfessionalSetupPage() {
         city: formData.city,
         address: formData.address || undefined,
         whatsapp: formData.whatsapp || undefined,
-      });
+      };
+
+      let response;
+      if (isEditMode) {
+        // Update existing profile
+        response = await apiClient.patch<{ professional: any; user: any }>('/professionals/me', payload);
+      } else {
+        // Create new profile
+        response = await apiClient.post<{ professional: any; user: any }>('/professionals/me', payload);
+      }
 
       // Update user data in localStorage if provided
       if (response.data.user) {
         setUser(response.data.user);
       }
 
-      // Redirect to professionals page
+      // Redirect to dashboard or profile
       const locale = pathname?.split('/')[1] || 'es';
-      router.push(`/${locale}/professionals`);
+      router.push(isEditMode ? `/${locale}/profile` : `/${locale}/specialist/dashboard`);
     } catch (error: any) {
-      console.error('Error creating professional profile:', error);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} professional profile:`, error);
       setErrors({
         general: error.response?.data?.message || t('errors.general'),
       });
@@ -122,10 +164,10 @@ export default function ProfessionalSetupPage() {
         <div className="max-w-2xl mx-auto">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-800">
-              {t('title')}
+              {isEditMode ? t('editTitle') : t('title')}
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              {t('subtitle')}
+              {isEditMode ? t('editSubtitle') : t('subtitle')}
             </p>
           </div>
 
@@ -303,17 +345,19 @@ export default function ProfessionalSetupPage() {
 
             <div className="flex gap-4">
               <Link
-                href="/dashboard"
+                href={isEditMode ? `/${pathname?.split('/')[1] || 'es'}/profile` : '/dashboard'}
                 className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
               >
-                {t('skip')}
+                {isEditMode ? t('cancel') : t('skip')}
               </Link>
               <button
                 type="submit"
                 disabled={isSubmitting}
                 className="flex-1 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? t('creating') : t('create')}
+                {isSubmitting 
+                  ? (isEditMode ? t('saving') : t('creating')) 
+                  : (isEditMode ? t('save') : t('create'))}
               </button>
             </div>
           </form>

@@ -282,7 +282,9 @@
   "specialist": {
     "setup": {
       "title": "Completar perfil de especialista",
+      "editTitle": "Editar perfil de especialista",
       "subtitle": "Completa tu información para comenzar a ofrecer servicios",
+      "editSubtitle": "Actualiza tu información de especialista",
       "trade": "Oficio",
       "trades": "Oficios",
       "selectTrade": "Selecciona tu oficio",
@@ -302,7 +304,10 @@
       "whatsapp": "WhatsApp",
       "create": "Crear perfil",
       "creating": "Creando...",
+      "save": "Guardar cambios",
+      "saving": "Guardando...",
       "skip": "Omitir por ahora",
+      "cancel": "Cancelar",
       "errors": {
         "tradeRequired": "Debes seleccionar un oficio",
         "general": "Ocurrió un error. Por favor intenta de nuevo."

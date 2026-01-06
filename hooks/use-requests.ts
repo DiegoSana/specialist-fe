@@ -8,7 +8,7 @@ export function useClientRequests() {
   return useQuery({
     queryKey: ['requests', 'client'],
     queryFn: async (): Promise<Request[]> => {
-      const response = await apiClient.get<Request[]>('/requests');
+      const response = await apiClient.get<Request[]>('/requests?role=client');
       return response.data;
     },
   });
@@ -18,7 +18,7 @@ export function useProfessionalRequests() {
   return useQuery({
     queryKey: ['requests', 'professional'],
     queryFn: async (): Promise<Request[]> => {
-      const response = await apiClient.get<Request[]>('/requests');
+      const response = await apiClient.get<Request[]>('/requests?role=professional');
       return response.data;
     },
   });

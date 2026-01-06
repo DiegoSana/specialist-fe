@@ -407,6 +407,39 @@
     }
   },
   "specialist": {
+    "setup": {
+      "title": "Complete specialist profile",
+      "editTitle": "Edit specialist profile",
+      "subtitle": "Fill in your information to start offering services",
+      "editSubtitle": "Update your specialist information",
+      "trade": "Trade",
+      "trades": "Trades",
+      "selectTrade": "Select your trade",
+      "selectMultiple": "(you can select multiple)",
+      "primary": "Primary",
+      "selectedTrades": "Selected trades",
+      "firstIsPrimary": "The first one will be the primary trade",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your experience and services you offer...",
+      "experienceYears": "Years of experience",
+      "experienceYearsPlaceholder": "E.g.: 5",
+      "city": "City",
+      "zone": "Zone",
+      "zonePlaceholder": "E.g.: Downtown, North District",
+      "address": "Address",
+      "addressPlaceholder": "E.g.: Av. San Martín 123",
+      "whatsapp": "WhatsApp",
+      "create": "Create profile",
+      "creating": "Creating...",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "skip": "Skip for now",
+      "cancel": "Cancel",
+      "errors": {
+        "tradeRequired": "You must select a trade",
+        "general": "An error occurred. Please try again."
+      }
+    },
     "jobBoard": {
       "title": "Job Board",
       "subtitle": "Available jobs matching your skills",
