@@ -169,6 +169,8 @@
       "requestDetails": "Detalles de la solicitud",
       "selectTrade": "Selecciona el tipo de oficio",
       "selectSpecialist": "Selecciona un especialista",
+      "title": "Título",
+      "titlePlaceholder": "Ej: Reparación de cañería en baño",
       "description": "Descripción",
       "descriptionPlaceholder": "Describe el trabajo que necesitas realizar...",
       "address": "Dirección",
@@ -196,6 +198,8 @@
       "changeSpecialist": "Cambiar especialista",
       "errors": {
         "selectSpecialist": "Debes seleccionar un especialista",
+        "titleRequired": "El título es requerido",
+        "titleMinLength": "El título debe tener al menos 5 caracteres",
         "descriptionRequired": "La descripción es requerida",
         "descriptionMinLength": "La descripción debe tener al menos 10 caracteres",
         "addressRequired": "La dirección es requerida",

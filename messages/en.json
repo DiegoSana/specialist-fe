@@ -146,6 +146,8 @@
       "requestDetails": "Job details",
       "selectTrade": "Select trade type",
       "selectProfessional": "Select a professional",
+      "title": "Title",
+      "titlePlaceholder": "E.g.: Bathroom pipe repair",
       "description": "Description",
       "descriptionPlaceholder": "Describe the work you need done...",
       "address": "Address",
@@ -170,6 +172,8 @@
       "selected": "Selected",
       "errors": {
         "selectProfessional": "You must select a professional",
+        "titleRequired": "Title is required",
+        "titleMinLength": "Title must be at least 5 characters",
         "descriptionRequired": "Description is required",
         "descriptionMinLength": "Description must be at least 10 characters",
         "addressRequired": "Address is required",
