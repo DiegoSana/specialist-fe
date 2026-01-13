@@ -101,6 +101,7 @@ export interface Request {
   professionalId?: string; // Optional for public requests
   tradeId?: string; // Trade for public requests
   isPublic: boolean;
+  title: string; // Request title for display
   description: string;
   address?: string;
   availability?: string;
@@ -128,6 +129,7 @@ export interface CreateRequestDto {
   professionalId?: string; // Required for direct requests
   tradeId?: string; // Required for public requests
   isPublic?: boolean;
+  title: string; // Request title
   description: string;
   address?: string;
   availability?: string;

@@ -24,6 +24,7 @@ export default function NewRequestPage() {
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [formData, setFormData] = useState({
+    title: '',
     description: '',
     address: '',
     availability: '',
@@ -31,6 +32,7 @@ export default function NewRequestPage() {
   });
 
   const [errors, setErrors] = useState<{
+    title?: string;
     description?: string;
     address?: string;
     general?: string;
@@ -146,6 +148,12 @@ export default function NewRequestPage() {
       newErrors.general = 'Debes seleccionar una especialidad';
     }
 
+    if (!formData.title.trim()) {
+      newErrors.title = t('errors.titleRequired');
+    } else if (formData.title.trim().length < 5) {
+      newErrors.title = t('errors.titleMinLength');
+    }
+
     if (!formData.description.trim()) {
       newErrors.description = t('errors.descriptionRequired');
     } else if (formData.description.trim().length < 10) {
@@ -173,6 +181,7 @@ export default function NewRequestPage() {
         professionalId: requestType === 'direct' ? selectedProfessional?.id : undefined,
         tradeId: selectedTrade?.id,
         isPublic: requestType === 'public',
+        title: formData.title,
         description: formData.description,
         address: formData.address,
         availability: formData.availability,
@@ -528,6 +537,28 @@ export default function NewRequestPage() {
                   <p className="text-sm text-red-600">{errors.general}</p>
                 </div>
               )}
+
+              {/* Title */}
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('title')} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
+                    errors.title ? 'border-red-300' : 'border-gray-200'
+                  }`}
+                  placeholder={t('titlePlaceholder')}
+                />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-500">{errors.title}</p>
+                )}
+              </div>
 
               {/* Description */}
               <div>
