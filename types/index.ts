@@ -24,6 +24,7 @@ export interface User {
   status: UserStatus;
   hasClientProfile: boolean;
   hasProfessionalProfile: boolean;
+  hasCompanyProfile: boolean;
   isAdmin: boolean;
 }
 
@@ -158,4 +159,113 @@ export interface ExpressInterestDto {
 
 export interface AssignProfessionalDto {
   professionalId: string;
+}
+
+export interface AssignProviderDto {
+  serviceProviderId: string;
+}
+
+// ==================== COMPANY TYPES ====================
+
+export enum CompanyStatus {
+  PENDING_VERIFICATION = 'PENDING_VERIFICATION',
+  VERIFIED = 'VERIFIED',
+  REJECTED = 'REJECTED',
+}
+
+export enum ProviderType {
+  PROFESSIONAL = 'PROFESSIONAL',
+  COMPANY = 'COMPANY',
+}
+
+export interface CompanyTrade {
+  id: string;
+  name: string;
+  category: string | null;
+  description: string | null;
+  isPrimary: boolean;
+}
+
+export interface Company {
+  id: string;
+  userId: string;
+  serviceProviderId: string;
+  companyName: string;
+  legalName?: string;
+  taxId?: string;
+  trades: CompanyTrade[];
+  description?: string;
+  foundedYear?: number;
+  employeeCount?: string; // "1-5", "6-20", "21-50", "50+"
+  website?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  city: string;
+  zone?: string;
+  profileImage?: string;
+  gallery: string[];
+  status: CompanyStatus;
+  active: boolean;
+  averageRating: number;
+  totalReviews: number;
+  createdAt: string;
+  updatedAt: string;
+  primaryTrade?: CompanyTrade;
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profilePictureUrl?: string;
+  };
+}
+
+export interface CreateCompanyDto {
+  companyName: string;
+  legalName?: string;
+  taxId?: string;
+  description?: string;
+  foundedYear?: number;
+  employeeCount?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  zone?: string;
+  profileImage?: string;
+  gallery?: string[];
+  trades: Array<{ id: string; isPrimary?: boolean }>;
+}
+
+export interface UpdateCompanyDto extends Partial<CreateCompanyDto> {
+  status?: CompanyStatus;
+  active?: boolean;
+}
+
+export interface SearchCompaniesParams {
+  search?: string;
+  tradeId?: string;
+  city?: string;
+  status?: CompanyStatus;
+  active?: boolean;
+}
+
+// Updated RequestInterest to support both Professional and Company
+export interface InterestedProvider {
+  id: string;
+  requestId: string;
+  serviceProviderId: string;
+  /** @deprecated Use serviceProviderId */
+  professionalId: string;
+  message?: string;
+  createdAt: string;
+  provider?: {
+    id: string;
+    type: ProviderType;
+    displayName: string;
+    profileImage?: string;
+    averageRating: number;
+    totalReviews: number;
+  };
 }
