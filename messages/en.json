@@ -605,6 +605,10 @@
       "jobBoard": "Job Board",
       "badge": "Specialist"
     },
+    "company": {
+      "dashboard": "Company Dashboard",
+      "badge": "Company"
+    },
     "professionals": "Specialists",
     "specialists": "Specialists",
     "profile": "My Profile",
@@ -819,6 +823,78 @@
   },
   "footer": {
     "copyright": "© 2024 Specialist. All rights reserved."
+  },
+  "company": {
+    "setup": {
+      "title": "Register Company",
+      "subtitle": "Complete your company information to start offering services",
+      "editTitle": "Edit Company Profile",
+      "editSubtitle": "Update your company information",
+      "companyName": "Company name",
+      "companyNamePlaceholder": "E.g: Southern Constructions",
+      "legalName": "Legal name",
+      "legalNamePlaceholder": "E.g: Southern Constructions LLC",
+      "taxId": "Tax ID",
+      "taxIdPlaceholder": "E.g: 30-12345678-9",
+      "trades": "Services/Industries",
+      "selectMultiple": "(you can select multiple)",
+      "primary": "Primary",
+      "selectedTrades": "Selected industries",
+      "firstIsPrimary": "The first one will be the primary industry",
+      "description": "Company description",
+      "descriptionPlaceholder": "Describe your company, experience and services you offer...",
+      "foundedYear": "Year founded",
+      "foundedYearPlaceholder": "E.g: 2010",
+      "employeeCount": "Number of employees",
+      "selectEmployeeCount": "Select",
+      "employees": "employees",
+      "contactInfo": "Contact information",
+      "phone": "Phone",
+      "email": "Contact email",
+      "emailPlaceholder": "company@example.com",
+      "website": "Website",
+      "location": "Location",
+      "city": "City",
+      "zone": "Zone",
+      "zonePlaceholder": "E.g: Downtown, North District",
+      "address": "Address",
+      "addressPlaceholder": "E.g: 123 Main St",
+      "create": "Register company",
+      "creating": "Registering...",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "skip": "Skip for now",
+      "cancel": "Cancel",
+      "errors": {
+        "companyNameRequired": "Company name is required",
+        "tradeRequired": "You must select at least one industry",
+        "general": "An error occurred. Please try again."
+      }
+    },
+    "profile": {
+      "title": "Company Profile",
+      "companyInfo": "Company information",
+      "services": "Services",
+      "contact": "Contact",
+      "location": "Location",
+      "rating": "Rating",
+      "reviews": "reviews",
+      "founded": "Founded in",
+      "employees": "employees",
+      "noProfile": "You don't have a company profile created",
+      "createProfile": "Create company profile",
+      "status": {
+        "verified": "Verified",
+        "pendingVerification": "Pending verification",
+        "rejected": "Rejected"
+      }
+    },
+    "dashboard": {
+      "title": "Company Dashboard",
+      "subtitle": "Manage your company's requests",
+      "companyStatus": "Company status",
+      "viewPublicRequests": "View public requests"
+    }
   }
 }
 

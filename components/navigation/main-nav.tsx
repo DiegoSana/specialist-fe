@@ -144,7 +144,8 @@ export default function MainNav() {
     });
   }
 
-  if (user?.hasProfessionalProfile) {
+  // Show Job Board for professionals OR companies
+  if (user?.hasProfessionalProfile || user?.hasCompanyProfile) {
     navItems.push({
       href: `/${locale}/specialist/job-board`,
       label: t('specialist.jobBoard'),
@@ -159,6 +160,9 @@ export default function MainNav() {
         </svg>
       ),
     });
+  }
+
+  if (user?.hasProfessionalProfile) {
     navItems.push({
       href: `/${locale}/specialist/dashboard`,
       label: t('specialist.dashboard'),
@@ -272,6 +276,11 @@ export default function MainNav() {
                     {user.hasProfessionalProfile && (
                       <span className="text-xs px-1.5 py-0.5 bg-green-50 text-green-600 rounded">
                         {t('specialist.badge')}
+                      </span>
+                    )}
+                    {user.hasCompanyProfile && (
+                      <span className="text-xs px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded">
+                        {t('company.badge')}
                       </span>
                     )}
                     {user.isAdmin && (
@@ -445,6 +454,11 @@ export default function MainNav() {
                       {user.hasProfessionalProfile && (
                         <span className="text-xs px-1.5 py-0.5 bg-green-50 text-green-600 rounded">
                           {t('specialist.badge')}
+                        </span>
+                      )}
+                      {user.hasCompanyProfile && (
+                        <span className="text-xs px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded">
+                          {t('company.badge')}
                         </span>
                       )}
                       {user.isAdmin && (

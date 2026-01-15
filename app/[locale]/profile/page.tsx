@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { getUser, isAuthenticated, setUser } from '@/lib/auth';
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
+import { useMyCompanyProfile } from '@/hooks/use-company';
 import { useUploadFile } from '@/hooks/use-file-upload';
 import apiClient from '@/lib/api-client';
 import AppLayout from '@/components/layout/app-layout';
@@ -53,6 +54,9 @@ export default function ProfilePage() {
 
   // Fetch professional profile
   const { data: professionalProfile, isLoading: loadingProfessional } = useMyProfessionalProfile();
+
+  // Fetch company profile
+  const { data: companyProfile, isLoading: loadingCompany } = useMyCompanyProfile();
 
   // Upload file mutation
   const uploadFileMutation = useUploadFile();
@@ -572,6 +576,128 @@ export default function ProfilePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                     Crear perfil de especialista
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Company Profile Section */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  companyProfile?.status === 'VERIFIED' ? 'bg-emerald-100' :
+                  companyProfile?.status === 'PENDING_VERIFICATION' ? 'bg-yellow-100' :
+                  user?.hasCompanyProfile ? 'bg-red-100' : 'bg-gray-100'
+                }`}>
+                  <svg className={`w-5 h-5 ${
+                    companyProfile?.status === 'VERIFIED' ? 'text-emerald-600' :
+                    companyProfile?.status === 'PENDING_VERIFICATION' ? 'text-yellow-600' :
+                    user?.hasCompanyProfile ? 'text-red-600' : 'text-gray-400'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="font-semibold text-gray-800">Perfil de Empresa</h2>
+                  <p className="text-xs text-gray-500">Ofrecer servicios como empresa</p>
+                </div>
+              </div>
+              {user?.hasCompanyProfile && companyProfile && (
+                <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  companyProfile.status === 'VERIFIED' 
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : companyProfile.status === 'PENDING_VERIFICATION'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-red-100 text-red-700'
+                }`}>
+                  {companyProfile.status === 'VERIFIED' ? '✓ Verificada' :
+                   companyProfile.status === 'PENDING_VERIFICATION' ? '⏳ Pendiente' :
+                   '✗ Rechazada'}
+                </span>
+              )}
+            </div>
+
+            <div className="p-6">
+              {loadingCompany ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                </div>
+              ) : user?.hasCompanyProfile && companyProfile ? (
+                <div className="space-y-4">
+                  {/* Company Name */}
+                  <h3 className="text-lg font-semibold text-gray-800">{companyProfile.companyName}</h3>
+
+                  {/* Rating */}
+                  {companyProfile.averageRating > 0 && (
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <span className="text-yellow-500">★</span>
+                      <span className="font-medium">{companyProfile.averageRating.toFixed(1)}</span>
+                      <span className="text-gray-400">({companyProfile.totalReviews} reseñas)</span>
+                    </div>
+                  )}
+
+                  {/* Trades */}
+                  {companyProfile.trades && companyProfile.trades.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {companyProfile.trades.map((trade: any, index: number) => (
+                        <span
+                          key={trade.id}
+                          className={`px-3 py-1 text-sm rounded-full ${
+                            trade.isPrimary ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {trade.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Quick info */}
+                  <div className="text-sm text-gray-600 space-y-1">
+                    {companyProfile.city && (
+                      <p>📍 {companyProfile.city}{companyProfile.zone ? `, ${companyProfile.zone}` : ''}</p>
+                    )}
+                    {companyProfile.employeeCount && (
+                      <p>👥 {companyProfile.employeeCount} empleados</p>
+                    )}
+                    {companyProfile.foundedYear && (
+                      <p>📅 Fundada en {companyProfile.foundedYear}</p>
+                    )}
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <Link
+                      href={`/${locale}/company/setup`}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Editar perfil
+                    </Link>
+                    <Link
+                      href={`/${locale}/specialist/job-board`}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      Ver bolsa de trabajo
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Registrá tu empresa para ofrecer servicios profesionales y acceder a la bolsa de trabajo.
+                  </p>
+                  <Link
+                    href={`/${locale}/company/setup`}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Registrar empresa
                   </Link>
                 </div>
               )}

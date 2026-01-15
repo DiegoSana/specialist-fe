@@ -524,6 +524,10 @@
       "jobBoard": "Bolsa de Trabajo",
       "badge": "Especialista"
     },
+    "company": {
+      "dashboard": "Panel Empresa",
+      "badge": "Empresa"
+    },
     "specialists": "Especialistas",
     "profile": "Mi Perfil",
     "notifications": "Notificaciones",
@@ -737,5 +741,77 @@
   },
   "footer": {
     "copyright": "© 2024 Specialist. Todos los derechos reservados."
+  },
+  "company": {
+    "setup": {
+      "title": "Registrar Empresa",
+      "subtitle": "Completa la información de tu empresa para comenzar a ofrecer servicios",
+      "editTitle": "Editar Perfil de Empresa",
+      "editSubtitle": "Actualiza la información de tu empresa",
+      "companyName": "Nombre comercial",
+      "companyNamePlaceholder": "Ej: Construcciones del Sur",
+      "legalName": "Razón social",
+      "legalNamePlaceholder": "Ej: Construcciones del Sur S.R.L.",
+      "taxId": "CUIT",
+      "taxIdPlaceholder": "Ej: 30-12345678-9",
+      "trades": "Servicios/Rubros",
+      "selectMultiple": "(puedes seleccionar varios)",
+      "primary": "Principal",
+      "selectedTrades": "Rubros seleccionados",
+      "firstIsPrimary": "El primero será el rubro principal",
+      "description": "Descripción de la empresa",
+      "descriptionPlaceholder": "Describe tu empresa, experiencia y servicios que ofreces...",
+      "foundedYear": "Año de fundación",
+      "foundedYearPlaceholder": "Ej: 2010",
+      "employeeCount": "Cantidad de empleados",
+      "selectEmployeeCount": "Seleccionar",
+      "employees": "empleados",
+      "contactInfo": "Información de contacto",
+      "phone": "Teléfono",
+      "email": "Email de contacto",
+      "emailPlaceholder": "empresa@ejemplo.com",
+      "website": "Sitio web",
+      "location": "Ubicación",
+      "city": "Ciudad",
+      "zone": "Zona",
+      "zonePlaceholder": "Ej: Centro, Barrio Norte",
+      "address": "Dirección",
+      "addressPlaceholder": "Ej: Av. San Martín 123",
+      "create": "Registrar empresa",
+      "creating": "Registrando...",
+      "save": "Guardar cambios",
+      "saving": "Guardando...",
+      "skip": "Omitir por ahora",
+      "cancel": "Cancelar",
+      "errors": {
+        "companyNameRequired": "El nombre de la empresa es requerido",
+        "tradeRequired": "Debes seleccionar al menos un rubro",
+        "general": "Ocurrió un error. Por favor intenta de nuevo."
+      }
+    },
+    "profile": {
+      "title": "Perfil de Empresa",
+      "companyInfo": "Información de la empresa",
+      "services": "Servicios",
+      "contact": "Contacto",
+      "location": "Ubicación",
+      "rating": "Calificación",
+      "reviews": "reseñas",
+      "founded": "Fundada en",
+      "employees": "empleados",
+      "noProfile": "No tienes un perfil de empresa creado",
+      "createProfile": "Crear perfil de empresa",
+      "status": {
+        "verified": "Verificada",
+        "pendingVerification": "Pendiente de verificación",
+        "rejected": "Rechazada"
+      }
+    },
+    "dashboard": {
+      "title": "Panel de Empresa",
+      "subtitle": "Gestiona las solicitudes de tu empresa",
+      "companyStatus": "Estado de la empresa",
+      "viewPublicRequests": "Ver solicitudes públicas"
+    }
   }
 }
