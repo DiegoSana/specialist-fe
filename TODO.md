@@ -82,6 +82,7 @@
 |----|-------------|
 | #3 | fix: Campanita mobile responsive |
 | #4 | fix: Professional profile edit + permissions |
+| #5 | feat: Company profiles feature |
 
 ### 🟡 Pendiente Merge
 
@@ -167,17 +168,38 @@ specialist.requestDetail.removeInterest
 
 ---
 
+## 🏢 Feature: Company Profiles
+
+### ✅ Completado (PR #5)
+
+- [x] Types y API Client (`Company`, `CompanyStatus`, `ProviderType`, DTOs)
+- [x] Hooks (`useMyCompanyProfile`, `useCreateCompany`, `useUpdateCompany`, etc.)
+- [x] Company Setup page (`/company/setup`)
+- [x] Company section en Profile page
+- [x] Navigation: badge y acceso a Job Board
+- [x] Traducciones ES/EN
+
+### ⬜ Pendiente
+
+- [ ] Company Dashboard page (`/company/dashboard`)
+- [ ] Company puede expresar interés en requests (actualizar Job Board)
+- [ ] Mostrar tipo de proveedor (Professional/Company) en interesados
+- [ ] Company public profile page
+
+---
+
 ## 📅 Prioridades
 
 ### Esta Semana
 1. ~~Crear PR con fixes de hooks + Accept Quote~~ ✅ PR #4
 2. ~~Merge PR #3 (campanita mobile)~~ ✅
-3. Verificar manejo de 403
+3. ~~Company profiles feature~~ ✅ PR #5
+4. Verificar manejo de 403
 
 ### Próxima Semana
 1. Empty states y loading states
 2. Revisar responsive en todas las páginas
-3. Traduciones completas
+3. Company Dashboard + expresar interés
 
 ---
 
@@ -186,4 +208,5 @@ specialist.requestDetail.removeInterest
 - Usar `@tanstack/react-query` devtools para debugging
 - El hook `useRequest` ahora puede devolver 403, actualizar manejo de error
 - Considerar extraer lógica de permisos a un hook `useCanViewRequest`
+- Company usa colores `emerald` para diferenciarse de Professional (`blue`/`green`)
 
