@@ -161,6 +161,24 @@ specialist.requestDetail.removeInterest
 
 ## 🎨 UI/UX Improvements
 
+### Alta Prioridad
+
+- [ ] **Tarjetas de especialista - Badge de empresa**
+  - Mostrar badge "Empresa" si el especialista tiene perfil de empresa
+  - Usar color distintivo (emerald) para diferenciarlo
+
+- [ ] **Tarjetas de especialista - Cambiar texto del botón**
+  - Cambiar "Solicitar" → "Contactar"
+  - Más apropiado para el contexto de primer contacto
+
+- [ ] **Formulario de solicitud directa - Ajustar descripción**
+  - Actualizar textos para que se entienda que puede ser:
+    - Un especialista independiente
+    - Una empresa
+  - Revisar labels y placeholders
+
+### Media Prioridad
+
 - [ ] Consistencia en badges de estado
 - [ ] Iconografía unificada
 - [ ] Colores de estado estandarizados
