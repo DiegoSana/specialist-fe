@@ -186,6 +186,17 @@ specialist.requestDetail.removeInterest
 
 ---
 
+## 🔍 Feature: Job Board Search
+
+### Alta Prioridad
+
+- [ ] **Filtro por palabra clave en bolsa de trabajo**
+  - Buscar por: nombre del trade, nombre del especialista/empresa
+  - Input de búsqueda con debounce
+  - Integrar con endpoint existente (agregar query param `search`)
+
+---
+
 ## 🏢 Feature: Company Profiles
 
 ### ✅ Completado (PR #5)
