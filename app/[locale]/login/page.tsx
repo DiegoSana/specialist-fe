@@ -255,53 +255,99 @@ export default function LoginPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Specialists */}
             <div>
-              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Especialistas</p>
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">👤 Especialistas</p>
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => { setEmail('electricista@test.com'); setPassword('123456'); }}
+                  onClick={() => { setEmail('electricista@test.com'); setPassword('Test1234!'); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">electricista@test.com</p>
-                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                  <p className="text-xs text-gray-400">Roberto - Electricista ⭐4.8</p>
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setEmail('plomero@test.com'); setPassword('123456'); }}
+                  onClick={() => { setEmail('plomero@test.com'); setPassword('Test1234!'); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">plomero@test.com</p>
-                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                  <p className="text-xs text-gray-400">Miguel - Plomero ⭐4.5</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmail('carpintero@test.com'); setPassword('Test1234!'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">carpintero@test.com</p>
+                  <p className="text-xs text-gray-400">Diego - Carpintero ⭐5.0</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Companies */}
+            <div>
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">🏢 Empresas</p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => { setEmail('constructora@test.com'); setPassword('Test1234!'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">constructora@test.com</p>
+                  <p className="text-xs text-gray-400">Constructora del Sur ⭐4.9</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEmail('serviciostech@test.com'); setPassword('Test1234!'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">serviciostech@test.com</p>
+                  <p className="text-xs text-gray-400">Servicios Técnicos ⭐4.6</p>
                 </button>
               </div>
             </div>
 
             {/* Clients */}
             <div>
-              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">Clientes</p>
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">🔍 Clientes</p>
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => { setEmail('cliente1@test.com'); setPassword('123456'); }}
+                  onClick={() => { setEmail('cliente1@test.com'); setPassword('Test1234!'); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">cliente1@test.com</p>
-                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                  <p className="text-xs text-gray-400">Juan Pérez</p>
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setEmail('cliente2@test.com'); setPassword('123456'); }}
+                  onClick={() => { setEmail('cliente2@test.com'); setPassword('Test1234!'); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">cliente2@test.com</p>
-                  <p className="text-xs text-gray-400">Pass: 123456</p>
+                  <p className="text-xs text-gray-400">María García</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Admin */}
+            <div>
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">⚙️ Admin</p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => { setEmail('admin@specialist.com'); setPassword('Test1234!'); }}
+                  className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
+                >
+                  <p className="text-xs font-medium text-gray-700">admin@specialist.com</p>
+                  <p className="text-xs text-gray-400">Administrador</p>
                 </button>
               </div>
             </div>
           </div>
           
           <p className="text-xs text-amber-600 mt-3 text-center">
-            Hacé clic en una cuenta para auto-completar
+            Hacé clic en una cuenta para auto-completar • Pass: Test1234!
           </p>
         </div>
       </div>
