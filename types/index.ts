@@ -26,6 +26,8 @@ export interface User {
   hasProfessionalProfile: boolean;
   hasCompanyProfile: boolean;
   isAdmin: boolean;
+  phoneVerified: boolean;
+  emailVerified: boolean;
 }
 
 export interface LoginRequest {

@@ -14,7 +14,44 @@
     "search": "Buscar",
     "filter": "Filtrar",
     "close": "Cerrar",
-    "or": "o"
+    "or": "o",
+    "sending": "Enviando...",
+    "verifying": "Verificando..."
+  },
+  "verification": {
+    "title": "Verificación de Cuenta",
+    "subtitle": "Verifica tu teléfono y email para mayor seguridad",
+    "verified": "Verificado",
+    "notVerified": "No verificado",
+    "verify": "Verificar",
+    "phone": {
+      "label": "Teléfono",
+      "title": "Verificar Teléfono",
+      "description": "Necesitamos verificar tu número de teléfono para continuar.",
+      "currentPhone": "Teléfono actual",
+      "noPhone": "No tienes un número de teléfono registrado. Por favor, actualiza tu perfil primero.",
+      "sendCode": "Enviar código de verificación",
+      "enterCode": "Ingresa el código de verificación que recibiste",
+      "codeLabel": "Código de verificación",
+      "codeTooShort": "El código debe tener al menos 4 dígitos",
+      "verify": "Verificar",
+      "requestError": "Error al enviar el código. Por favor intenta de nuevo.",
+      "confirmError": "Código inválido o expirado. Por favor intenta de nuevo."
+    },
+    "email": {
+      "label": "Email",
+      "title": "Verificar Email",
+      "description": "Necesitamos verificar tu dirección de email para continuar.",
+      "currentEmail": "Email actual",
+      "sendCode": "Enviar código de verificación",
+      "checkInbox": "Revisa tu bandeja de entrada",
+      "checkInboxDescription": "Hemos enviado un código de verificación a tu email. Ingresa el código que recibiste.",
+      "codeLabel": "Código de verificación",
+      "codeTooShort": "El código debe tener al menos 4 dígitos",
+      "verify": "Verificar",
+      "requestError": "Error al enviar el código. Por favor intenta de nuevo.",
+      "confirmError": "Código inválido o expirado. Por favor intenta de nuevo."
+    }
   },
   "notifications": {
     "title": "Notificaciones",
