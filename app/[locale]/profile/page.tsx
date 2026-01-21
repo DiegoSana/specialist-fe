@@ -9,11 +9,13 @@ import { getUser, isAuthenticated, setUser } from '@/lib/auth';
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
 import { useMyCompanyProfile } from '@/hooks/use-company';
 import { useUploadFile } from '@/hooks/use-file-upload';
+import { openVerificationModal } from '@/lib/verification';
 import apiClient from '@/lib/api-client';
 import AppLayout from '@/components/layout/app-layout';
 
 export default function ProfilePage() {
   const t = useTranslations('profile');
+  const tVerification = useTranslations('verification');
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -389,6 +391,93 @@ export default function ProfilePage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Account Verification Section */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="font-semibold text-gray-800">{tVerification('title')}</h2>
+                  <p className="text-xs text-gray-500">{tVerification('subtitle')}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Phone Verification */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-800">{tVerification('phone.label')}</p>
+                    {userProfile?.phone && (
+                      <p className="text-xs text-gray-500 truncate">{userProfile.phone}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  {userProfile?.phoneVerified ? (
+                    <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full whitespace-nowrap">
+                      {tVerification('verified')}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full whitespace-nowrap">
+                        {tVerification('notVerified')}
+                      </span>
+                      <button
+                        onClick={() => openVerificationModal('PHONE')}
+                        className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors whitespace-nowrap"
+                      >
+                        {tVerification('verify')}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Email Verification */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-800">{tVerification('email.label')}</p>
+                    {userProfile?.email && (
+                      <p className="text-xs text-gray-500 truncate">{userProfile.email}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  {userProfile?.emailVerified ? (
+                    <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full whitespace-nowrap">
+                      {tVerification('verified')}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full whitespace-nowrap">
+                        {tVerification('notVerified')}
+                      </span>
+                      <button
+                        onClick={() => openVerificationModal('EMAIL')}
+                        className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors whitespace-nowrap"
+                      >
+                        {tVerification('verify')}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 

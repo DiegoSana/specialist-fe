@@ -13,7 +13,43 @@
     "submit": "Submit",
     "search": "Search",
     "filter": "Filter",
-    "close": "Close"
+    "close": "Close",
+    "sending": "Sending...",
+    "verifying": "Verifying..."
+  },
+  "verification": {
+    "title": "Account Verification",
+    "subtitle": "Verify your phone and email for added security",
+    "phone": {
+      "label": "Phone",
+      "title": "Verify Phone",
+      "description": "We need to verify your phone number to continue.",
+      "currentPhone": "Current phone",
+      "noPhone": "You don't have a phone number registered. Please update your profile first.",
+      "sendCode": "Send verification code",
+      "enterCode": "Enter the verification code you received",
+      "codeLabel": "Verification code",
+      "codeTooShort": "Code must be at least 4 digits",
+      "verify": "Verify",
+      "requestError": "Error sending code. Please try again.",
+      "confirmError": "Invalid or expired code. Please try again."
+    },
+    "email": {
+      "label": "Email",
+      "title": "Verify Email",
+      "description": "We need to verify your email address to continue.",
+      "currentEmail": "Current email",
+      "sendCode": "Send verification code",
+      "checkInbox": "Check your inbox",
+      "checkInboxDescription": "We've sent a verification code to your email. Enter the code you received.",
+      "codeLabel": "Verification code",
+      "codeTooShort": "Code must be at least 4 digits",
+      "verify": "Verify",
+      "requestError": "Error sending code. Please try again.",
+      "confirmError": "Invalid or expired code. Please try again."
+    },
+    "verified": "Verified",
+    "notVerified": "Not verified"
   },
   "notifications": {
     "title": "Notifications",
