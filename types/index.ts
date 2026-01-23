@@ -101,7 +101,8 @@ export interface Professional {
 export interface Request {
   id: string;
   clientId: string;
-  professionalId?: string; // Optional for public requests
+  professionalId?: string; // Optional for public requests (deprecated, use providerId)
+  providerId?: string | null; // ServiceProvider ID (Professional or Company)
   tradeId?: string; // Trade for public requests
   isPublic: boolean;
   title: string; // Request title for display
@@ -118,6 +119,42 @@ export interface Request {
   createdAt: string;
   updatedAt: string;
   professional?: Professional;
+  company?: {
+    id: string;
+    userId: string;
+    serviceProviderId: string;
+    companyName: string;
+    legalName?: string;
+    taxId?: string;
+    description?: string;
+    foundedYear?: number;
+    employeeCount?: string;
+    website?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    city: string;
+    zone?: string;
+    status: string;
+    averageRating: number;
+    totalReviews: number;
+    profileImage?: string;
+    gallery: string[];
+    active: boolean;
+    trades: Array<{
+      id: string;
+      name: string;
+      category: string | null;
+      description: string | null;
+      isPrimary: boolean;
+    }>;
+    user?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+  };
   trade?: Trade;
   client?: {
     id: string;
@@ -129,7 +166,8 @@ export interface Request {
 }
 
 export interface CreateRequestDto {
-  professionalId?: string; // Required for direct requests
+  professionalId?: string; // Required for direct requests to professionals
+  companyId?: string; // Required for direct requests to companies
   tradeId?: string; // Required for public requests
   isPublic?: boolean;
   title: string; // Request title
@@ -146,14 +184,8 @@ export interface UpdateRequestDto {
 }
 
 // Request Interest types (for public requests)
-export interface RequestInterest {
-  id: string;
-  requestId: string;
-  professionalId: string;
-  message?: string;
-  createdAt: string;
-  professional?: Professional;
-}
+// RequestInterest is now an alias for InterestedProvider to maintain backward compatibility
+export interface RequestInterest extends InterestedProvider {}
 
 export interface ExpressInterestDto {
   message?: string;
@@ -269,5 +301,7 @@ export interface InterestedProvider {
     profileImage?: string;
     averageRating: number;
     totalReviews: number;
+    whatsapp?: string | null;
+    phone?: string | null;
   };
 }
