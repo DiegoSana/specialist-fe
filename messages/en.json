@@ -186,8 +186,8 @@
       "titlePlaceholder": "E.g.: Bathroom pipe repair",
       "description": "Description",
       "descriptionPlaceholder": "Describe the work you need done...",
-      "address": "Address",
-      "addressPlaceholder": "E.g.: Av. San Martín 123, Bariloche",
+      "address": "Address or area",
+      "addressPlaceholder": "E.g.: Av. San Martín 123, Bariloche or West KM13",
       "availability": "Availability",
       "availabilityPlaceholder": "E.g.: Monday to Friday, 9:00 AM - 6:00 PM",
       "photos": "Photos",
@@ -206,6 +206,11 @@
       "noProfessionals": "No professionals available for this trade",
       "reviews": "reviews",
       "selected": "Selected",
+      "changeSpecialist": "Change specialist",
+      "whatsappInfo": {
+        "title": "WhatsApp Contact",
+        "description": "Once the request is created, we will put you in contact with the specialist via WhatsApp to coordinate the details."
+      },
       "errors": {
         "selectProfessional": "You must select a professional",
         "titleRequired": "Title is required",
@@ -250,6 +255,11 @@
       "professional": "Professional",
       "reviews": "reviews",
       "contactWhatsApp": "Contact via WhatsApp",
+      "professional": "Specialist",
+      "company": "Company",
+      "unassign": "Unassign",
+      "unassigning": "Unassigning...",
+      "confirmUnassign": "Are you sure you want to unassign the specialist? The request will return to pending and become public again.",
       "quote": "Quote",
       "amount": "Amount",
       "notes": "Notes",
@@ -280,6 +290,7 @@
         "description": "These specialists have shown interest in your request. Contact them via WhatsApp to discuss details and choose the best one for you.",
         "publicRequest": "Public Request",
         "waitingForInterest": "Waiting for interested specialists",
+        "hasInterests": "Choose a specialist or wait for more options",
         "noInterested": "No interested specialists yet",
         "noInterestedDescription": "Specialists working in your area will see your request and can express interest.",
         "assign": "Choose",
@@ -597,6 +608,7 @@
     },
     "viewDetails": "View Details",
     "createRequest": "Request",
+    "contact": "Contact",
     "reviews": "reviews",
     "noProfessionals": "No specialists found",
     "details": {
@@ -830,6 +842,7 @@
       "cancelledDescription": "This request was cancelled",
       "descriptions": {
         "pending": "Waiting for specialist response",
+        "pendingWithInterests": "Choose a specialist from those interested or wait for more options",
         "accepted": "Specialist accepted the request. Preparing to start",
         "in_progress": "Specialist is working on your request",
         "done": "Work completed! Don't forget to leave a review"

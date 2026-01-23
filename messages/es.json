@@ -210,8 +210,8 @@
       "titlePlaceholder": "Ej: Reparación de cañería en baño",
       "description": "Descripción",
       "descriptionPlaceholder": "Describe el trabajo que necesitas realizar...",
-      "address": "Dirección",
-      "addressPlaceholder": "Ej: Av. San Martín 123, Bariloche",
+      "address": "Dirección o zona",
+      "addressPlaceholder": "Ej: Av. San Martín 123, Bariloche o Oeste KM13",
       "availability": "Disponibilidad",
       "availabilityPlaceholder": "Ej: Lunes a Viernes, 9:00 - 18:00",
       "photos": "Fotos",
@@ -233,6 +233,10 @@
       "reviews": "reseñas",
       "selected": "Seleccionado",
       "changeSpecialist": "Cambiar especialista",
+      "whatsappInfo": {
+        "title": "Contacto por WhatsApp",
+        "description": "Una vez creada la solicitud, te pondremos en contacto con el especialista por WhatsApp para coordinar los detalles."
+      },
       "errors": {
         "selectSpecialist": "Debes seleccionar un especialista",
         "titleRequired": "El título es requerido",
@@ -278,10 +282,15 @@
       "created": "Creada",
       "description": "Descripción",
       "specialist": "Especialista",
+      "professional": "Especialista",
+      "company": "Empresa",
       "noSpecialistYet": "Aún sin especialista asignado",
       "waitingForProposals": "Esperando propuestas de especialistas...",
       "reviews": "reseñas",
       "contactWhatsApp": "Contactar por WhatsApp",
+      "unassign": "Desasignar",
+      "unassigning": "Desasignando...",
+      "confirmUnassign": "¿Estás seguro de que deseas desasignar al especialista? La solicitud volverá a estar pendiente y será pública nuevamente.",
       "quote": "Presupuesto",
       "amount": "Monto",
       "notes": "Notas",
@@ -312,6 +321,7 @@
         "description": "Estos especialistas han mostrado interés en tu solicitud. Contactá por WhatsApp para coordinar detalles y elegí al que mejor te convenga.",
         "publicRequest": "Solicitud Pública",
         "waitingForInterest": "Esperando especialistas interesados",
+        "hasInterests": "Elige un especialista o espera más opciones",
         "noInterested": "Aún no hay especialistas interesados",
         "noInterestedDescription": "Los especialistas que trabajen en tu zona verán tu solicitud y podrán mostrar interés.",
         "assign": "Elegir",
@@ -521,6 +531,7 @@
     },
     "viewDetails": "Ver Detalles",
     "createRequest": "Solicitar",
+    "contact": "Contactar",
     "reviews": "reseñas",
     "noSpecialists": "No se encontraron especialistas",
     "details": {
@@ -749,6 +760,7 @@
       "cancelledDescription": "Esta solicitud fue cancelada",
       "descriptions": {
         "pending": "Esperando respuesta del especialista",
+        "pendingWithInterests": "Elige un especialista de los interesados o espera más opciones",
         "accepted": "El especialista aceptó la solicitud. Preparando para comenzar",
         "in_progress": "El especialista está trabajando en tu solicitud",
         "done": "¡Trabajo completado! No olvides dejar una reseña"
