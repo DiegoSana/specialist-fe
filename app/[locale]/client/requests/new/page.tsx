@@ -5,9 +5,10 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import { useCreateRequest } from '@/hooks/use-requests';
-import { useTradesWithProfessionals, useSearchProfessionals } from '@/hooks/use-professionals';
+import { useTradesWithProfessionals } from '@/hooks/use-professionals';
+import { useSearchProviders, UnifiedProvider } from '@/hooks/use-providers';
 import AppLayout from '@/components/layout/app-layout';
-import { Professional, Trade } from '@/types';
+import { Trade } from '@/types';
 
 type RequestType = 'public' | 'direct' | null;
 
@@ -21,7 +22,7 @@ export default function NewRequestPage() {
   const [requestType, setRequestType] = useState<RequestType>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
-  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<UnifiedProvider | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -41,20 +42,23 @@ export default function NewRequestPage() {
   const searchRef = useRef<HTMLDivElement>(null);
 
   const { data: trades } = useTradesWithProfessionals();
-  const { data: allProfessionals } = useSearchProfessionals({});
+  const { data: allProviders } = useSearchProviders({ providerType: 'ALL' });
   const createRequestMutation = useCreateRequest();
 
-  // Pre-select professional if professionalId is in URL
+  // Pre-select provider if professionalId or companyId is in URL
   useEffect(() => {
     const professionalId = searchParams.get('professionalId');
-    if (professionalId && allProfessionals && allProfessionals.length > 0) {
-      const professional = allProfessionals.find((p) => p.id === professionalId);
-      if (professional) {
-        setSelectedProfessional(professional);
+    const companyId = searchParams.get('companyId');
+    const providerId = professionalId || companyId;
+    
+    if (providerId && allProviders && allProviders.length > 0) {
+      const provider = allProviders.find((p) => p.id === providerId);
+      if (provider) {
+        setSelectedProvider(provider);
         setRequestType('direct');
-        // Set the primary trade from the professional
-        if (professional.trades && professional.trades.length > 0) {
-          const primaryTrade = professional.trades.find((t) => t.isPrimary) || professional.trades[0];
+        // Set the primary trade from the provider
+        if (provider.trades && provider.trades.length > 0) {
+          const primaryTrade = provider.trades.find((t) => t.isPrimary) || provider.trades[0];
           if (trades) {
             const trade = trades.find((t) => t.id === primaryTrade.id);
             if (trade) {
@@ -64,7 +68,7 @@ export default function NewRequestPage() {
         }
       }
     }
-  }, [searchParams, allProfessionals, trades]);
+  }, [searchParams, allProviders, trades]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -94,25 +98,25 @@ export default function NewRequestPage() {
         trade.description?.toLowerCase().includes(query)
     );
 
-    const matchingProfessionals = (allProfessionals || []).filter((professional) => {
-      const fullName = `${professional.user?.firstName || ''} ${professional.user?.lastName || ''}`.toLowerCase();
-      const tradeName = professional.trades?.map((t) => t.name.toLowerCase()).join(' ') || '';
-      return fullName.includes(query) || tradeName.includes(query);
+    const matchingProviders = (allProviders || []).filter((provider) => {
+      const displayName = provider.displayName.toLowerCase();
+      const tradeName = provider.trades?.map((t) => t.name.toLowerCase()).join(' ') || '';
+      return displayName.includes(query) || tradeName.includes(query);
     });
 
     return {
       trades: matchingTrades,
-      professionals: matchingProfessionals,
+      providers: matchingProviders,
     };
-  }, [searchQuery, trades, allProfessionals]);
+  }, [searchQuery, trades, allProviders]);
 
-  // Get professionals for selected trade
-  const professionalsForTrade = useMemo(() => {
-    if (!selectedTrade || !allProfessionals) return [];
-    return allProfessionals.filter((p) =>
+  // Get providers for selected trade
+  const providersForTrade = useMemo(() => {
+    if (!selectedTrade || !allProviders) return [];
+    return allProviders.filter((p) =>
       p.trades?.some((t) => t.id === selectedTrade.id)
     );
-  }, [selectedTrade, allProfessionals]);
+  }, [selectedTrade, allProviders]);
 
   if (!isAuthenticated() || !user) {
     const locale = pathname?.split('/')[1] || 'es';
@@ -126,10 +130,11 @@ export default function NewRequestPage() {
     setShowDropdown(false);
   };
 
-  const handleProfessionalSelect = (professional: Professional) => {
-    setSelectedProfessional(professional);
-    if (!selectedTrade && professional.trades && professional.trades.length > 0) {
-      const primaryTrade = professional.trades.find((t) => t.isPrimary) || professional.trades[0];
+  const handleProviderSelect = (provider: UnifiedProvider) => {
+    setSelectedProvider(provider);
+    setRequestType('direct');
+    if (!selectedTrade && provider.trades && provider.trades.length > 0) {
+      const primaryTrade = provider.trades.find((t) => t.isPrimary) || provider.trades[0];
       const trade = trades?.find((t) => t.id === primaryTrade.id);
       if (trade) setSelectedTrade(trade);
     }
@@ -140,7 +145,7 @@ export default function NewRequestPage() {
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {};
 
-    if (requestType === 'direct' && !selectedProfessional) {
+    if (requestType === 'direct' && !selectedProvider) {
       newErrors.general = t('errors.selectSpecialist');
     }
 
@@ -178,7 +183,8 @@ export default function NewRequestPage() {
 
     try {
       await createRequestMutation.mutateAsync({
-        professionalId: requestType === 'direct' ? selectedProfessional?.id : undefined,
+        professionalId: requestType === 'direct' && selectedProvider?.type === 'PROFESSIONAL' ? selectedProvider.id : undefined,
+        companyId: requestType === 'direct' && selectedProvider?.type === 'COMPANY' ? selectedProvider.id : undefined,
         tradeId: selectedTrade?.id,
         isPublic: requestType === 'public',
         title: formData.title,
@@ -208,14 +214,14 @@ export default function NewRequestPage() {
   };
 
   const goBack = () => {
-    if (selectedProfessional) {
-      setSelectedProfessional(null);
+    if (selectedProvider) {
+      setSelectedProvider(null);
     } else if (selectedTrade && requestType === 'direct') {
       setSelectedTrade(null);
     } else if (requestType) {
       setRequestType(null);
       setSelectedTrade(null);
-      setSelectedProfessional(null);
+      setSelectedProvider(null);
     } else {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/client/dashboard`);
@@ -239,12 +245,6 @@ export default function NewRequestPage() {
               </svg>
               {t('back')}
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">
-              {t('title')}
-            </h1>
-            <p className="text-gray-500 mt-1">
-              {t('subtitle')}
-            </p>
           </div>
 
           {/* Step 1: Choose Request Type */}
@@ -370,8 +370,8 @@ export default function NewRequestPage() {
             </div>
           )}
 
-          {/* Step 2B: Direct Request - Select Specialist */}
-          {requestType === 'direct' && !selectedProfessional && (
+          {/* Step 2B: Direct Request - Select Provider */}
+          {requestType === 'direct' && !selectedProvider && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">
                 {t('selectSpecialist')}
@@ -397,17 +397,17 @@ export default function NewRequestPage() {
                 {/* Search Dropdown */}
                 {showDropdown && searchQuery && (
                   <div className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-xl border border-gray-200 max-h-80 overflow-y-auto">
-                    {filteredResults.professionals.length > 0 ? (
+                    {filteredResults.providers && filteredResults.providers.length > 0 ? (
                       <div className="p-2">
-                        {filteredResults.professionals.map((professional) => (
+                        {filteredResults.providers.map((provider) => (
                           <button
-                            key={professional.id}
-                            onClick={() => handleProfessionalSelect(professional)}
+                            key={provider.id}
+                            onClick={() => handleProviderSelect(provider)}
                             className="w-full px-4 py-3 text-left hover:bg-gray-50 rounded-lg flex items-center gap-3"
                           >
                             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                              {professional.user?.profilePictureUrl ? (
-                                <img src={professional.user.profilePictureUrl} alt="" className="w-full h-full object-cover" />
+                              {provider.profileImage || provider.user?.profilePictureUrl ? (
+                                <img src={provider.profileImage || provider.user?.profilePictureUrl} alt="" className="w-full h-full object-cover" />
                               ) : (
                                 <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -415,16 +415,23 @@ export default function NewRequestPage() {
                               )}
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium text-gray-800">
-                                {professional.user?.firstName} {professional.user?.lastName}
+                              <div className="flex items-center gap-2">
+                                <div className="font-medium text-gray-800">
+                                  {provider.displayName}
+                                </div>
+                                {provider.type === 'COMPANY' && (
+                                  <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                                    Empresa
+                                  </span>
+                                )}
                               </div>
                               <div className="text-sm text-gray-500">
-                                {professional.trades?.map((t) => t.name).join(', ')}
+                                {provider.trades?.map((t) => t.name).join(', ')}
                               </div>
                             </div>
-                            {professional.averageRating > 0 && (
+                            {provider.averageRating > 0 && (
                               <div className="text-sm text-yellow-500 font-medium">
-                                ★ {professional.averageRating.toFixed(1)}
+                                ★ {provider.averageRating.toFixed(1)}
                               </div>
                             )}
                           </button>
@@ -437,17 +444,17 @@ export default function NewRequestPage() {
                 )}
               </div>
 
-              {/* All Specialists */}
+              {/* All Providers */}
               <div className="grid gap-3">
-                {(allProfessionals || []).slice(0, 10).map((professional) => (
+                {(allProviders || []).slice(0, 10).map((provider) => (
                   <button
-                    key={professional.id}
-                    onClick={() => handleProfessionalSelect(professional)}
+                    key={provider.id}
+                    onClick={() => handleProviderSelect(provider)}
                     className="bg-gray-50 rounded-xl p-4 hover:bg-green-50 hover:border-green-300 border-2 border-transparent transition-all text-left flex items-center gap-4"
                   >
                     <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
-                      {professional.user?.profilePictureUrl ? (
-                        <img src={professional.user.profilePictureUrl} alt="" className="w-full h-full object-cover" />
+                      {provider.profileImage || provider.user?.profilePictureUrl ? (
+                        <img src={provider.profileImage || provider.user?.profilePictureUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -455,22 +462,29 @@ export default function NewRequestPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-800">
-                        {professional.user?.firstName} {professional.user?.lastName}
+                      <div className="flex items-center gap-2">
+                        <div className="font-semibold text-gray-800">
+                          {provider.displayName}
+                        </div>
+                        {provider.type === 'COMPANY' && (
+                          <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                            Empresa
+                          </span>
+                        )}
                       </div>
                       <div className="text-sm text-gray-500 truncate">
-                        {professional.trades?.map((t) => t.name).join(', ')}
+                        {provider.trades?.map((t) => t.name).join(', ')}
                       </div>
-                      {professional.city && (
+                      {provider.city && (
                         <div className="text-xs text-gray-400 mt-1">
-                          📍 {professional.city}{professional.zone && `, ${professional.zone}`}
+                          📍 {provider.city}{provider.zone && `, ${provider.zone}`}
                         </div>
                       )}
                     </div>
-                    {professional.averageRating > 0 && (
+                    {provider.averageRating > 0 && (
                       <div className="text-right flex-shrink-0">
-                        <div className="text-yellow-500 font-semibold">★ {professional.averageRating.toFixed(1)}</div>
-                        <div className="text-xs text-gray-400">{professional.totalReviews} {t('reviews')}</div>
+                        <div className="text-yellow-500 font-semibold">★ {provider.averageRating.toFixed(1)}</div>
+                        <div className="text-xs text-gray-400">{provider.totalReviews} {t('reviews')}</div>
                       </div>
                     )}
                   </button>
@@ -480,7 +494,7 @@ export default function NewRequestPage() {
           )}
 
           {/* Step 3: Request Form */}
-          {((requestType === 'public' && selectedTrade) || (requestType === 'direct' && selectedProfessional)) && (
+          {((requestType === 'public' && selectedTrade) || (requestType === 'direct' && selectedProvider)) && (
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
               {/* Selected Info */}
               <div className={`p-4 rounded-xl ${requestType === 'public' ? 'bg-blue-50 border border-blue-100' : 'bg-green-50 border border-green-100'}`}>
@@ -501,8 +515,8 @@ export default function NewRequestPage() {
                     ) : (
                       <>
                         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                          {selectedProfessional?.user?.profilePictureUrl ? (
-                            <img src={selectedProfessional.user.profilePictureUrl} alt="" className="w-full h-full object-cover" />
+                          {selectedProvider?.profileImage || selectedProvider?.user?.profilePictureUrl ? (
+                            <img src={selectedProvider.profileImage || selectedProvider.user?.profilePictureUrl} alt="" className="w-full h-full object-cover" />
                           ) : (
                             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -511,8 +525,15 @@ export default function NewRequestPage() {
                         </div>
                         <div>
                           <div className="text-sm text-green-600 font-medium">{t('directRequest.title')}</div>
-                          <div className="font-semibold text-gray-800">
-                            {selectedProfessional?.user?.firstName} {selectedProfessional?.user?.lastName}
+                          <div className="flex items-center gap-2">
+                            <div className="font-semibold text-gray-800">
+                              {selectedProvider?.displayName}
+                            </div>
+                            {selectedProvider?.type === 'COMPANY' && (
+                              <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                                Empresa
+                              </span>
+                            )}
                           </div>
                         </div>
                       </>
@@ -527,6 +548,25 @@ export default function NewRequestPage() {
                   </button>
                 </div>
               </div>
+
+              {/* WhatsApp Info for Direct Requests */}
+              {requestType === 'direct' && selectedProvider && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-0.5">
+                    <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-green-800 font-medium mb-1">
+                      {t('whatsappInfo.title')}
+                    </p>
+                    <p className="text-sm text-green-700">
+                      {t('whatsappInfo.description')}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <h2 className="text-lg font-semibold text-gray-800">
                 {t('requestDetails')}
