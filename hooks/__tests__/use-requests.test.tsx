@@ -256,17 +256,17 @@ describe('use-requests hooks', () => {
   });
 
   describe('useAssignProfessional', () => {
-    it('should assign professional successfully', async () => {
+    it('should assign provider successfully', async () => {
       const assignedRequest = createMockRequest({ status: 'ACCEPTED', professionalId: 'prof-456' });
       mockApiClient.post.mockResolvedValueOnce({ data: assignedRequest });
 
       const { result } = renderHook(() => useAssignProfessional(), { wrapper: createWrapper() });
 
-      result.current.mutate({ requestId: 'request-123', professionalId: 'prof-456' });
+      result.current.mutate({ requestId: 'request-123', serviceProviderId: 'sp-456' });
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-      expect(mockApiClient.post).toHaveBeenCalledWith('/requests/request-123/assign', { professionalId: 'prof-456' });
+      expect(mockApiClient.post).toHaveBeenCalledWith('/requests/request-123/assign-provider', { serviceProviderId: 'sp-456' });
     });
   });
 });
