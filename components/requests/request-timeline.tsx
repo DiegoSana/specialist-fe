@@ -7,6 +7,8 @@ interface RequestTimelineProps {
   status: RequestStatus;
   createdAt: string;
   updatedAt: string;
+  isPublic?: boolean;
+  hasInterestedProfessionals?: boolean;
 }
 
 const TIMELINE_STEPS = [
@@ -24,7 +26,7 @@ const STATUS_ORDER: Record<RequestStatus, number> = {
   [RequestStatus.CANCELLED]: -1,
 };
 
-export default function RequestTimeline({ status, createdAt, updatedAt }: RequestTimelineProps) {
+export default function RequestTimeline({ status, createdAt, updatedAt, isPublic, hasInterestedProfessionals }: RequestTimelineProps) {
   const t = useTranslations('components.timeline');
   
   const currentIndex = STATUS_ORDER[status];
@@ -229,7 +231,9 @@ export default function RequestTimeline({ status, createdAt, updatedAt }: Reques
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
           <p className="text-sm text-gray-600">
-            {t(`descriptions.${status.toLowerCase()}`)}
+            {status === RequestStatus.PENDING && isPublic && hasInterestedProfessionals
+              ? t('descriptions.pendingWithInterests')
+              : t(`descriptions.${status.toLowerCase()}`)}
           </p>
         </div>
       </div>

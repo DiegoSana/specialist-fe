@@ -5,7 +5,7 @@ import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
-import { useRequest, useUpdateRequest, useUpdateRequestByClient, useRequestInterests, useAssignProfessional } from '@/hooks/use-requests';
+import { useRequest, useUpdateRequest, useUpdateRequestByClient, useRequestInterests, useAssignProfessional, useUnassignProvider } from '@/hooks/use-requests';
 import { useCreateReview, useReviewByRequestId } from '@/hooks/use-reviews';
 import { RequestInterest } from '@/types';
 import { useAddRequestPhoto, useRemoveRequestPhoto } from '@/hooks/use-completed-work-photos';
@@ -33,11 +33,12 @@ export default function RequestDetailPage() {
   const updateRequestByClientMutation = useUpdateRequestByClient();
   const createReviewMutation = useCreateReview();
   const assignProfessionalMutation = useAssignProfessional();
+  const unassignProviderMutation = useUnassignProvider();
   const uploadFileMutation = useUploadFile();
   const addRequestPhotoMutation = useAddRequestPhoto();
   const removeRequestPhotoMutation = useRemoveRequestPhoto();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [assigningProfessionalId, setAssigningProfessionalId] = useState<string | null>(null);
+  const [assigningProviderId, setAssigningProviderId] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewData, setReviewData] = useState({
     rating: 5,
@@ -202,7 +203,7 @@ export default function RequestDetailPage() {
             {t('back')}
           </Link>
           <h1 className="text-2xl font-bold mt-2 text-gray-800">
-            {t('title')}
+            {request?.title || t('title')}
           </h1>
         </div>
         <div className="max-w-4xl mx-auto space-y-6">
@@ -210,7 +211,9 @@ export default function RequestDetailPage() {
           <RequestTimeline 
             status={request.status} 
             createdAt={request.createdAt} 
-            updatedAt={request.updatedAt} 
+            updatedAt={request.updatedAt}
+            isPublic={request.isPublic}
+            hasInterestedProfessionals={interestedProfessionals && interestedProfessionals.length > 0}
           />
 
           {/* Review Section - Prominent CTA when request is DONE */}
@@ -270,58 +273,91 @@ export default function RequestDetailPage() {
                 </span>
               </div>
 
-              {/* Professional Info Section */}
-              {request.professional && (
+              {/* Provider Info Section (Professional or Company) */}
+              {(request.professional || request.company || request.providerId) && (
                 <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-gray-200 pt-4 md:pt-0 md:pl-4">
                   <div className="flex-1">
                     <h2 className="text-sm font-medium text-gray-500 mb-1">
-                      {t('professional')}
+                      {request.company ? t('company') : t('professional')}
                     </h2>
                     <div className="flex items-center gap-3">
                       <div>
-                        <h3 className="font-semibold text-gray-800">
-                          {request.professional.user?.firstName}{' '}
-                          {request.professional.user?.lastName}
-                        </h3>
-                        {request.professional.trades && request.professional.trades.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-800">
+                            {request.company
+                              ? request.company.companyName
+                              : request.professional
+                              ? `${request.professional.user?.firstName || ''} ${request.professional.user?.lastName || ''}`.trim() || 'Especialista'
+                              : 'Especialista asignado'}
+                          </h3>
+                          {request.company && (
+                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                              Empresa
+                            </span>
+                          )}
+                        </div>
+                        {(request.professional?.trades || request.company?.trades) && (
                           <p className="text-sm text-gray-500">
-                            {request.professional.trades.map((t) => t.name).join(', ')}
+                            {(request.professional?.trades || request.company?.trades || [])
+                              .map((t: any) => t.name)
+                              .join(', ')}
                           </p>
                         )}
-                        {request.professional.averageRating > 0 && (
+                        {((request.professional?.averageRating ?? 0) > 0 || (request.company?.averageRating ?? 0) > 0) && (
                           <div className="flex items-center gap-1 mt-1">
                             <span className="text-yellow-500 text-xs">★</span>
                             <span className="text-xs text-gray-500">
-                              {request.professional.averageRating.toFixed(1)} (
-                              {request.professional.totalReviews} {t('reviews')})
+                              {(request.professional?.averageRating ?? request.company?.averageRating ?? 0).toFixed(1)} (
+                              {request.professional?.totalReviews ?? request.company?.totalReviews ?? 0} {t('reviews')})
                             </span>
                           </div>
                         )}
                       </div>
-                      {request.professional.whatsapp && (
-                        <a
-                          href={`https://wa.me/${request.professional.whatsapp.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-shrink-0 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-                        >
-                          {t('contactWhatsApp')}
-                        </a>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {(request.professional?.whatsapp || request.company?.phone) && (
+                          <a
+                            href={`https://wa.me/${(request.professional?.whatsapp || request.company?.phone || '').replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-shrink-0 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                          >
+                            {t('contactWhatsApp')}
+                          </a>
+                        )}
+                        {(request.status === RequestStatus.ACCEPTED && (request.providerId || request.professionalId)) && (
+                          <button
+                            onClick={async () => {
+                              if (confirm(t('confirmUnassign'))) {
+                                try {
+                                  await unassignProviderMutation.mutateAsync(requestId);
+                                } catch (error) {
+                                  console.error('Error unassigning provider:', error);
+                                }
+                              }
+                            }}
+                            disabled={unassignProviderMutation.isPending}
+                            className="flex-shrink-0 px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm disabled:opacity-50"
+                          >
+                            {unassignProviderMutation.isPending ? t('unassigning') : t('unassign')}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Public Request - No professional assigned yet */}
-              {request.isPublic && !request.professionalId && request.status === RequestStatus.PENDING && (
+              {/* Public Request - No provider assigned yet */}
+              {request.isPublic && !request.professionalId && !request.providerId && request.status === RequestStatus.PENDING && (
                 <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-gray-200 pt-4 md:pt-0 md:pl-4">
                   <div className="text-center">
                     <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
                       {tInterest('publicRequest')}
                     </span>
                     <p className="text-xs text-gray-500 mt-1">
-                      {tInterest('waitingForInterest')}
+                      {interestedProfessionals && interestedProfessionals.length > 0
+                        ? tInterest('hasInterests')
+                        : tInterest('waitingForInterest')}
                     </p>
                   </div>
                 </div>
@@ -329,8 +365,8 @@ export default function RequestDetailPage() {
             </div>
           </div>
 
-          {/* Interested Specialists Section - Only for public requests without assigned professional */}
-          {request.isPublic && !request.professionalId && request.status === RequestStatus.PENDING && (
+          {/* Interested Specialists Section - Only for public requests without assigned provider */}
+          {request.isPublic && !request.professionalId && !request.providerId && request.status === RequestStatus.PENDING && (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">
                 {tInterest('title')}
@@ -341,96 +377,107 @@ export default function RequestDetailPage() {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
               ) : interestedProfessionals && interestedProfessionals.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <p className="text-sm text-gray-500 mb-4">
                     {tInterest('description')}
                   </p>
                   {interestedProfessionals.map((interest: any) => (
                     <div
                       key={interest.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                      className="bg-gray-50 rounded-xl p-4 hover:bg-green-50 hover:border-green-300 border-2 border-transparent transition-all"
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                            {interest.professional?.user?.profilePictureUrl ? (
-                              <img
-                                src={interest.professional.user.profilePictureUrl}
-                                alt=""
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                              </svg>
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-800">
-                              {interest.professional?.user?.firstName} {interest.professional?.user?.lastName}
-                            </h3>
-                            {interest.professional?.trades && interest.professional.trades.length > 0 && (
-                              <p className="text-sm text-gray-500">
-                                {interest.professional.trades.map((t: any) => t.name).join(', ')}
-                              </p>
-                            )}
-                            {interest.professional?.averageRating > 0 && (
-                              <div className="flex items-center gap-1 mt-1">
-                                <span className="text-yellow-500 text-sm">★</span>
-                                <span className="text-sm text-gray-500">
-                                  {interest.professional.averageRating.toFixed(1)} ({interest.professional.totalReviews} {t('reviews')})
+                      <div className="flex items-center gap-3">
+                        {/* Avatar */}
+                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {interest.provider?.profileImage ? (
+                            <img
+                              src={interest.provider.profileImage}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          )}
+                        </div>
+                        
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-semibold text-gray-800 truncate">
+                                  {interest.provider?.displayName || 'Especialista'}
+                                </h3>
+                                {interest.provider?.type === 'COMPANY' && (
+                                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                                    Empresa
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                {interest.provider && interest.provider.averageRating > 0 && (
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-yellow-500 text-xs">★</span>
+                                    <span className="text-xs text-gray-500">
+                                      {interest.provider.averageRating.toFixed(1)} ({interest.provider.totalReviews})
+                                    </span>
+                                  </div>
+                                )}
+                                <span className="text-xs text-gray-400">
+                                  • {new Date(interest.createdAt).toLocaleDateString()}
                                 </span>
                               </div>
-                            )}
+                              {interest.message && (
+                                <p className="text-sm text-gray-600 italic mt-2 truncate">
+                                  &ldquo;{interest.message}&rdquo;
+                                </p>
+                              )}
+                            </div>
+                            
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {(interest.provider?.whatsapp || interest.provider?.phone) && (
+                                <a
+                                  href={`https://wa.me/${(interest.provider?.whatsapp || interest.provider?.phone || '').replace(/[^0-9]/g, '')}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-shrink-0 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm whitespace-nowrap"
+                                >
+                                  {t('contactWhatsApp')}
+                                </a>
+                              )}
+                              <button
+                                onClick={async () => {
+                                  setAssigningProviderId(interest.serviceProviderId);
+                                  try {
+                                    await assignProfessionalMutation.mutateAsync({
+                                      requestId,
+                                      serviceProviderId: interest.serviceProviderId,
+                                    });
+                                  } catch (error) {
+                                    console.error('Error assigning provider:', error);
+                                  } finally {
+                                    setAssigningProviderId(null);
+                                  }
+                                }}
+                                disabled={assignProfessionalMutation.isPending}
+                                className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50 whitespace-nowrap"
+                              >
+                                {assigningProviderId === interest.serviceProviderId ? (
+                                  <span className="flex items-center gap-2">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                    {tInterest('assigning')}
+                                  </span>
+                                ) : (
+                                  tInterest('assign')
+                                )}
+                              </button>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {interest.professional?.whatsapp && (
-                            <a
-                              href={`https://wa.me/${interest.professional.whatsapp.replace(/[^0-9]/g, '')}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 text-sm"
-                            >
-                              WhatsApp
-                            </a>
-                          )}
-                          <button
-                            onClick={async () => {
-                              setAssigningProfessionalId(interest.professionalId);
-                              try {
-                                await assignProfessionalMutation.mutateAsync({
-                                  requestId,
-                                  professionalId: interest.professionalId,
-                                });
-                              } catch (error) {
-                                console.error('Error assigning professional:', error);
-                              } finally {
-                                setAssigningProfessionalId(null);
-                              }
-                            }}
-                            disabled={assignProfessionalMutation.isPending}
-                            className="px-4 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm disabled:opacity-50"
-                          >
-                            {assigningProfessionalId === interest.professionalId ? (
-                              <span className="flex items-center gap-2">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                {tInterest('assigning')}
-                              </span>
-                            ) : (
-                              tInterest('assign')
-                            )}
-                          </button>
-                        </div>
                       </div>
-                      {interest.message && (
-                        <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                          <p className="text-sm text-gray-600 italic">&ldquo;{interest.message}&rdquo;</p>
-                        </div>
-                      )}
-                      <p className="text-xs text-gray-400 mt-2">
-                        {tInterest('interestedSince')} {new Date(interest.createdAt).toLocaleDateString()}
-                      </p>
                     </div>
                   ))}
                 </div>
@@ -467,42 +514,6 @@ export default function RequestDetailPage() {
             </p>
           </div>
 
-          {/* Quote Information */}
-          {request.quoteAmount !== null && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                {t('quote')}
-              </h2>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-700">{t('amount')}:</span>
-                  <span className="text-2xl font-bold text-green-600">
-                    ${request.quoteAmount?.toLocaleString() || '0'}
-                  </span>
-                </div>
-                {request.quoteNotes && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">
-                      {t('notes')}:
-                    </p>
-                    <p className="text-gray-500 whitespace-pre-wrap">
-                      {request.quoteNotes}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Messages Section - Placeholder */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              {t('messages')}
-            </h2>
-            <div className="text-center py-8 text-gray-500">
-              <p className="text-sm">{t('messagesNote')}</p>
-            </div>
-          </div>
 
           {/* Photos Section */}
           {request.status !== RequestStatus.CANCELLED && (

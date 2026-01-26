@@ -200,13 +200,21 @@ export function useAssignProfessional() {
     mutationFn: async ({
       requestId,
       professionalId,
+      serviceProviderId,
     }: {
       requestId: string;
-      professionalId: string;
+      professionalId?: string; // Deprecated, use serviceProviderId
+      serviceProviderId?: string;
     }): Promise<Request> => {
+      // Use new endpoint with serviceProviderId if available, otherwise fallback to deprecated endpoint
+      const providerId = serviceProviderId || professionalId;
+      if (!providerId) {
+        throw new Error('Either serviceProviderId or professionalId must be provided');
+      }
+      
       const response = await apiClient.post<Request>(
-        `/requests/${requestId}/assign`,
-        { professionalId }
+        `/requests/${requestId}/assign-provider`,
+        { serviceProviderId: providerId }
       );
       return response.data;
     },
@@ -214,6 +222,24 @@ export function useAssignProfessional() {
       queryClient.invalidateQueries({ queryKey: ['requests'] });
       queryClient.invalidateQueries({ queryKey: ['request', variables.requestId] });
       queryClient.invalidateQueries({ queryKey: ['request-interests', variables.requestId] });
+    },
+  });
+}
+
+export function useUnassignProvider() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (requestId: string): Promise<Request> => {
+      const response = await apiClient.post<Request>(
+        `/requests/${requestId}/unassign-provider`
+      );
+      return response.data;
+    },
+    onSuccess: (_, requestId) => {
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      queryClient.invalidateQueries({ queryKey: ['request', requestId] });
+      queryClient.invalidateQueries({ queryKey: ['request-interests', requestId] });
     },
   });
 }

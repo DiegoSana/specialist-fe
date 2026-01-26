@@ -231,7 +231,7 @@ export default function SpecialistRequestDetailPage() {
             {t('back')}
           </Link>
           <h1 className="text-2xl font-bold mt-2 text-gray-800">
-            {t('title')}
+            {request?.title || t('title')}
           </h1>
         </div>
 

@@ -61,18 +61,11 @@ export function useReviewByRequestId(requestId: string) {
   return useQuery({
     queryKey: ['review', 'request', requestId],
     queryFn: async (): Promise<Review | null> => {
-      try {
-        const response = await apiClient.get<Review>(`/reviews?requestId=${requestId}`);
-        return response.data;
-      } catch (error: any) {
-        if (error.response?.status === 404) {
-          return null;
-        }
-        throw error;
-      }
+      const response = await apiClient.get<Review | null>(`/reviews?requestId=${requestId}`);
+      return response.data ?? null;
     },
     enabled: !!requestId,
-    retry: false, // Don't retry on 404
+    retry: false,
   });
 }
 
