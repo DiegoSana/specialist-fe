@@ -352,6 +352,7 @@
       "zonePlaceholder": "Ej: Centro, Barrio Norte",
       "address": "Dirección",
       "addressPlaceholder": "Ej: Av. San Martín 123",
+      "contactFromUser": "Tu número de contacto para clientes es el de tu cuenta de usuario. Podés editarlo en tu perfil.",
       "whatsapp": "WhatsApp",
       "create": "Crear perfil",
       "creating": "Creando...",

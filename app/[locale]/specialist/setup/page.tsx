@@ -28,7 +28,6 @@ export default function ProfessionalSetupPage() {
     zone: '',
     city: 'Bariloche',
     address: '',
-    whatsapp: '',
   });
 
   const [errors, setErrors] = useState<{
@@ -51,7 +50,6 @@ export default function ProfessionalSetupPage() {
         zone: existingProfile.zone || '',
         city: existingProfile.city || 'Bariloche',
         address: existingProfile.address || '',
-        whatsapp: existingProfile.whatsapp || '',
       });
       setIsInitialized(true);
     }
@@ -128,7 +126,6 @@ export default function ProfessionalSetupPage() {
         zone: formData.zone || undefined,
         city: formData.city,
         address: formData.address || undefined,
-        whatsapp: formData.whatsapp || undefined,
       };
 
       let response;
@@ -324,24 +321,9 @@ export default function ProfessionalSetupPage() {
               />
             </div>
 
-            {/* WhatsApp */}
-            <div>
-              <label
-                htmlFor="whatsapp"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                {t('whatsapp')}
-              </label>
-              <input
-                id="whatsapp"
-                name="whatsapp"
-                type="tel"
-                value={formData.whatsapp}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-800"
-                placeholder="+5492944123456"
-              />
-            </div>
+            <p className="text-sm text-gray-600">
+              {t('contactFromUser')}
+            </p>
 
             <div className="flex gap-4">
               <Link

@@ -479,6 +479,7 @@
       "zonePlaceholder": "E.g.: Downtown, North District",
       "address": "Address",
       "addressPlaceholder": "E.g.: Av. San Martín 123",
+      "contactFromUser": "Your contact number for clients is your user account phone. You can edit it in your profile.",
       "whatsapp": "WhatsApp",
       "create": "Create profile",
       "creating": "Creating...",
