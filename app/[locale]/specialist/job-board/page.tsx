@@ -12,9 +12,13 @@ import { Request } from '@/types';
 // Component for interest button with loading state
 function InterestButton({ request }: { request: Request }) {
   const t = useTranslations('specialist.jobBoard');
+  const tProfileActive = useTranslations('profileActive');
+  const pathname = usePathname();
+  const locale = pathname?.split('/')[1] || 'es';
   const { data: interestData, isLoading: isLoadingInterest } = useMyInterest(request.id);
   const expressInterest = useExpressInterest();
   const removeInterest = useRemoveInterest();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const hasInterest = interestData?.hasInterest ?? false;
   const isLoading = isLoadingInterest || expressInterest.isPending || removeInterest.isPending;
@@ -22,42 +26,73 @@ function InterestButton({ request }: { request: Request }) {
   const handleToggleInterest = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    setErrorMessage(null);
 
     if (hasInterest) {
-      await removeInterest.mutateAsync(request.id);
-    } else {
+      try {
+        await removeInterest.mutateAsync(request.id);
+      } catch (err: any) {
+        setErrorMessage(err.response?.data?.message || 'Error');
+      }
+      return;
+    }
+
+    try {
       await expressInterest.mutateAsync({ requestId: request.id });
+    } catch (err: any) {
+      const msg = err.response?.data?.message as string | undefined;
+      const lower = (msg || '').toLowerCase();
+      const isProfileInactive =
+        !!msg &&
+        ((lower.includes('active') && lower.includes('interest')) ||
+          (lower.includes('verify') && (lower.includes('email') || lower.includes('phone'))));
+      setErrorMessage(
+        isProfileInactive ? tProfileActive('expressInterestMessage') : msg || 'Error'
+      );
     }
   };
 
   return (
-    <button
-      onClick={handleToggleInterest}
-      disabled={isLoading}
-      className={`flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-        hasInterest
-          ? 'bg-green-100 text-green-700 hover:bg-green-200'
-          : 'bg-blue-600 text-white hover:bg-blue-700'
-      } disabled:opacity-50`}
-    >
-      {isLoading ? (
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-      ) : hasInterest ? (
-        <>
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          {t('interested')}
-        </>
-      ) : (
-        <>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-          {t('expressInterest')}
-        </>
+    <div className="space-y-2">
+      <button
+        onClick={handleToggleInterest}
+        disabled={isLoading}
+        className={`flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+          hasInterest
+            ? 'bg-green-100 text-green-700 hover:bg-green-200'
+            : 'bg-blue-600 text-white hover:bg-blue-700'
+        } disabled:opacity-50`}
+      >
+        {isLoading ? (
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+        ) : hasInterest ? (
+          <>
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            {t('interested')}
+          </>
+        ) : (
+          <>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            {t('expressInterest')}
+          </>
+        )}
+      </button>
+      {errorMessage && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-2 text-left">
+          <p className="text-xs text-amber-800">{errorMessage}</p>
+          <Link
+            href={`/${locale}/profile`}
+            className="inline-block mt-1.5 text-xs font-medium text-blue-600 hover:text-blue-800"
+          >
+            {tProfileActive('goToProfile')} →
+          </Link>
+        </div>
       )}
-    </button>
+    </div>
   );
 }
 

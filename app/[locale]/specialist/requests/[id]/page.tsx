@@ -19,6 +19,7 @@ import ReceivedRatingCard from '@/components/requests/received-rating-card';
 
 export default function SpecialistRequestDetailPage() {
   const t = useTranslations('specialist.requestDetail');
+  const tProfileActive = useTranslations('profileActive');
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -39,6 +40,7 @@ export default function SpecialistRequestDetailPage() {
   const [showInterestForm, setShowInterestForm] = useState(false);
   const [interestMessage, setInterestMessage] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated() || !user) {
@@ -91,6 +93,7 @@ export default function SpecialistRequestDetailPage() {
   const handleExpressInterest = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
+    setIsProfileInactiveError(false);
 
     if (!request) return;
 
@@ -102,9 +105,18 @@ export default function SpecialistRequestDetailPage() {
       setShowInterestForm(false);
       setInterestMessage('');
     } catch (error: any) {
+      const msg = error.response?.data?.message as string | undefined;
+      const lower = (msg || '').toLowerCase();
+      const isProfileInactive =
+        !!msg &&
+        ((lower.includes('active') && lower.includes('interest')) ||
+          (lower.includes('verify') && (lower.includes('email') || lower.includes('phone'))));
       setErrors({
-        general: error.response?.data?.message || t('errors.general'),
+        general: isProfileInactive
+          ? tProfileActive('expressInterestMessage')
+          : msg || t('errors.general'),
       });
+      setIsProfileInactiveError(isProfileInactive);
     }
   };
 
@@ -395,6 +407,14 @@ export default function SpecialistRequestDetailPage() {
                   {errors.general && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                       <p className="text-sm text-red-800">{errors.general}</p>
+                      {isProfileInactiveError && (
+                        <Link
+                          href={`/${pathname?.split('/')[1] || 'es'}/profile`}
+                          className="inline-block mt-3 text-sm font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          {tProfileActive('goToProfile')} →
+                        </Link>
+                      )}
                     </div>
                   )}
 

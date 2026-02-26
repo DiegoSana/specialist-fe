@@ -38,8 +38,6 @@ export default function CompanySetupPage() {
     foundedYear: '',
     employeeCount: '',
     website: '',
-    phone: '',
-    email: '',
     address: '',
     city: 'Bariloche',
     zone: '',
@@ -67,8 +65,6 @@ export default function CompanySetupPage() {
         foundedYear: existingProfile.foundedYear?.toString() || '',
         employeeCount: existingProfile.employeeCount || '',
         website: existingProfile.website || '',
-        phone: existingProfile.phone || '',
-        email: existingProfile.email || '',
         address: existingProfile.address || '',
         city: existingProfile.city || 'Bariloche',
         zone: existingProfile.zone || '',
@@ -151,8 +147,6 @@ export default function CompanySetupPage() {
       foundedYear: formData.foundedYear ? parseInt(formData.foundedYear) : undefined,
       employeeCount: formData.employeeCount || undefined,
       website: formData.website || undefined,
-      phone: formData.phone || undefined,
-      email: formData.email || undefined,
       address: formData.address || undefined,
       city: formData.city,
       zone: formData.zone || undefined,
@@ -377,46 +371,13 @@ export default function CompanySetupPage() {
               </div>
             </div>
 
-            {/* Contact Info */}
+            {/* Contact Info - MVP: contact is from user account */}
             <div className="border-t pt-6">
               <h3 className="text-sm font-medium text-gray-700 mb-4">{t('contactInfo')}</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    {t('phone')}
-                  </label>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-gray-800"
-                    placeholder="+5492944123456"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    {t('email')}
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-gray-800"
-                    placeholder={t('emailPlaceholder')}
-                  />
-                </div>
+              <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <p className="text-sm text-emerald-800">{t('contactFromUser')}</p>
               </div>
-              <div className="mt-4">
+              <div>
                 <label
                   htmlFor="website"
                   className="block text-sm font-medium text-gray-700 mb-2"
