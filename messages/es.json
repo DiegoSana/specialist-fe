@@ -53,6 +53,11 @@
       "confirmError": "Código inválido o expirado. Por favor intenta de nuevo."
     }
   },
+  "profileActive": {
+    "createRequestMessage": "Verificá tu email y teléfono para crear una solicitud. Podés hacerlo desde tu perfil.",
+    "expressInterestMessage": "Para expresar interés necesitás tener tu perfil activo. Verificá tu email y teléfono desde tu perfil.",
+    "goToProfile": "Ir a mi perfil"
+  },
   "notifications": {
     "title": "Notificaciones",
     "empty": "No tenés notificaciones",
@@ -817,6 +822,7 @@
       "selectEmployeeCount": "Seleccionar",
       "employees": "empleados",
       "contactInfo": "Información de contacto",
+      "contactFromUser": "En el MVP el contacto con clientes es el de tu cuenta de usuario (email y teléfono verificados). Podés verificarlos en tu perfil.",
       "phone": "Teléfono",
       "email": "Email de contacto",
       "emailPlaceholder": "empresa@ejemplo.com",

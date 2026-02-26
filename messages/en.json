@@ -20,6 +20,7 @@
   "verification": {
     "title": "Account Verification",
     "subtitle": "Verify your phone and email for added security",
+    "verify": "Verify",
     "phone": {
       "label": "Phone",
       "title": "Verify Phone",
@@ -50,6 +51,11 @@
     },
     "verified": "Verified",
     "notVerified": "Not verified"
+  },
+  "profileActive": {
+    "createRequestMessage": "Verify your email and phone to create a request. You can do this from your profile.",
+    "expressInterestMessage": "You need an active provider profile to express interest. Verify your email and phone from your profile.",
+    "goToProfile": "Go to my profile"
   },
   "notifications": {
     "title": "Notifications",
@@ -170,6 +176,27 @@
     "newRequest": {
       "title": "Request a job",
       "subtitle": "Search for a specialist or browse by specialty",
+      "requestTypeTitle": "How do you want to create your request?",
+      "publicRequest": {
+        "title": "Post to Job Board",
+        "description": "Your job will be visible to all specialists in your area. They will contact you with their proposals.",
+        "benefits": [
+          "Receive multiple proposals",
+          "Compare prices and profiles",
+          "Choose the one that suits you best"
+        ],
+        "button": "Post to Job Board"
+      },
+      "directRequest": {
+        "title": "Direct Request",
+        "description": "Choose a specific specialist and send them your request directly.",
+        "benefits": [
+          "Contact someone you already know",
+          "Faster response",
+          "Direct communication"
+        ],
+        "button": "Choose specialist"
+      },
       "back": "Back",
       "searchLabel": "Search specialty or specialist",
       "searchPlaceholder": "E.g.: Electrician, Plumber, John Smith...",
@@ -899,6 +926,7 @@
       "selectEmployeeCount": "Select",
       "employees": "employees",
       "contactInfo": "Contact information",
+      "contactFromUser": "In the MVP, contact with clients uses your user account email and phone (verified). You can verify them in your profile.",
       "phone": "Phone",
       "email": "Contact email",
       "emailPlaceholder": "company@example.com",

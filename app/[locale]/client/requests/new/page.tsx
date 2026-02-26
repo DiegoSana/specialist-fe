@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import { useCreateRequest } from '@/hooks/use-requests';
 import { useTradesWithProfessionals } from '@/hooks/use-professionals';
@@ -14,6 +15,7 @@ type RequestType = 'public' | 'direct' | null;
 
 export default function NewRequestPage() {
   const t = useTranslations('client.newRequest');
+  const tProfileActive = useTranslations('profileActive');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -38,6 +40,8 @@ export default function NewRequestPage() {
     address?: string;
     general?: string;
   }>({});
+
+  const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -176,6 +180,7 @@ export default function NewRequestPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
+    setIsProfileInactiveError(false);
 
     if (!validateForm()) {
       return;
@@ -197,9 +202,18 @@ export default function NewRequestPage() {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/client/dashboard`);
     } catch (error: any) {
+      const msg = error.response?.data?.message as string | undefined;
+      const lower = (msg || '').toLowerCase();
+      const isProfileInactive =
+        !!msg &&
+        lower.includes('verify') &&
+        (lower.includes('email') || lower.includes('phone'));
       setErrors({
-        general: error.response?.data?.message || t('errors.general'),
+        general: isProfileInactive
+          ? tProfileActive('createRequestMessage')
+          : msg || t('errors.general'),
       });
+      setIsProfileInactiveError(isProfileInactive);
     }
   };
 
@@ -230,10 +244,27 @@ export default function NewRequestPage() {
 
   const locale = pathname?.split('/')[1] || 'es';
 
+  const needsVerificationToCreate =
+    user && (user.emailVerified === false || user.phoneVerified === false);
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
+          {/* Proactive message: need to verify before creating request */}
+          {needsVerificationToCreate && (
+            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-sm text-amber-800">{tProfileActive('createRequestMessage')}</p>
+              <Link
+                href={`/${locale}/profile`}
+                className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-blue-600 hover:text-blue-800"
+              >
+                {tProfileActive('goToProfile')}
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+          )}
+
           {/* Header */}
           <div className="mb-8">
             <button
@@ -575,6 +606,14 @@ export default function NewRequestPage() {
               {errors.general && (
                 <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                   <p className="text-sm text-red-600">{errors.general}</p>
+                  {isProfileInactiveError && (
+                    <Link
+                      href={`/${pathname?.split('/')[1] || 'es'}/profile`}
+                      className="inline-block mt-3 text-sm font-medium text-blue-600 hover:text-blue-800"
+                    >
+                      {tProfileActive('goToProfile')} →
+                    </Link>
+                  )}
                 </div>
               )}
 
