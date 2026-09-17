@@ -17,6 +17,7 @@ import AuthenticatedVideo from '@/components/videos/authenticated-video';
 import RequestTimeline from '@/components/requests/request-timeline';
 import ReviewCtaCard from '@/components/requests/review-cta-card';
 import ReceivedRatingCard from '@/components/requests/received-rating-card';
+import RequestPhotosLightbox from '@/components/requests/request-photos-lightbox';
 
 export default function RequestDetailPage() {
   const t = useTranslations('client.requestDetail');
@@ -45,6 +46,8 @@ export default function RequestDetailPage() {
     comment: '',
   });
   const [reviewErrors, setReviewErrors] = useState<{ [key: string]: string }>({});
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     if (!isAuthenticated() || !user) {
@@ -185,6 +188,7 @@ export default function RequestDetailPage() {
   };
 
   return (
+    <>
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
@@ -585,7 +589,10 @@ export default function RequestDetailPage() {
                           src={url}
                           alt={`Photo ${index + 1}`}
                           className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={() => window.open(url, '_blank')}
+                          onClick={() => {
+                            setLightboxIndex(index);
+                            setLightboxOpen(true);
+                          }}
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
@@ -656,6 +663,15 @@ export default function RequestDetailPage() {
         </div>
       </div>
     </AppLayout>
+    {request?.photos && request.photos.length > 0 && (
+      <RequestPhotosLightbox
+        photos={request.photos}
+        open={lightboxOpen}
+        index={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+      />
+    )}
+  </>
   );
 }
 
