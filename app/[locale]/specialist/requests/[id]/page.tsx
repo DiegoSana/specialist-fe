@@ -16,6 +16,7 @@ import AuthenticatedVideo from '@/components/videos/authenticated-video';
 import RequestTimeline from '@/components/requests/request-timeline';
 import ReviewCtaCard from '@/components/requests/review-cta-card';
 import ReceivedRatingCard from '@/components/requests/received-rating-card';
+import RequestPhotosLightbox from '@/components/requests/request-photos-lightbox';
 
 export default function SpecialistRequestDetailPage() {
   const t = useTranslations('specialist.requestDetail');
@@ -41,6 +42,8 @@ export default function SpecialistRequestDetailPage() {
   const [interestMessage, setInterestMessage] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     if (!isAuthenticated() || !user) {
@@ -225,6 +228,7 @@ export default function SpecialistRequestDetailPage() {
   const locale = pathname?.split('/')[1] || 'es';
 
   return (
+    <>
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
@@ -367,7 +371,10 @@ export default function SpecialistRequestDetailPage() {
                       src={photo}
                       alt={`Photo ${index + 1}`}
                       className="w-full h-48 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => window.open(photo, '_blank')}
+                      onClick={() => {
+                        setLightboxIndex(index);
+                        setLightboxOpen(true);
+                      }}
                     />
                   )
                 ))}
@@ -642,7 +649,10 @@ export default function SpecialistRequestDetailPage() {
                                 src={url}
                                 alt={`Completed work ${index + 1}`}
                                 className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                                onClick={() => window.open(url, '_blank')}
+                                onClick={() => {
+                                  setLightboxIndex(index);
+                                  setLightboxOpen(true);
+                                }}
                                 onError={(e) => {
                                   e.currentTarget.style.display = 'none';
                                 }}
@@ -685,6 +695,15 @@ export default function SpecialistRequestDetailPage() {
         </div>
       </div>
     </AppLayout>
+    {request?.photos && request.photos.length > 0 && (
+      <RequestPhotosLightbox
+        photos={request.photos}
+        open={lightboxOpen}
+        index={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+      />
+    )}
+    </>
   );
 }
 
