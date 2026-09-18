@@ -14,7 +14,7 @@ export function useRequireProfile() {
   const router = useRouter();
   const user = getUser();
 
-  const hasProfile = user?.hasClientProfile || user?.hasProfessionalProfile || false;
+  const hasProfile = user?.hasClientProfile || user?.hasProfessionalProfile || user?.hasCompanyProfile || false;
   const isAuthenticated = !!user;
 
   useEffect(() => {

@@ -49,7 +49,7 @@ export default function SpecialistRequestDetailPage() {
     if (!isAuthenticated() || !user) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/login`);
-    } else if (!user.hasProfessionalProfile) {
+    } else if (!user.hasProfessionalProfile && !user.hasCompanyProfile) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/specialist/setup`);
     }

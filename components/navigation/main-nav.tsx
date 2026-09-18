@@ -200,7 +200,7 @@ export default function MainNav() {
     <div className="container mx-auto px-4">
       <div className="flex justify-between items-center h-16">
         {/* Logo */}
-        <Link href={user && user.hasClientProfile ? `/${locale}/client/dashboard` : user && user.hasProfessionalProfile ? `/${locale}/specialist/dashboard` : `/${locale}`} className="flex items-center">
+        <Link href={user && user.hasClientProfile ? `/${locale}/client/dashboard` : user && user.hasProfessionalProfile ? `/${locale}/specialist/dashboard` : user && user.hasCompanyProfile ? `/${locale}/specialist/job-board` : `/${locale}`} className="flex items-center">
           <span className="text-2xl font-bold text-blue-600">
             Specialist
           </span>

@@ -27,7 +27,7 @@ export default function ProtectedLayout({ children, requireProfile = true }: Pro
       
       // Check profile if required
       if (requireProfile && user) {
-        const hasProfile = user.hasClientProfile || user.hasProfessionalProfile;
+        const hasProfile = user.hasClientProfile || user.hasProfessionalProfile || user.hasCompanyProfile;
         if (!hasProfile) {
           router.push('/es/profile-setup');
           return;

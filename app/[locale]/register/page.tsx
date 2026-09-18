@@ -19,10 +19,12 @@ export default function RegisterPage() {
     if (isAuthenticated()) {
       const user = getUser();
       if (user) {
-        if (!user.hasClientProfile && !user.hasProfessionalProfile) {
+        if (!user.hasClientProfile && !user.hasProfessionalProfile && !user.hasCompanyProfile) {
           router.push('/es/profile-setup');
         } else if (user.hasProfessionalProfile) {
           router.push('/es/specialist/dashboard');
+        } else if (user.hasCompanyProfile) {
+          router.push('/es/specialist/job-board');
         } else {
           router.push('/es/professionals');
         }
