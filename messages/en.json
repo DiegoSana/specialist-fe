@@ -189,7 +189,7 @@
       },
       "directRequest": {
         "title": "Direct Request",
-        "description": "Choose a specific specialist and send them your request directly.",
+        "description": "Choose a specific specialist or company and send them your request directly.",
         "benefits": [
           "Contact someone you already know",
           "Faster response",
@@ -632,7 +632,12 @@
     "search": {
       "title": "Search",
       "placeholder": "Search by name or trade...",
-      "hint": "Search by specialist name or trade type (e.g.: electrician, plumber, John)"
+      "hint": "Search by specialist name or trade type (e.g.: electrician, plumber, John)",
+      "typeFilter": {
+        "all": "All",
+        "professional": "Specialists",
+        "company": "Companies"
+      }
     },
     "viewDetails": "View Details",
     "createRequest": "Request",

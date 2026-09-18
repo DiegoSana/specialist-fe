@@ -192,7 +192,7 @@
       },
       "directRequest": {
         "title": "Solicitud Directa",
-        "description": "Elegí un especialista específico y enviale tu solicitud directamente.",
+        "description": "Elegí un especialista o una empresa y enviale tu solicitud directamente.",
         "benefits": [
           "Contactá a quien ya conocés",
           "Respuesta más rápida",
@@ -533,7 +533,12 @@
     "search": {
       "title": "Buscar",
       "placeholder": "Buscar por nombre o especialidad...",
-      "hint": "Busca por nombre del especialista o tipo de oficio (ej: electricista, plomero, Juan)"
+      "hint": "Busca por nombre del especialista o tipo de oficio (ej: electricista, plomero, Juan)",
+      "typeFilter": {
+        "all": "Todos",
+        "professional": "Especialistas",
+        "company": "Empresas"
+      }
     },
     "viewDetails": "Ver Detalles",
     "createRequest": "Solicitar",

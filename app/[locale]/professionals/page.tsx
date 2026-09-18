@@ -9,12 +9,21 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { isAuthenticated } from '@/lib/auth';
 
+type ProviderTypeFilter = 'ALL' | 'PROFESSIONAL' | 'COMPANY';
+
+const PROVIDER_TYPE_FILTERS: { value: ProviderTypeFilter; labelKey: string }[] = [
+  { value: 'ALL', labelKey: 'all' },
+  { value: 'PROFESSIONAL', labelKey: 'professional' },
+  { value: 'COMPANY', labelKey: 'company' },
+];
+
 export default function ProfessionalsPage() {
   const t = useTranslations('professionals');
   const params = useParams();
   const locale = params.locale as string;
 
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [providerType, setProviderType] = useState<ProviderTypeFilter>('ALL');
   const [selectedProvider, setSelectedProvider] = useState<UnifiedProvider | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
@@ -24,7 +33,7 @@ export default function ProfessionalsPage() {
 
   const { data: providers, isLoading: loadingProviders } = useSearchProviders({
     search: searchTerm || undefined,
-    providerType: 'ALL',
+    providerType,
   });
 
   const { data: reviews } = useProfessionalReviews(
@@ -89,6 +98,23 @@ export default function ProfessionalsPage() {
             )}
           </div>
           <p className="text-xs text-gray-500 mt-2">{t('search.hint')}</p>
+          <div className="flex flex-wrap gap-2 mt-4" role="group" aria-label={t('search.title')}>
+            {PROVIDER_TYPE_FILTERS.map(({ value, labelKey }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setProviderType(value)}
+                aria-pressed={providerType === value}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                  providerType === value
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {t(`search.typeFilter.${labelKey}`)}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Providers Grid */}
