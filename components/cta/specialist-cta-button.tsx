@@ -28,7 +28,7 @@ export default function SpecialistCtaButton({
 
     if (token && user) {
       // User is logged in
-      if (user.hasProfessionalProfile) {
+      if (user.hasProfessionalProfile || user.hasCompanyProfile) {
         // User is a specialist → go to job board
         setTargetUrl(`/${locale}/specialist/job-board`);
       } else {

@@ -26,10 +26,12 @@ export default function LoginPage() {
       const user = getUser();
       if (user) {
         // If no profile, go to profile setup
-        if (!user.hasClientProfile && !user.hasProfessionalProfile) {
+        if (!user.hasClientProfile && !user.hasProfessionalProfile && !user.hasCompanyProfile) {
           router.push('/es/profile-setup');
         } else if (user.hasProfessionalProfile) {
           router.push('/es/specialist/dashboard');
+        } else if (user.hasCompanyProfile) {
+          router.push('/es/specialist/job-board');
         } else {
           router.push('/es/professionals');
         }

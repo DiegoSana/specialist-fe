@@ -38,6 +38,8 @@ export function useLogin() {
         const locale = window.location.pathname.split('/')[1] || 'es';
         if (data.user.hasProfessionalProfile) {
           router.push(`/${locale}/specialist/dashboard`);
+        } else if (data.user.hasCompanyProfile) {
+          router.push(`/${locale}/specialist/job-board`);
         } else if (data.user.hasClientProfile) {
           router.push(`/${locale}/professionals`);
         } else {

@@ -102,6 +102,7 @@ export default function JobBoardPage() {
   const pathname = usePathname();
   const [user, setUserState] = useState<any | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const isProvider = !!(user?.hasProfessionalProfile || user?.hasCompanyProfile);
 
   useEffect(() => {
     const initialUser = getUser();
@@ -112,11 +113,11 @@ export default function JobBoardPage() {
   }, []);
 
   useEffect(() => {
-    if (!isLoadingUser && (!isAuthenticated() || !user?.hasProfessionalProfile)) {
+    if (!isLoadingUser && (!isAuthenticated() || !isProvider)) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/login`);
     }
-  }, [router, user, pathname, isLoadingUser]);
+  }, [router, isProvider, pathname, isLoadingUser]);
 
   // Fetch available requests for professionals
   const { data: requests, isLoading } = useAvailableRequests();
@@ -135,7 +136,7 @@ export default function JobBoardPage() {
     );
   }
 
-  if (!user?.hasProfessionalProfile) {
+  if (!isProvider) {
     return null;
   }
 
