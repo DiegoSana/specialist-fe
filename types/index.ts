@@ -203,8 +203,11 @@ export interface AssignProviderDto {
 
 export enum CompanyStatus {
   PENDING_VERIFICATION = 'PENDING_VERIFICATION',
+  ACTIVE = 'ACTIVE',
   VERIFIED = 'VERIFIED',
+  INACTIVE = 'INACTIVE',
   REJECTED = 'REJECTED',
+  SUSPENDED = 'SUSPENDED',
 }
 
 export enum ProviderType {
