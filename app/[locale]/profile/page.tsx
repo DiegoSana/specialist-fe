@@ -13,6 +13,21 @@ import { openVerificationModal } from '@/lib/verification';
 import apiClient from '@/lib/api-client';
 import AppLayout from '@/components/layout/app-layout';
 
+const COMPANY_STATUS_UI: Record<
+  string,
+  { icon: string; iconText: string; badge: string; label: string }
+> = {
+  ACTIVE: { icon: 'bg-emerald-100', iconText: 'text-emerald-600', badge: 'bg-emerald-100 text-emerald-700', label: '✓ Activa' },
+  VERIFIED: { icon: 'bg-emerald-100', iconText: 'text-emerald-600', badge: 'bg-emerald-100 text-emerald-700', label: '✓ Verificada' },
+  PENDING_VERIFICATION: { icon: 'bg-yellow-100', iconText: 'text-yellow-600', badge: 'bg-yellow-100 text-yellow-700', label: '⏳ Pendiente' },
+  INACTIVE: { icon: 'bg-gray-100', iconText: 'text-gray-500', badge: 'bg-gray-100 text-gray-600', label: 'Inactiva' },
+  SUSPENDED: { icon: 'bg-orange-100', iconText: 'text-orange-600', badge: 'bg-orange-100 text-orange-700', label: '⚠ Suspendida' },
+  REJECTED: { icon: 'bg-red-100', iconText: 'text-red-600', badge: 'bg-red-100 text-red-700', label: '✗ Rechazada' },
+};
+
+const companyStatusUi = (status: string) =>
+  COMPANY_STATUS_UI[status] ?? COMPANY_STATUS_UI.INACTIVE;
+
 export default function ProfilePage() {
   const t = useTranslations('profile');
   const tVerification = useTranslations('verification');
@@ -676,14 +691,10 @@ export default function ProfilePage() {
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                  companyProfile?.status === 'VERIFIED' ? 'bg-emerald-100' :
-                  companyProfile?.status === 'PENDING_VERIFICATION' ? 'bg-yellow-100' :
-                  user?.hasCompanyProfile ? 'bg-red-100' : 'bg-gray-100'
+                  companyProfile ? companyStatusUi(companyProfile.status).icon : 'bg-gray-100'
                 }`}>
                   <svg className={`w-5 h-5 ${
-                    companyProfile?.status === 'VERIFIED' ? 'text-emerald-600' :
-                    companyProfile?.status === 'PENDING_VERIFICATION' ? 'text-yellow-600' :
-                    user?.hasCompanyProfile ? 'text-red-600' : 'text-gray-400'
+                    companyProfile ? companyStatusUi(companyProfile.status).iconText : 'text-gray-400'
                   }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
@@ -694,16 +705,8 @@ export default function ProfilePage() {
                 </div>
               </div>
               {user?.hasCompanyProfile && companyProfile && (
-                <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                  companyProfile.status === 'VERIFIED' 
-                    ? 'bg-emerald-100 text-emerald-700'
-                    : companyProfile.status === 'PENDING_VERIFICATION'
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {companyProfile.status === 'VERIFIED' ? '✓ Verificada' :
-                   companyProfile.status === 'PENDING_VERIFICATION' ? '⏳ Pendiente' :
-                   '✗ Rechazada'}
+                <span className={`px-3 py-1 text-xs font-medium rounded-full ${companyStatusUi(companyProfile.status).badge}`}>
+                  {companyStatusUi(companyProfile.status).label}
                 </span>
               )}
             </div>
