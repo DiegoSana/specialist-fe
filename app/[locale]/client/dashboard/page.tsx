@@ -4,8 +4,16 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useClientRequests } from '@/hooks/use-requests';
-import { RequestStatus } from '@/types';
+import { Request, RequestStatus } from '@/types';
 import ProtectedLayout from '@/components/layout/protected-layout';
+
+/** Assigned provider's display name: company name, or the professional's full name. */
+function getProviderName(request: Request): string | null {
+  if (request.company?.companyName) return request.company.companyName;
+  const user = request.professional?.user;
+  const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
+  return name || null;
+}
 
 export default function ClientDashboardPage() {
   const t = useTranslations('client.dashboard');
@@ -108,13 +116,15 @@ export default function ClientDashboardPage() {
                           {getStatusLabel(request.status)}
                         </span>
                       </div>
+                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">
+                        {request.title}
+                      </h3>
                       <p className="text-gray-700 text-sm line-clamp-2 mb-2">
                         {request.description}
                       </p>
-                      {request.professional && (
+                      {getProviderName(request) && (
                         <p className="text-xs text-gray-500">
-                          {t('with')} {request.professional.user?.firstName}{' '}
-                          {request.professional.user?.lastName}
+                          {t('with')} {getProviderName(request)}
                         </p>
                       )}
                       <p className="text-xs text-gray-500 mt-2">
@@ -148,13 +158,15 @@ export default function ClientDashboardPage() {
                           {getStatusLabel(request.status)}
                         </span>
                       </div>
+                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">
+                        {request.title}
+                      </h3>
                       <p className="text-gray-700 text-sm line-clamp-2 mb-2">
                         {request.description}
                       </p>
-                      {request.professional && (
+                      {getProviderName(request) && (
                         <p className="text-xs text-gray-500">
-                          {t('with')} {request.professional.user?.firstName}{' '}
-                          {request.professional.user?.lastName}
+                          {t('with')} {getProviderName(request)}
                         </p>
                       )}
                       {request.quoteAmount && (
@@ -190,13 +202,15 @@ export default function ClientDashboardPage() {
                           {getStatusLabel(request.status)}
                         </span>
                       </div>
+                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">
+                        {request.title}
+                      </h3>
                       <p className="text-gray-700 text-sm line-clamp-2 mb-2">
                         {request.description}
                       </p>
-                      {request.professional && (
+                      {getProviderName(request) && (
                         <p className="text-xs text-gray-500">
-                          {t('with')} {request.professional.user?.firstName}{' '}
-                          {request.professional.user?.lastName}
+                          {t('with')} {getProviderName(request)}
                         </p>
                       )}
                     </Link>
