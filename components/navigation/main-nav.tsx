@@ -162,7 +162,7 @@ export default function MainNav() {
     });
   }
 
-  if (user?.hasProfessionalProfile) {
+  if (user?.hasProfessionalProfile || user?.hasCompanyProfile) {
     navItems.push({
       href: `/${locale}/specialist/dashboard`,
       label: t('specialist.dashboard'),

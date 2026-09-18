@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import { useProfessionalRequests, useAvailableRequests } from '@/hooks/use-requests';
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
+import { useMyCompanyProfile } from '@/hooks/use-company';
 import { RequestStatus } from '@/types';
 import AppLayout from '@/components/layout/app-layout';
 
@@ -17,7 +18,10 @@ export default function SpecialistDashboardPage() {
   const user = getUser();
 
   const { data: requests, isLoading } = useProfessionalRequests();
-  const { data: profile, isLoading: loadingProfile } = useMyProfessionalProfile();
+  const { data: professionalProfile, isLoading: loadingProfessional } = useMyProfessionalProfile();
+  const { data: companyProfile, isLoading: loadingCompany } = useMyCompanyProfile();
+  const profile = professionalProfile ?? companyProfile;
+  const loadingProfile = loadingProfessional || loadingCompany;
   const { data: availableRequests, isLoading: loadingAvailable } = useAvailableRequests(
     profile?.city,
     profile?.zone
@@ -30,7 +34,7 @@ export default function SpecialistDashboardPage() {
     if (!isAuthenticated() || !user) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/login`);
-    } else if (!user.hasProfessionalProfile) {
+    } else if (!user.hasProfessionalProfile && !user.hasCompanyProfile) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/specialist/setup`);
     }
@@ -105,14 +109,14 @@ export default function SpecialistDashboardPage() {
                 </p>
                 <span
                   className={`inline-block px-3 py-1 rounded-full text-xs font-medium mt-1 ${
-                    profile.status === 'VERIFIED'
+                    profile.status === 'VERIFIED' || profile.status === 'ACTIVE'
                       ? 'bg-green-100 text-green-800'
                       : profile.status === 'PENDING_VERIFICATION'
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {profile.status === 'VERIFIED'
+                  {profile.status === 'VERIFIED' || profile.status === 'ACTIVE'
                     ? t('status.verified')
                     : profile.status === 'PENDING_VERIFICATION'
                     ? t('status.pendingVerification')
