@@ -284,7 +284,7 @@ export default function RequestDetailPage() {
                     <h2 className="text-sm font-medium text-gray-500 mb-1">
                       {request.company ? t('company') : t('professional')}
                     </h2>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-semibold text-gray-800">
@@ -317,13 +317,13 @@ export default function RequestDetailPage() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {(request.professional?.whatsapp || request.company?.phone) && (
                           <a
                             href={`https://wa.me/${(request.professional?.whatsapp || request.company?.phone || '').replace(/[^0-9]/g, '')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-shrink-0 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                            className="flex-shrink-0 px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm whitespace-nowrap"
                           >
                             {t('contactWhatsApp')}
                           </a>
@@ -340,7 +340,7 @@ export default function RequestDetailPage() {
                               }
                             }}
                             disabled={unassignProviderMutation.isPending}
-                            className="flex-shrink-0 px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm disabled:opacity-50"
+                            className="flex-shrink-0 px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm whitespace-nowrap disabled:opacity-50"
                           >
                             {unassignProviderMutation.isPending ? t('unassigning') : t('unassign')}
                           </button>
@@ -408,7 +408,7 @@ export default function RequestDetailPage() {
                         
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <h3 className="font-semibold text-gray-800 truncate">
@@ -441,7 +441,7 @@ export default function RequestDetailPage() {
                             </div>
                             
                             {/* Actions */}
-                            <div className="flex items-center gap-2 flex-shrink-0">
+                            <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
                               {(interest.provider?.whatsapp || interest.provider?.phone) && (
                                 <a
                                   href={`https://wa.me/${(interest.provider?.whatsapp || interest.provider?.phone || '').replace(/[^0-9]/g, '')}`}
