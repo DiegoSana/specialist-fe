@@ -8,14 +8,25 @@ import {
   useRequest,
   useCreateRequest,
   useUpdateRequest,
-  useAcceptQuote,
   useRequestInterests,
   useMyInterest,
   useExpressInterest,
   useRemoveInterest,
   useAssignProfessional,
+  useAcceptRequest,
+  useRejectRequest,
+  useStartRequest,
+  useMarkRequestFinished,
+  useConfirmRequest,
+  useObjectRequest,
+  useCancelRequest,
+  useReportNotCompleted,
+  useReportInterrupted,
+  useRepublishRequest,
+  useMyInterestedRequests,
 } from '../use-requests';
 import { createMockRequest } from '../../__mocks__/test-utils';
+import { RequestStatus } from '@/types';
 
 // Mock the API client
 jest.mock('@/lib/api-client', () => ({
@@ -57,7 +68,7 @@ describe('use-requests hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(result.current.data).toEqual(mockRequests);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/requests');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/requests?role=client');
     });
 
     it('should handle error', async () => {
@@ -79,7 +90,7 @@ describe('use-requests hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(result.current.data).toEqual(mockRequests);
-      expect(mockApiClient.get).toHaveBeenCalledWith('/requests');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/requests?role=professional');
     });
   });
 
@@ -147,6 +158,7 @@ describe('use-requests hooks', () => {
       const { result } = renderHook(() => useCreateRequest(), { wrapper: createWrapper() });
 
       result.current.mutate({
+        title: 'Test title',
         description: 'Test description',
         tradeId: 'trade-123',
         isPublic: false,
@@ -156,6 +168,7 @@ describe('use-requests hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/requests', {
+        title: 'Test title',
         description: 'Test description',
         tradeId: 'trade-123',
         isPublic: false,
@@ -173,27 +186,12 @@ describe('use-requests hooks', () => {
 
       result.current.mutate({
         id: 'request-123',
-        data: { status: 'IN_PROGRESS' },
+        data: { status: RequestStatus.IN_PROGRESS },
       });
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(mockApiClient.patch).toHaveBeenCalledWith('/requests/request-123', { status: 'IN_PROGRESS' });
-    });
-  });
-
-  describe('useAcceptQuote', () => {
-    it('should accept a quote successfully', async () => {
-      const acceptedRequest = createMockRequest({ status: 'ACCEPTED' });
-      mockApiClient.post.mockResolvedValueOnce({ data: acceptedRequest });
-
-      const { result } = renderHook(() => useAcceptQuote(), { wrapper: createWrapper() });
-
-      result.current.mutate('request-123');
-
-      await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-      expect(mockApiClient.post).toHaveBeenCalledWith('/requests/request-123/accept');
     });
   });
 
@@ -257,7 +255,7 @@ describe('use-requests hooks', () => {
 
   describe('useAssignProfessional', () => {
     it('should assign provider successfully', async () => {
-      const assignedRequest = createMockRequest({ status: 'ACCEPTED', professionalId: 'prof-456' });
+      const assignedRequest = createMockRequest({ status: 'CONTACT_RELEASED', professionalId: 'prof-456' });
       mockApiClient.post.mockResolvedValueOnce({ data: assignedRequest });
 
       const { result } = renderHook(() => useAssignProfessional(), { wrapper: createWrapper() });
@@ -267,6 +265,113 @@ describe('use-requests hooks', () => {
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
       expect(mockApiClient.post).toHaveBeenCalledWith('/requests/request-123/assign-provider', { serviceProviderId: 'sp-456' });
+    });
+  });
+  describe('state transitions', () => {
+    const cases: Array<[string, () => any, string]> = [
+      ['useAcceptRequest', useAcceptRequest, 'CONTACT_RELEASED'],
+      ['useRejectRequest', useRejectRequest, 'REJECTED'],
+      ['useStartRequest', useStartRequest, 'IN_PROGRESS'],
+      ['useMarkRequestFinished', useMarkRequestFinished, 'FINISHED'],
+      ['useConfirmRequest', useConfirmRequest, 'CLOSED'],
+      ['useCancelRequest', useCancelRequest, 'CANCELLED'],
+    ];
+
+    it.each(cases)('%s PATCHes the target status', async (_name, useHook, status) => {
+      mockApiClient.patch.mockResolvedValueOnce({ data: createMockRequest({ status }) });
+      const { result } = renderHook(() => useHook(), { wrapper: createWrapper() });
+
+      result.current.mutate({ id: 'request-123' });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mockApiClient.patch).toHaveBeenCalledWith('/requests/request-123', { status });
+    });
+
+    it.each([
+      ['useObjectRequest', useObjectRequest, 'UNDER_REVIEW'],
+      ['useReportNotCompleted', useReportNotCompleted, 'NOT_COMPLETED'],
+      ['useReportInterrupted', useReportInterrupted, 'INTERRUPTED'],
+    ] as Array<[string, () => any, string]>)(
+      '%s sends the reason as statusReason (truncated to 500 chars)',
+      async (_name, useHook, status) => {
+        mockApiClient.patch.mockResolvedValueOnce({ data: createMockRequest({ status }) });
+        const { result } = renderHook(() => useHook(), { wrapper: createWrapper() });
+
+        result.current.mutate({ id: 'request-123', reason: 'x'.repeat(600) });
+
+        await waitFor(() => expect(result.current.isSuccess).toBe(true));
+        expect(mockApiClient.patch).toHaveBeenCalledWith('/requests/request-123', {
+          status,
+          statusReason: 'x'.repeat(500),
+        });
+      },
+    );
+
+    it('omits statusReason when no reason is given', async () => {
+      mockApiClient.patch.mockResolvedValueOnce({ data: createMockRequest() });
+      const { result } = renderHook(() => useReportNotCompleted(), { wrapper: createWrapper() });
+
+      result.current.mutate({ id: 'request-123' });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mockApiClient.patch).toHaveBeenCalledWith('/requests/request-123', {
+        status: 'NOT_COMPLETED',
+      });
+    });
+  });
+
+  describe('useRepublishRequest', () => {
+    const original: any = createMockRequest({
+      title: 'Pintar',
+      description: 'Departamento',
+      tradeId: 'trade-9',
+      status: 'NOT_COMPLETED',
+    });
+
+    it('creates a new public request copying the original data', async () => {
+      mockApiClient.post.mockResolvedValueOnce({ data: createMockRequest({ id: 'new-1' }) });
+      const { result } = renderHook(() => useRepublishRequest(), { wrapper: createWrapper() });
+
+      result.current.mutate({ original, isPublic: true });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(mockApiClient.post).toHaveBeenCalledWith(
+        '/requests',
+        expect.objectContaining({
+          title: 'Pintar',
+          description: 'Departamento',
+          isPublic: true,
+          tradeId: 'trade-9',
+        }),
+      );
+    });
+
+    it('creates a direct request for the given provider target', async () => {
+      mockApiClient.post.mockResolvedValueOnce({ data: createMockRequest({ id: 'new-2' }) });
+      const { result } = renderHook(() => useRepublishRequest(), { wrapper: createWrapper() });
+
+      result.current.mutate({
+        original,
+        isPublic: false,
+        providerTarget: { professionalId: 'prof-1' },
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      const body = (mockApiClient.post.mock.calls.at(-1) as any[])[1];
+      expect(body).toMatchObject({ isPublic: false, professionalId: 'prof-1' });
+      expect(body.tradeId).toBeUndefined();
+    });
+  });
+
+  describe('useMyInterestedRequests', () => {
+    it('fetches the specialist postulaciones with their interest status', async () => {
+      const data = [{ interestId: 'i1', interestStatus: 'INTERESTED', requestId: 'r1' }];
+      mockApiClient.get.mockResolvedValueOnce({ data });
+      const { result } = renderHook(() => useMyInterestedRequests(), { wrapper: createWrapper() });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      expect(result.current.data).toEqual(data);
+      expect(mockApiClient.get).toHaveBeenCalledWith('/requests/interested');
     });
   });
 });

@@ -759,22 +759,125 @@
       "button": "Crear cuenta gratis"
     }
   },
+  "requestStatus": {
+    "status": {
+      "DRAFT": "Borrador",
+      "PUBLISHED": "Publicado en la bolsa",
+      "SENT": "Enviado",
+      "CONTACT_RELEASED": "Contacto liberado",
+      "IN_PROGRESS": "En curso",
+      "FINISHED": "Terminado",
+      "CLOSED": "Cerrado",
+      "UNDER_REVIEW": "En revisión",
+      "EXPIRED": "Vencido",
+      "NO_RESPONSE": "Sin respuesta",
+      "REJECTED": "Rechazado",
+      "CANCELLED": "Cancelado",
+      "NOT_COMPLETED": "No se concretó",
+      "INTERRUPTED": "Interrumpido",
+      "ABANDONED": "Abandonado"
+    },
+    "interest": {
+      "INTERESTED": "Interesado",
+      "CHOSEN": "Elegido",
+      "NOT_CHOSEN": "No elegido",
+      "WITHDRAWN": "Retirado"
+    },
+    "tabs": {
+      "yours": "Te toca a vos",
+      "waiting": "Esperando a la otra parte",
+      "closed": "Cerrados",
+      "final": "Finalizados sin acuerdo"
+    },
+    "finalStrip": {
+      "title": "Finalizados sin acuerdo ({count})",
+      "show": "mostrar",
+      "hide": "ocultar"
+    },
+    "interestedCount": "{count, plural, one {# especialista interesado} other {# especialistas interesados}}",
+    "applications": {
+      "title": "Tus postulaciones en la bolsa"
+    },
+    "actions": {
+      "continueDraft": "Continuar",
+      "viewInterests": "Ver interesados y elegir",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "openWhatsapp": "Abrir WhatsApp",
+      "markFinished": "Marcar como terminado",
+      "confirm": "Confirmar",
+      "object": "Objetar",
+      "rate": "Calificar",
+      "republish": "Volver a publicar",
+      "reportProblem": "¿Algo salió mal? Informar que no se concretó o se interrumpió",
+      "reasonLabel": "Motivo"
+    },
+    "hints": {
+      "client": {
+        "DRAFT": "Te toca a vos — completá y publicá",
+        "PUBLISHED": "Te toca a vos — elegí uno",
+        "PUBLISHED_NO_INTERESTS": "Esperando a la otra parte — todavía no hay interesados",
+        "SENT": "Esperando a la otra parte — el especialista tiene que responder",
+        "CONTACT_RELEASED": "Te toca a vos — coordiná por WhatsApp",
+        "IN_PROGRESS": "Esperando a la otra parte — el especialista está trabajando en esto",
+        "FINISHED": "Te toca a vos — confirmá que se completó",
+        "CLOSED": "Cerrado — dejá tu calificación",
+        "UNDER_REVIEW": "Esperando a la otra parte — soporte está revisando tu objeción",
+        "EXPIRED": "Nadie eligió a un interesado a tiempo",
+        "NO_RESPONSE": "El especialista no respondió",
+        "REJECTED": "El especialista rechazó la solicitud",
+        "CANCELLED": "Cancelaste esta solicitud",
+        "NOT_COMPLETED": "No se llegó a un acuerdo",
+        "INTERRUPTED": "El trabajo se interrumpió",
+        "ABANDONED": "Nadie respondió a los seguimientos"
+      },
+      "provider": {
+        "DRAFT": "Borrador del cliente",
+        "PUBLISHED": "Esperando a la otra parte — el cliente tiene que elegir",
+        "SENT": "Te toca a vos — respondé",
+        "CONTACT_RELEASED": "Te toca a vos — coordiná por WhatsApp",
+        "IN_PROGRESS": "Te toca a vos — marcá cuando termines",
+        "FINISHED": "Esperando a la otra parte — el cliente tiene que confirmar",
+        "CLOSED": "Cerrado — calificá al cliente",
+        "UNDER_REVIEW": "Esperando a la otra parte — soporte está revisando",
+        "EXPIRED": "La solicitud venció",
+        "NO_RESPONSE": "No respondiste a tiempo",
+        "REJECTED": "Rechazaste la solicitud",
+        "CANCELLED": "El cliente canceló la solicitud",
+        "NOT_COMPLETED": "No se llegó a un acuerdo",
+        "INTERRUPTED": "El trabajo se interrumpió",
+        "ABANDONED": "Nadie respondió a los seguimientos"
+      }
+    }
+  },
   "components": {
     "timeline": {
       "title": "Progreso de la solicitud",
       "updated": "Actualizado",
-      "pending": "Pendiente",
-      "accepted": "Aceptado",
-      "inProgress": "En progreso",
-      "done": "Completado",
-      "cancelled": "Cancelada",
-      "cancelledDescription": "Esta solicitud fue cancelada",
+      "reason": "Motivo",
+      "steps": {
+        "contactReleased": "Contacto liberado",
+        "inProgress": "En curso",
+        "finished": "Terminado",
+        "closed": "Cerrado"
+      },
       "descriptions": {
-        "pending": "Esperando respuesta del especialista",
-        "pendingWithInterests": "Elige un especialista de los interesados o espera más opciones",
-        "accepted": "El especialista aceptó la solicitud. Preparando para comenzar",
-        "in_progress": "El especialista está trabajando en tu solicitud",
-        "done": "¡Trabajo completado! No olvides dejar una reseña"
+        "DRAFT": "Todavía no publicaste esta solicitud",
+        "PUBLISHED": "Esperando que se interesen especialistas",
+        "pendingWithInterests": "Elegí un especialista de los interesados o esperá más opciones",
+        "SENT": "Esperando respuesta del especialista",
+        "CONTACT_RELEASED": "Ya podés hablar por WhatsApp y ponerse de acuerdo",
+        "IN_PROGRESS": "El especialista está trabajando en tu solicitud",
+        "FINISHED": "El especialista terminó. Falta la conformidad del cliente",
+        "CLOSED": "¡Pedido cerrado! Ya se puede dejar una calificación",
+        "UNDER_REVIEW": "Soporte está revisando el pedido",
+        "EXPIRED": "Nadie eligió a un interesado a tiempo",
+        "NO_RESPONSE": "El especialista no respondió a tiempo",
+        "REJECTED": "El especialista rechazó la solicitud",
+        "CANCELLED": "Esta solicitud fue cancelada",
+        "NOT_COMPLETED": "Hablaron pero no llegaron a un acuerdo",
+        "INTERRUPTED": "El trabajo empezó pero no se terminó",
+        "ABANDONED": "Nadie respondió a los seguimientos"
       }
     },
     "receivedRating": {

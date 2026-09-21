@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { RequestStatus } from '@/types';
+import { REQUEST_STATUS_META, TIMELINE_STATUSES } from '@/lib/request-status';
 
 interface RequestTimelineProps {
   status: RequestStatus;
@@ -9,134 +10,49 @@ interface RequestTimelineProps {
   updatedAt: string;
   isPublic?: boolean;
   hasInterestedProfessionals?: boolean;
+  /** Reason stored for NOT_COMPLETED / INTERRUPTED (shown on final states when present). */
+  statusReason?: string | null;
 }
 
-const TIMELINE_STEPS = [
-  { status: RequestStatus.PENDING, icon: 'clock' },
-  { status: RequestStatus.ACCEPTED, icon: 'check' },
-  { status: RequestStatus.IN_PROGRESS, icon: 'wrench' },
-  { status: RequestStatus.DONE, icon: 'flag' },
-];
+type StepState = 'completed' | 'current' | 'upcoming';
 
-const STATUS_ORDER: Record<RequestStatus, number> = {
-  [RequestStatus.PENDING]: 0,
-  [RequestStatus.ACCEPTED]: 1,
-  [RequestStatus.IN_PROGRESS]: 2,
-  [RequestStatus.DONE]: 3,
-  [RequestStatus.CANCELLED]: -1,
+const STEP_LABEL_KEYS = ['contactReleased', 'inProgress', 'finished', 'closed'] as const;
+
+const STEP_STYLES: Record<StepState, { circle: string; text: string }> = {
+  completed: {
+    circle: 'bg-green-500 text-white border-green-500',
+    text: 'text-green-700 font-medium',
+  },
+  current: {
+    circle: 'bg-blue-500 text-white border-blue-500 ring-4 ring-blue-100',
+    text: 'text-blue-700 font-semibold',
+  },
+  upcoming: {
+    circle: 'bg-gray-100 text-gray-400 border-gray-300',
+    text: 'text-gray-400',
+  },
 };
 
-export default function RequestTimeline({ status, createdAt, updatedAt, isPublic, hasInterestedProfessionals }: RequestTimelineProps) {
+/**
+ * Post-contact timeline (Contacto liberado → En curso → Terminado → Cerrado). Statuses before the
+ * contact is released (draft / published / sent) show the four steps as upcoming; statuses that end
+ * without an agreement replace the steps with a summary card. Everything status-specific comes from
+ * lib/request-status.ts.
+ */
+export default function RequestTimeline({
+  status,
+  updatedAt,
+  hasInterestedProfessionals,
+  statusReason,
+}: RequestTimelineProps) {
   const t = useTranslations('components.timeline');
-  
-  const currentIndex = STATUS_ORDER[status];
-  const isCancelled = status === RequestStatus.CANCELLED;
+  const tStatus = useTranslations('requestStatus.status');
 
-  const getStepState = (stepIndex: number): 'completed' | 'current' | 'upcoming' | 'cancelled' => {
-    if (isCancelled) return 'cancelled';
-    if (stepIndex < currentIndex) return 'completed';
-    if (stepIndex === currentIndex) return 'current';
-    return 'upcoming';
-  };
+  const meta = REQUEST_STATUS_META[status];
 
-  const getIcon = (iconType: string, state: 'completed' | 'current' | 'upcoming' | 'cancelled') => {
-    const baseClass = "w-5 h-5";
-    
-    if (state === 'cancelled') {
-      return (
-        <svg className={baseClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      );
-    }
-
-    if (state === 'completed') {
-      return (
-        <svg className={baseClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-      );
-    }
-
-    switch (iconType) {
-      case 'clock':
-        return (
-          <svg className={baseClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        );
-      case 'check':
-        return (
-          <svg className={baseClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        );
-      case 'wrench':
-        return (
-          <svg className={baseClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        );
-      case 'flag':
-        return (
-          <svg className={baseClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
-          </svg>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const getStepStyles = (state: 'completed' | 'current' | 'upcoming' | 'cancelled') => {
-    switch (state) {
-      case 'completed':
-        return {
-          circle: 'bg-green-500 text-white border-green-500',
-          text: 'text-green-700 font-medium',
-          line: 'bg-green-500',
-        };
-      case 'current':
-        return {
-          circle: 'bg-blue-500 text-white border-blue-500 ring-4 ring-blue-100',
-          text: 'text-blue-700 font-semibold',
-          line: 'bg-gray-200',
-        };
-      case 'upcoming':
-        return {
-          circle: 'bg-gray-100 text-gray-400 border-gray-300',
-          text: 'text-gray-400',
-          line: 'bg-gray-200',
-        };
-      case 'cancelled':
-        return {
-          circle: 'bg-red-500 text-white border-red-500',
-          text: 'text-red-600 font-medium',
-          line: 'bg-red-200',
-        };
-    }
-  };
-
-  const getStatusLabel = (stepStatus: RequestStatus) => {
-    switch (stepStatus) {
-      case RequestStatus.PENDING:
-        return t('pending');
-      case RequestStatus.ACCEPTED:
-        return t('accepted');
-      case RequestStatus.IN_PROGRESS:
-        return t('inProgress');
-      case RequestStatus.DONE:
-        return t('done');
-      default:
-        return stepStatus;
-    }
-  };
-
-  // Calculate progress percentage for the progress bar
-  const progressPercentage = isCancelled ? 0 : ((currentIndex + 1) / TIMELINE_STEPS.length) * 100;
-
-  if (isCancelled) {
+  if (meta.isFinalNoAgreement) {
+    const isNegative =
+      status === RequestStatus.REJECTED || status === RequestStatus.CANCELLED;
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-4">
@@ -147,21 +63,55 @@ export default function RequestTimeline({ status, createdAt, updatedAt, isPublic
             {new Date(updatedAt).toLocaleDateString()}
           </span>
         </div>
-        
+
         <div className="flex items-center justify-center py-8">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-              <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div
+              className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                isNegative ? 'bg-red-100' : 'bg-gray-100'
+              }`}
+            >
+              <svg
+                className={`w-8 h-8 ${isNegative ? 'text-red-500' : 'text-gray-500'}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <p className="text-lg font-semibold text-red-600">{t('cancelled')}</p>
-            <p className="text-sm text-gray-500 mt-1">{t('cancelledDescription')}</p>
+            <p className={`text-lg font-semibold ${isNegative ? 'text-red-600' : 'text-gray-700'}`}>
+              {tStatus(meta.labelKey)}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">{t(`descriptions.${status}`)}</p>
+            {statusReason && (
+              <p className="text-sm text-gray-600 mt-3">
+                <span className="font-medium">{t('reason')}:</span> {statusReason}
+              </p>
+            )}
           </div>
         </div>
       </div>
     );
   }
+
+  const currentStep = meta.timelineStep; // null while the contact is not released yet
+  const isClosed = status === RequestStatus.CLOSED;
+
+  const getStepState = (index: number): StepState => {
+    if (currentStep === null) return 'upcoming';
+    if (isClosed || index < currentStep) return 'completed';
+    if (index === currentStep) return 'current';
+    return 'upcoming';
+  };
+
+  const progressPercentage =
+    currentStep === null ? 0 : ((currentStep + 1) / TIMELINE_STATUSES.length) * 100;
+
+  const description =
+    status === RequestStatus.PUBLISHED && hasInterestedProfessionals
+      ? t('descriptions.pendingWithInterests')
+      : t(`descriptions.${status}`);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -177,7 +127,7 @@ export default function RequestTimeline({ status, createdAt, updatedAt, isPublic
       {/* Progress bar */}
       <div className="relative mb-8">
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progressPercentage}%` }}
           />
@@ -190,34 +140,38 @@ export default function RequestTimeline({ status, createdAt, updatedAt, isPublic
       {/* Timeline steps */}
       <div className="relative">
         <div className="flex justify-between">
-          {TIMELINE_STEPS.map((step, index) => {
+          {TIMELINE_STATUSES.map((stepStatus, index) => {
             const state = getStepState(index);
-            const styles = getStepStyles(state);
-            const isLast = index === TIMELINE_STEPS.length - 1;
+            const styles = STEP_STYLES[state];
+            const isLast = index === TIMELINE_STATUSES.length - 1;
+            const connectorDone = currentStep !== null && (isClosed || index < currentStep);
 
             return (
-              <div key={step.status} className="flex flex-col items-center relative flex-1">
-                {/* Connector line */}
+              <div key={stepStatus} className="flex flex-col items-center relative flex-1">
                 {!isLast && (
-                  <div 
+                  <div
                     className={`absolute top-5 left-1/2 w-full h-0.5 ${
-                      index < currentIndex ? 'bg-green-500' : 'bg-gray-200'
+                      connectorDone ? 'bg-green-500' : 'bg-gray-200'
                     }`}
                     style={{ transform: 'translateX(50%)' }}
                   />
                 )}
-                
-                {/* Circle */}
-                <div 
-                  className={`relative z-10 w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${styles.circle}`}
+
+                <div
+                  className={`relative z-10 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all duration-300 ${styles.circle}`}
                 >
-                  {getIcon(step.icon, state)}
+                  {state === 'completed' ? (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    index + 1
+                  )}
                 </div>
-                
-                {/* Label */}
+
                 <div className="mt-3 text-center">
                   <p className={`text-xs sm:text-sm ${styles.text}`}>
-                    {getStatusLabel(step.status)}
+                    {t(`steps.${STEP_LABEL_KEYS[index]}`)}
                   </p>
                 </div>
               </div>
@@ -229,15 +183,14 @@ export default function RequestTimeline({ status, createdAt, updatedAt, isPublic
       {/* Current status description */}
       <div className="mt-6 pt-4 border-t border-gray-100">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-          <p className="text-sm text-gray-600">
-            {status === RequestStatus.PENDING && isPublic && hasInterestedProfessionals
-              ? t('descriptions.pendingWithInterests')
-              : t(`descriptions.${status.toLowerCase()}`)}
-          </p>
+          <div
+            className={`w-2 h-2 rounded-full animate-pulse ${
+              status === RequestStatus.UNDER_REVIEW ? 'bg-orange-500' : 'bg-blue-500'
+            }`}
+          />
+          <p className="text-sm text-gray-600">{description}</p>
         </div>
       </div>
     </div>
   );
 }
-

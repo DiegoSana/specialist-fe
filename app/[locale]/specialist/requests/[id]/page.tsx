@@ -10,6 +10,7 @@ import { useReviewByRequestId } from '@/hooks/use-reviews';
 import { useAddRequestPhoto, useRemoveRequestPhoto } from '@/hooks/use-completed-work-photos';
 import { useUploadFile } from '@/hooks/use-file-upload';
 import { RequestStatus } from '@/types';
+import { REQUEST_STATUS_META } from '@/lib/request-status';
 import AppLayout from '@/components/layout/app-layout';
 import AuthenticatedImage from '@/components/images/authenticated-image';
 import AuthenticatedVideo from '@/components/videos/authenticated-video';
@@ -21,6 +22,7 @@ import RequestPhotosLightbox from '@/components/requests/request-photos-lightbox
 export default function SpecialistRequestDetailPage() {
   const t = useTranslations('specialist.requestDetail');
   const tProfileActive = useTranslations('profileActive');
+  const tStatus = useTranslations('requestStatus.status');
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -59,39 +61,11 @@ export default function SpecialistRequestDetailPage() {
     return null;
   }
 
-  const getStatusBadgeColor = (status: RequestStatus) => {
-    switch (status) {
-      case RequestStatus.PENDING:
-        return 'bg-yellow-100 text-yellow-800';
-      case RequestStatus.ACCEPTED:
-        return 'bg-blue-100 text-blue-800';
-      case RequestStatus.IN_PROGRESS:
-        return 'bg-purple-100 text-purple-800';
-      case RequestStatus.DONE:
-        return 'bg-green-100 text-green-800';
-      case RequestStatus.CANCELLED:
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getStatusBadgeColor = (status: RequestStatus) =>
+    REQUEST_STATUS_META[status]?.badgeClass ?? 'bg-gray-100 text-gray-800';
 
-  const getStatusLabel = (status: RequestStatus) => {
-    switch (status) {
-      case RequestStatus.PENDING:
-        return t('status.pending');
-      case RequestStatus.ACCEPTED:
-        return t('status.accepted');
-      case RequestStatus.IN_PROGRESS:
-        return t('status.inProgress');
-      case RequestStatus.DONE:
-        return t('status.done');
-      case RequestStatus.CANCELLED:
-        return t('status.cancelled');
-      default:
-        return status;
-    }
-  };
+  const getStatusLabel = (status: RequestStatus) =>
+    REQUEST_STATUS_META[status] ? tStatus(REQUEST_STATUS_META[status].labelKey) : status;
 
   const handleExpressInterest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,7 +131,7 @@ export default function SpecialistRequestDetailPage() {
       await updateRequestMutation.mutateAsync({
         id: request.id,
         data: {
-          status: RequestStatus.DONE,
+          status: RequestStatus.FINISHED,
         },
       });
     } catch (error) {
@@ -172,7 +146,7 @@ export default function SpecialistRequestDetailPage() {
       await updateRequestMutation.mutateAsync({
         id: request.id,
         data: {
-          status: RequestStatus.ACCEPTED,
+          status: RequestStatus.CONTACT_RELEASED,
         },
       });
     } catch (error: any) {
@@ -215,15 +189,15 @@ export default function SpecialistRequestDetailPage() {
   // For public requests that are still pending and not yet assigned to this professional
   const isPublicRequest = request.isPublic;
   const hasAlreadyExpressedInterest = myInterest?.hasInterest === true;
-  const canExpressInterest = isPublicRequest && request.status === RequestStatus.PENDING && !request.professionalId;
+  const canExpressInterest = isPublicRequest && request.status === RequestStatus.PUBLISHED && !request.professionalId;
   
   // For requests assigned to this professional
-  const canMarkInProgress = request.status === RequestStatus.ACCEPTED;
+  const canMarkInProgress = request.status === RequestStatus.CONTACT_RELEASED;
   const canMarkCompleted = request.status === RequestStatus.IN_PROGRESS;
   
   // For direct requests - professional can accept
   const isDirectRequest = !isPublicRequest && request.professionalId;
-  const canAcceptDirectRequest = isDirectRequest && request.status === RequestStatus.PENDING;
+  const canAcceptDirectRequest = isDirectRequest && request.status === RequestStatus.SENT;
   
   const locale = pathname?.split('/')[1] || 'es';
 
@@ -260,7 +234,7 @@ export default function SpecialistRequestDetailPage() {
           />
 
           {/* Rate Client - Prominent CTA when request is DONE */}
-          {request.status === RequestStatus.DONE && request.client && (
+          {request.status === RequestStatus.CLOSED && request.client && (
             <ReviewCtaCard
               hasExistingReview={request.clientRating !== null && request.clientRating !== undefined}
               existingReview={request.clientRating ? {
@@ -286,7 +260,7 @@ export default function SpecialistRequestDetailPage() {
           )}
 
           {/* Show rating received from client - only when both have rated */}
-          {request.status === RequestStatus.DONE && 
+          {request.status === RequestStatus.CLOSED && 
            request.clientRating && 
            clientReview && 
            request.client && (
@@ -572,7 +546,7 @@ export default function SpecialistRequestDetailPage() {
                 </button>
               )}
 
-              {request.status === RequestStatus.DONE && (
+              {request.status === RequestStatus.CLOSED && (
                 <div className="mt-4 space-y-4">
                   <div className="p-4 bg-green-50/20 border border-green-200 rounded-lg">
                     <p className="text-sm text-green-800">

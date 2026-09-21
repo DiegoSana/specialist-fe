@@ -863,22 +863,125 @@
       "button": "Create free account"
     }
   },
+  "requestStatus": {
+    "status": {
+      "DRAFT": "Draft",
+      "PUBLISHED": "Posted to the board",
+      "SENT": "Sent",
+      "CONTACT_RELEASED": "Contact released",
+      "IN_PROGRESS": "In progress",
+      "FINISHED": "Finished",
+      "CLOSED": "Closed",
+      "UNDER_REVIEW": "Under review",
+      "EXPIRED": "Expired",
+      "NO_RESPONSE": "No response",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "NOT_COMPLETED": "Not completed",
+      "INTERRUPTED": "Interrupted",
+      "ABANDONED": "Abandoned"
+    },
+    "interest": {
+      "INTERESTED": "Interested",
+      "CHOSEN": "Chosen",
+      "NOT_CHOSEN": "Not chosen",
+      "WITHDRAWN": "Withdrawn"
+    },
+    "tabs": {
+      "yours": "It's your turn",
+      "waiting": "Waiting for the other party",
+      "closed": "Closed",
+      "final": "Ended without agreement"
+    },
+    "finalStrip": {
+      "title": "Ended without agreement ({count})",
+      "show": "show",
+      "hide": "hide"
+    },
+    "interestedCount": "{count, plural, one {# interested specialist} other {# interested specialists}}",
+    "applications": {
+      "title": "Your applications on the board"
+    },
+    "actions": {
+      "continueDraft": "Continue",
+      "viewInterests": "View interested specialists and choose",
+      "accept": "Accept",
+      "reject": "Reject",
+      "openWhatsapp": "Open WhatsApp",
+      "markFinished": "Mark as finished",
+      "confirm": "Confirm",
+      "object": "Object",
+      "rate": "Rate",
+      "republish": "Publish again",
+      "reportProblem": "Something went wrong? Report that it fell through or was interrupted",
+      "reasonLabel": "Reason"
+    },
+    "hints": {
+      "client": {
+        "DRAFT": "Your turn — complete and publish",
+        "PUBLISHED": "Your turn — pick one",
+        "PUBLISHED_NO_INTERESTS": "Waiting for the other party — no one is interested yet",
+        "SENT": "Waiting for the other party — the specialist has to respond",
+        "CONTACT_RELEASED": "Your turn — coordinate over WhatsApp",
+        "IN_PROGRESS": "Waiting for the other party — the specialist is working on it",
+        "FINISHED": "Your turn — confirm it was completed",
+        "CLOSED": "Closed — leave your rating",
+        "UNDER_REVIEW": "Waiting for the other party — support is reviewing your objection",
+        "EXPIRED": "Nobody was chosen in time",
+        "NO_RESPONSE": "The specialist did not respond",
+        "REJECTED": "The specialist rejected the request",
+        "CANCELLED": "You cancelled this request",
+        "NOT_COMPLETED": "No agreement was reached",
+        "INTERRUPTED": "The work was interrupted",
+        "ABANDONED": "Nobody answered the follow-ups"
+      },
+      "provider": {
+        "DRAFT": "Client's draft",
+        "PUBLISHED": "Waiting for the other party — the client has to choose",
+        "SENT": "Your turn — respond",
+        "CONTACT_RELEASED": "Your turn — coordinate over WhatsApp",
+        "IN_PROGRESS": "Your turn — mark it when you finish",
+        "FINISHED": "Waiting for the other party — the client has to confirm",
+        "CLOSED": "Closed — rate the client",
+        "UNDER_REVIEW": "Waiting for the other party — support is reviewing",
+        "EXPIRED": "The request expired",
+        "NO_RESPONSE": "You did not respond in time",
+        "REJECTED": "You rejected the request",
+        "CANCELLED": "The client cancelled the request",
+        "NOT_COMPLETED": "No agreement was reached",
+        "INTERRUPTED": "The work was interrupted",
+        "ABANDONED": "Nobody answered the follow-ups"
+      }
+    }
+  },
   "components": {
     "timeline": {
       "title": "Request Progress",
       "updated": "Updated",
-      "pending": "Pending",
-      "accepted": "Accepted",
-      "inProgress": "In Progress",
-      "done": "Completed",
-      "cancelled": "Cancelled",
-      "cancelledDescription": "This request was cancelled",
+      "reason": "Reason",
+      "steps": {
+        "contactReleased": "Contact released",
+        "inProgress": "In progress",
+        "finished": "Finished",
+        "closed": "Closed"
+      },
       "descriptions": {
-        "pending": "Waiting for specialist response",
+        "DRAFT": "You haven't published this request yet",
+        "PUBLISHED": "Waiting for specialists to show interest",
         "pendingWithInterests": "Choose a specialist from those interested or wait for more options",
-        "accepted": "Specialist accepted the request. Preparing to start",
-        "in_progress": "Specialist is working on your request",
-        "done": "Work completed! Don't forget to leave a review"
+        "SENT": "Waiting for the specialist to respond",
+        "CONTACT_RELEASED": "You can now talk over WhatsApp and reach an agreement",
+        "IN_PROGRESS": "The specialist is working on your request",
+        "FINISHED": "The specialist finished. Waiting for the client's confirmation",
+        "CLOSED": "Request closed! Ratings are now enabled",
+        "UNDER_REVIEW": "Support is reviewing the request",
+        "EXPIRED": "Nobody was chosen in time",
+        "NO_RESPONSE": "The specialist did not respond in time",
+        "REJECTED": "The specialist rejected the request",
+        "CANCELLED": "This request was cancelled",
+        "NOT_COMPLETED": "They talked but didn't reach an agreement",
+        "INTERRUPTED": "Work started but was not finished",
+        "ABANDONED": "Nobody answered the follow-ups"
       }
     },
     "receivedRating": {

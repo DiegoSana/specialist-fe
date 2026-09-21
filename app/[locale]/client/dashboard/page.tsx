@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useClientRequests } from '@/hooks/use-requests';
 import { Request, RequestStatus } from '@/types';
+import { REQUEST_STATUS_META } from '@/lib/request-status';
 import ProtectedLayout from '@/components/layout/protected-layout';
 
 /** Assigned provider's display name: company name, or the professional's full name. */
@@ -17,52 +18,33 @@ function getProviderName(request: Request): string | null {
 
 export default function ClientDashboardPage() {
   const t = useTranslations('client.dashboard');
+  const tStatus = useTranslations('requestStatus.status');
   const pathname = usePathname();
 
   const { data: requests, isLoading } = useClientRequests();
 
-  const getStatusBadgeColor = (status: RequestStatus) => {
-    switch (status) {
-      case RequestStatus.PENDING:
-        return 'bg-yellow-100 text-yellow-800';
-      case RequestStatus.ACCEPTED:
-        return 'bg-blue-100 text-blue-800';
-      case RequestStatus.IN_PROGRESS:
-        return 'bg-purple-100 text-purple-800';
-      case RequestStatus.DONE:
-        return 'bg-green-100 text-green-800';
-      case RequestStatus.CANCELLED:
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getStatusBadgeColor = (status: RequestStatus) =>
+    REQUEST_STATUS_META[status]?.badgeClass ?? 'bg-gray-100 text-gray-800';
 
-  const getStatusLabel = (status: RequestStatus) => {
-    switch (status) {
-      case RequestStatus.PENDING:
-        return t('status.pending');
-      case RequestStatus.ACCEPTED:
-        return t('status.accepted');
-      case RequestStatus.IN_PROGRESS:
-        return t('status.inProgress');
-      case RequestStatus.DONE:
-        return t('status.done');
-      case RequestStatus.CANCELLED:
-        return t('status.cancelled');
-      default:
-        return status;
-    }
-  };
+  const getStatusLabel = (status: RequestStatus) =>
+    REQUEST_STATUS_META[status] ? tStatus(REQUEST_STATUS_META[status].labelKey) : status;
 
-  const pendingRequests = requests?.filter((r) => r.status === RequestStatus.PENDING) || [];
+  // Interim grouping until the list screens are rebuilt around "whose turn is it" tabs.
+  const pendingRequests =
+    requests?.filter((r) =>
+      [RequestStatus.DRAFT, RequestStatus.PUBLISHED, RequestStatus.SENT].includes(r.status),
+    ) || [];
   const inProgressRequests =
-    requests?.filter(
-      (r) =>
-        r.status === RequestStatus.ACCEPTED || r.status === RequestStatus.IN_PROGRESS
+    requests?.filter((r) =>
+      [
+        RequestStatus.CONTACT_RELEASED,
+        RequestStatus.IN_PROGRESS,
+        RequestStatus.FINISHED,
+        RequestStatus.UNDER_REVIEW,
+      ].includes(r.status),
     ) || [];
   const completedRequests =
-    requests?.filter((r) => r.status === RequestStatus.DONE) || [];
+    requests?.filter((r) => r.status === RequestStatus.CLOSED) || [];
 
   const locale = pathname?.split('/')[1] || 'es';
 

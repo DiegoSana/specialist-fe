@@ -11,6 +11,7 @@ import { RequestInterest } from '@/types';
 import { useAddRequestPhoto, useRemoveRequestPhoto } from '@/hooks/use-completed-work-photos';
 import { useUploadFile } from '@/hooks/use-file-upload';
 import { RequestStatus } from '@/types';
+import { REQUEST_STATUS_META } from '@/lib/request-status';
 import AppLayout from '@/components/layout/app-layout';
 import AuthenticatedImage from '@/components/images/authenticated-image';
 import AuthenticatedVideo from '@/components/videos/authenticated-video';
@@ -22,6 +23,7 @@ import RequestPhotosLightbox from '@/components/requests/request-photos-lightbox
 export default function RequestDetailPage() {
   const t = useTranslations('client.requestDetail');
   const tInterest = useTranslations('client.requestDetail.interests');
+  const tStatus = useTranslations('requestStatus.status');
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -60,39 +62,11 @@ export default function RequestDetailPage() {
     return null;
   }
 
-  const getStatusBadgeColor = (status: RequestStatus) => {
-    switch (status) {
-      case RequestStatus.PENDING:
-        return 'bg-yellow-100 text-yellow-800';
-      case RequestStatus.ACCEPTED:
-        return 'bg-blue-100 text-blue-800';
-      case RequestStatus.IN_PROGRESS:
-        return 'bg-purple-100 text-purple-800';
-      case RequestStatus.DONE:
-        return 'bg-green-100 text-green-800';
-      case RequestStatus.CANCELLED:
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getStatusBadgeColor = (status: RequestStatus) =>
+    REQUEST_STATUS_META[status]?.badgeClass ?? 'bg-gray-100 text-gray-800';
 
-  const getStatusLabel = (status: RequestStatus) => {
-    switch (status) {
-      case RequestStatus.PENDING:
-        return t('status.pending');
-      case RequestStatus.ACCEPTED:
-        return t('status.accepted');
-      case RequestStatus.IN_PROGRESS:
-        return t('status.inProgress');
-      case RequestStatus.DONE:
-        return t('status.done');
-      case RequestStatus.CANCELLED:
-        return t('status.cancelled');
-      default:
-        return status;
-    }
-  };
+  const getStatusLabel = (status: RequestStatus) =>
+    REQUEST_STATUS_META[status] ? tStatus(REQUEST_STATUS_META[status].labelKey) : status;
 
   const handleCancel = async () => {
     if (!request) return;
@@ -142,8 +116,8 @@ export default function RequestDetailPage() {
     );
   }
 
-  const canCancel = request.status !== RequestStatus.DONE && request.status !== RequestStatus.CANCELLED;
-  const canReview = request.status === RequestStatus.DONE && request.professionalId && !existingReview;
+  const canCancel = ([RequestStatus.DRAFT, RequestStatus.PUBLISHED, RequestStatus.SENT] as RequestStatus[]).includes(request.status);
+  const canReview = request.status === RequestStatus.CLOSED && request.professionalId && !existingReview;
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,7 +195,7 @@ export default function RequestDetailPage() {
           />
 
           {/* Review Section - Prominent CTA when request is DONE */}
-          {request.status === RequestStatus.DONE && request.professional && (
+          {request.status === RequestStatus.CLOSED && request.professional && (
             <ReviewCtaCard
               hasExistingReview={!!existingReview}
               existingReview={existingReview ? {
@@ -248,7 +222,7 @@ export default function RequestDetailPage() {
           )}
 
           {/* Show rating received from specialist - only when both have rated */}
-          {request.status === RequestStatus.DONE && 
+          {request.status === RequestStatus.CLOSED && 
            existingReview && 
            request.clientRating && 
            request.professional && (
@@ -328,7 +302,7 @@ export default function RequestDetailPage() {
                             {t('contactWhatsApp')}
                           </a>
                         )}
-                        {(request.status === RequestStatus.ACCEPTED && (request.providerId || request.professionalId)) && (
+                        {(request.status === RequestStatus.CONTACT_RELEASED && (request.providerId || request.professionalId)) && (
                           <button
                             onClick={async () => {
                               if (confirm(t('confirmUnassign'))) {
@@ -352,7 +326,7 @@ export default function RequestDetailPage() {
               )}
 
               {/* Public Request - No provider assigned yet */}
-              {request.isPublic && !request.professionalId && !request.providerId && request.status === RequestStatus.PENDING && (
+              {request.isPublic && !request.professionalId && !request.providerId && request.status === RequestStatus.PUBLISHED && (
                 <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-gray-200 pt-4 md:pt-0 md:pl-4">
                   <div className="text-center">
                     <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
@@ -370,7 +344,7 @@ export default function RequestDetailPage() {
           </div>
 
           {/* Interested Specialists Section - Only for public requests without assigned provider */}
-          {request.isPublic && !request.professionalId && !request.providerId && request.status === RequestStatus.PENDING && (
+          {request.isPublic && !request.professionalId && !request.providerId && request.status === RequestStatus.PUBLISHED && (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">
                 {tInterest('title')}
