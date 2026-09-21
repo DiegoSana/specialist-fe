@@ -138,9 +138,10 @@ export interface Request {
   // Client rating by professional
   clientRating?: number;
   clientRatingComment?: string;
-  // Reason for NOT_COMPLETED / INTERRUPTED (and support/auto-close notes). NOTE: the backend
-  // RequestResponseDto does not return it yet — see the Phase 2 notes in TODO.md.
+  // Reason for NOT_COMPLETED / INTERRUPTED (or a support resolution note).
   statusReason?: string | null;
+  // Specialists currently INTERESTED; only present on the client's list response.
+  interestsCount?: number;
   createdAt: string;
   updatedAt: string;
   professional?: Professional;
@@ -187,6 +188,9 @@ export interface Request {
     lastName: string;
     email: string;
     profilePictureUrl?: string;
+    // Not returned by the API today (specialist-be RequestUserDto); used for "Abrir WhatsApp"
+    // as soon as it is exposed to the assigned provider.
+    phone?: string;
   };
 }
 

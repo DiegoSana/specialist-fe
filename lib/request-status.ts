@@ -296,3 +296,38 @@ export const INTEREST_STATUS_META: Record<
     muted: true,
   },
 };
+
+/** Which "informar" option (if any) the viewer has for this status: a reason-bearing final state. */
+export function getReportOption(
+  status: RequestStatus,
+  role: RequestRole,
+): 'NOT_COMPLETED' | 'INTERRUPTED' | null {
+  // Mirrors specialist-be TRANSITIONS: CONTACT_RELEASED -> NOT_COMPLETED (either side),
+  // IN_PROGRESS -> INTERRUPTED (specialist only).
+  if (status === RequestStatus.CONTACT_RELEASED) return 'NOT_COMPLETED';
+  if (status === RequestStatus.IN_PROGRESS && role === 'provider') {
+    return 'INTERRUPTED';
+  }
+  return null;
+}
+
+export type BucketedRequests<T> = Record<RequestBucket, T[]>;
+
+/** Splits a list into the tab buckets ("yours" / "waiting" / "closed") + the final-states strip. */
+export function bucketRequests<
+  T extends { status: RequestStatus; interestsCount?: number },
+>(requests: T[], role: RequestRole): BucketedRequests<T> {
+  const buckets: BucketedRequests<T> = {
+    yours: [],
+    waiting: [],
+    closed: [],
+    final: [],
+  };
+  for (const request of requests) {
+    const bucket = getRequestBucket(request.status, role, {
+      interestCount: request.interestsCount,
+    });
+    buckets[bucket].push(request);
+  }
+  return buckets;
+}

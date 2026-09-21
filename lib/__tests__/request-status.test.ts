@@ -5,7 +5,9 @@ import {
   TIMELINE_STATUSES,
   getBallOwner,
   getHintKey,
+  bucketRequests,
   getPrimaryAction,
+  getReportOption,
   getRequestBucket,
 } from '../request-status';
 import es from '@/messages/es.json';
@@ -162,5 +164,80 @@ describe('interest status metadata', () => {
     expect(INTEREST_STATUS_META[RequestInterestStatus.NOT_CHOSEN].muted).toBe(true);
     expect(INTEREST_STATUS_META[RequestInterestStatus.WITHDRAWN].muted).toBe(true);
     expect(INTEREST_STATUS_META[RequestInterestStatus.INTERESTED].muted).toBe(false);
+  });
+});
+
+describe('bucketRequests', () => {
+  const req = (status: RequestStatus, interestsCount?: number) => ({ status, interestsCount });
+
+  it('splits a client list into yours / waiting / closed / final', () => {
+    const buckets = bucketRequests(
+      [
+        req(RequestStatus.DRAFT),
+        req(RequestStatus.PUBLISHED, 3),
+        req(RequestStatus.PUBLISHED, 0),
+        req(RequestStatus.SENT),
+        req(RequestStatus.CONTACT_RELEASED),
+        req(RequestStatus.IN_PROGRESS),
+        req(RequestStatus.FINISHED),
+        req(RequestStatus.UNDER_REVIEW),
+        req(RequestStatus.CLOSED),
+        req(RequestStatus.REJECTED),
+        req(RequestStatus.ABANDONED),
+      ],
+      'client',
+    );
+    expect(buckets.yours.map((r) => r.status)).toEqual([
+      RequestStatus.DRAFT,
+      RequestStatus.PUBLISHED,
+      RequestStatus.CONTACT_RELEASED,
+      RequestStatus.FINISHED,
+    ]);
+    expect(buckets.waiting).toHaveLength(4);
+    expect(buckets.closed.map((r) => r.status)).toEqual([RequestStatus.CLOSED]);
+    expect(buckets.final.map((r) => r.status)).toEqual([RequestStatus.REJECTED, RequestStatus.ABANDONED]);
+  });
+
+  it('splits a specialist list the other way around', () => {
+    const buckets = bucketRequests(
+      [
+        req(RequestStatus.SENT),
+        req(RequestStatus.IN_PROGRESS),
+        req(RequestStatus.FINISHED),
+        req(RequestStatus.CLOSED),
+        req(RequestStatus.NO_RESPONSE),
+      ],
+      'provider',
+    );
+    expect(buckets.yours.map((r) => r.status)).toEqual([RequestStatus.SENT, RequestStatus.IN_PROGRESS]);
+    expect(buckets.waiting.map((r) => r.status)).toEqual([RequestStatus.FINISHED]);
+    expect(buckets.closed).toHaveLength(1);
+    expect(buckets.final).toHaveLength(1);
+  });
+
+  it('puts every one of the 15 statuses in exactly one bucket for both roles', () => {
+    const all = Object.values(RequestStatus).map((status) => req(status as RequestStatus));
+    for (const role of ['client', 'provider'] as const) {
+      const buckets = bucketRequests(all, role);
+      const total = buckets.yours.length + buckets.waiting.length + buckets.closed.length + buckets.final.length;
+      expect(total).toBe(15);
+    }
+  });
+});
+
+describe('getReportOption', () => {
+  it('offers NOT_COMPLETED to both roles once contact is released', () => {
+    expect(getReportOption(RequestStatus.CONTACT_RELEASED, 'client')).toBe('NOT_COMPLETED');
+    expect(getReportOption(RequestStatus.CONTACT_RELEASED, 'provider')).toBe('NOT_COMPLETED');
+  });
+
+  it('offers INTERRUPTED only to the specialist while in progress (mirrors the backend transitions)', () => {
+    expect(getReportOption(RequestStatus.IN_PROGRESS, 'provider')).toBe('INTERRUPTED');
+    expect(getReportOption(RequestStatus.IN_PROGRESS, 'client')).toBeNull();
+  });
+
+  it('offers nothing in other statuses', () => {
+    expect(getReportOption(RequestStatus.FINISHED, 'client')).toBeNull();
+    expect(getReportOption(RequestStatus.PUBLISHED, 'provider')).toBeNull();
   });
 });

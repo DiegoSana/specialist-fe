@@ -1,242 +1,89 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useClientRequests } from '@/hooks/use-requests';
-import { Request, RequestStatus } from '@/types';
-import { REQUEST_STATUS_META } from '@/lib/request-status';
+import { bucketRequests } from '@/lib/request-status';
 import ProtectedLayout from '@/components/layout/protected-layout';
-
-/** Assigned provider's display name: company name, or the professional's full name. */
-function getProviderName(request: Request): string | null {
-  if (request.company?.companyName) return request.company.companyName;
-  const user = request.professional?.user;
-  const name = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
-  return name || null;
-}
+import RequestTabs, { RequestTab } from '@/components/requests/request-tabs';
+import RequestListCard from '@/components/requests/request-list-card';
+import FinalRequestsStrip from '@/components/requests/final-requests-strip';
 
 export default function ClientDashboardPage() {
   const t = useTranslations('client.dashboard');
-  const tStatus = useTranslations('requestStatus.status');
+  const tTabs = useTranslations('requestStatus.tabs');
   const pathname = usePathname();
+  const locale = pathname?.split('/')[1] || 'es';
 
   const { data: requests, isLoading } = useClientRequests();
+  const [tab, setTab] = useState<RequestTab>('yours');
 
-  const getStatusBadgeColor = (status: RequestStatus) =>
-    REQUEST_STATUS_META[status]?.badgeClass ?? 'bg-gray-100 text-gray-800';
-
-  const getStatusLabel = (status: RequestStatus) =>
-    REQUEST_STATUS_META[status] ? tStatus(REQUEST_STATUS_META[status].labelKey) : status;
-
-  // Interim grouping until the list screens are rebuilt around "whose turn is it" tabs.
-  const pendingRequests =
-    requests?.filter((r) =>
-      [RequestStatus.DRAFT, RequestStatus.PUBLISHED, RequestStatus.SENT].includes(r.status),
-    ) || [];
-  const inProgressRequests =
-    requests?.filter((r) =>
-      [
-        RequestStatus.CONTACT_RELEASED,
-        RequestStatus.IN_PROGRESS,
-        RequestStatus.FINISHED,
-        RequestStatus.UNDER_REVIEW,
-      ].includes(r.status),
-    ) || [];
-  const completedRequests =
-    requests?.filter((r) => r.status === RequestStatus.CLOSED) || [];
-
-  const locale = pathname?.split('/')[1] || 'es';
+  const buckets = useMemo(() => bucketRequests(requests ?? [], 'client'), [requests]);
+  const counts = {
+    yours: buckets.yours.length,
+    waiting: buckets.waiting.length,
+    closed: buckets.closed.length,
+  };
+  const visible = buckets[tab];
 
   return (
     <ProtectedLayout>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              {t('title')}
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              {t('subtitle')}
-            </p>
+            <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
+            <p className="mt-1 text-sm text-gray-500">{t('subtitle')}</p>
           </div>
           <Link
             href={`/${locale}/client/requests/new`}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700 sm:text-base"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             {t('newRequest')}
           </Link>
         </div>
+
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="flex items-center justify-center py-12">
+            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+          </div>
+        ) : requests && requests.length === 0 ? (
+          <div className="py-12 text-center">
+            <h3 className="mt-2 text-sm font-medium text-gray-800">{t('empty.title')}</h3>
+            <p className="mt-1 text-sm text-gray-500">{t('empty.description')}</p>
+            <div className="mt-6">
+              <Link
+                href={`/${locale}/client/requests/new`}
+                className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+              >
+                {t('newRequest')}
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* Pending Requests */}
-            {pendingRequests.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                  {t('sections.pending')} ({pendingRequests.length})
-                </h2>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {pendingRequests.map((request) => (
-                    <Link
-                      key={request.id}
-                      href={`/${locale}/client/requests/${request.id}`}
-                      className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusLabel(request.status)}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">
-                        {request.title}
-                      </h3>
-                      <p className="text-gray-700 text-sm line-clamp-2 mb-2">
-                        {request.description}
-                      </p>
-                      {getProviderName(request) && (
-                        <p className="text-xs text-gray-500">
-                          {t('with')} {getProviderName(request)}
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-500 mt-2">
-                        {new Date(request.createdAt).toLocaleDateString()}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
+          <div className="space-y-6">
+            <RequestTabs active={tab} counts={counts} onChange={setTab} />
 
-            {/* In Progress Requests */}
-            {inProgressRequests.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                  {t('sections.inProgress')} ({inProgressRequests.length})
-                </h2>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {inProgressRequests.map((request) => (
-                    <Link
-                      key={request.id}
-                      href={`/${locale}/client/requests/${request.id}`}
-                      className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusLabel(request.status)}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">
-                        {request.title}
-                      </h3>
-                      <p className="text-gray-700 text-sm line-clamp-2 mb-2">
-                        {request.description}
-                      </p>
-                      {getProviderName(request) && (
-                        <p className="text-xs text-gray-500">
-                          {t('with')} {getProviderName(request)}
-                        </p>
-                      )}
-                      {request.quoteAmount && (
-                        <p className="text-sm font-semibold text-green-600 mt-2">
-                          ${request.quoteAmount.toLocaleString()}
-                        </p>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Completed Requests */}
-            {completedRequests.length > 0 && (
-              <section>
-                <h2 className="text-xl font-semibold mb-4 text-gray-800">
-                  {t('sections.completed')} ({completedRequests.length})
-                </h2>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {completedRequests.map((request) => (
-                    <Link
-                      key={request.id}
-                      href={`/${locale}/client/requests/${request.id}`}
-                      className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusLabel(request.status)}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1">
-                        {request.title}
-                      </h3>
-                      <p className="text-gray-700 text-sm line-clamp-2 mb-2">
-                        {request.description}
-                      </p>
-                      {getProviderName(request) && (
-                        <p className="text-xs text-gray-500">
-                          {t('with')} {getProviderName(request)}
-                        </p>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Empty State */}
-            {requests?.length === 0 && (
-              <div className="text-center py-12">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-                <h3 className="mt-2 text-sm font-medium text-gray-800">
-                  {t('empty.title')}
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {t('empty.description')}
-                </p>
-                <div className="mt-6">
-                  <Link
-                    href={`/${locale}/client/requests/new`}
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    {t('newRequest')}
-                  </Link>
-                </div>
+            {visible.length === 0 ? (
+              <p className="py-8 text-center text-sm text-gray-500">
+                {t('emptyTab', { tab: tTabs(tab) })}
+              </p>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                {visible.map((request) => (
+                  <RequestListCard key={request.id} request={request} role="client" locale={locale} />
+                ))}
               </div>
             )}
+
+            <FinalRequestsStrip requests={buckets.final} role="client" locale={locale} />
           </div>
         )}
       </div>
     </ProtectedLayout>
   );
 }
-

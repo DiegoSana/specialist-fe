@@ -1,25 +1,34 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { getUser, isAuthenticated } from '@/lib/auth';
-import { useProfessionalRequests, useAvailableRequests } from '@/hooks/use-requests';
+import {
+  useProfessionalRequests,
+  useAvailableRequests,
+  useMyInterestedRequests,
+} from '@/hooks/use-requests';
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
 import { useMyCompanyProfile } from '@/hooks/use-company';
-import { RequestStatus } from '@/types';
-import { REQUEST_STATUS_META } from '@/lib/request-status';
+import { bucketRequests } from '@/lib/request-status';
 import AppLayout from '@/components/layout/app-layout';
+import RequestTabs, { RequestTab } from '@/components/requests/request-tabs';
+import RequestListCard from '@/components/requests/request-list-card';
+import FinalRequestsStrip from '@/components/requests/final-requests-strip';
+import ApplicationsList from '@/components/requests/applications-list';
 
 export default function SpecialistDashboardPage() {
   const t = useTranslations('specialist.dashboard');
-  const tStatus = useTranslations('requestStatus.status');
+  const tTabs = useTranslations('requestStatus.tabs');
   const router = useRouter();
   const pathname = usePathname();
   const user = getUser();
 
   const { data: requests, isLoading } = useProfessionalRequests();
+  const { data: applications } = useMyInterestedRequests();
+  const [tab, setTab] = useState<RequestTab>('yours');
   const { data: professionalProfile, isLoading: loadingProfessional } = useMyProfessionalProfile();
   const { data: companyProfile, isLoading: loadingCompany } = useMyCompanyProfile();
   const profile = professionalProfile ?? companyProfile;
@@ -28,9 +37,7 @@ export default function SpecialistDashboardPage() {
     profile?.city,
     profile?.zone
   );
-  
-  // Get trade IDs from profile for available requests
-  const tradeIds = profile?.trades?.map((t) => t.id) || [];
+
 
   useEffect(() => {
     if (!isAuthenticated() || !user) {
@@ -46,28 +53,16 @@ export default function SpecialistDashboardPage() {
     return null;
   }
 
-  const getStatusBadgeColor = (status: RequestStatus) =>
-    REQUEST_STATUS_META[status]?.badgeClass ?? 'bg-gray-100 text-gray-800';
-
-  const getStatusLabel = (status: RequestStatus) =>
-    REQUEST_STATUS_META[status] ? tStatus(REQUEST_STATUS_META[status].labelKey) : status;
-
-  // Interim grouping until the list screens are rebuilt around "whose turn is it" tabs.
-  const pendingRequests =
-    requests?.filter((r) =>
-      [RequestStatus.DRAFT, RequestStatus.PUBLISHED, RequestStatus.SENT].includes(r.status),
-    ) || [];
-  const inProgressRequests =
-    requests?.filter((r) =>
-      [
-        RequestStatus.CONTACT_RELEASED,
-        RequestStatus.IN_PROGRESS,
-        RequestStatus.FINISHED,
-        RequestStatus.UNDER_REVIEW,
-      ].includes(r.status),
-    ) || [];
-  const completedRequests =
-    requests?.filter((r) => r.status === RequestStatus.CLOSED) || [];
+  const buckets = bucketRequests(requests ?? [], 'provider');
+  const counts = {
+    yours: buckets.yours.length,
+    waiting: buckets.waiting.length,
+    closed: buckets.closed.length,
+  };
+  const visible = buckets[tab];
+  // Requests the specialist was chosen for already show up as regular cards; the rest are "postulaciones".
+  const ownedIds = new Set((requests ?? []).map((r) => r.id));
+  const openApplications = (applications ?? []).filter((a) => !ownedIds.has(a.requestId));
 
   const locale = pathname?.split('/')[1] || 'es';
 
@@ -152,144 +147,26 @@ export default function SpecialistDashboardPage() {
               </div>
             )}
 
-            {/* Pending Requests */}
-            {pendingRequests.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {t('sections.pending')}
-                </h2>
-                <div className="space-y-3">
-                  {pendingRequests.map((request) => (
-                    <Link
-                      key={request.id}
-                      href={`/${locale}/specialist/requests/${request.id}`}
-                      className="block bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500">
-                            {t('requestFrom')}{' '}
-                            {request.client
-                              ? `${request.client.firstName} ${request.client.lastName}`
-                              : request.clientId}
-                          </p>
-                          <p className="text-gray-800 mt-1 line-clamp-2">
-                            {request.description}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-2">
-                            {new Date(request.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusLabel(request.status)}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+            <RequestTabs active={tab} counts={counts} onChange={setTab} />
+
+            {visible.length === 0 ? (
+              <p className="py-6 text-center text-sm text-gray-500">
+                {t('emptyTab', { tab: tTabs(tab) })}
+              </p>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                {visible.map((request) => (
+                  <RequestListCard key={request.id} request={request} role="provider" locale={locale} />
+                ))}
               </div>
             )}
 
-            {/* In Progress Requests */}
-            {inProgressRequests.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {t('sections.inProgress')}
-                </h2>
-                <div className="space-y-3">
-                  {inProgressRequests.map((request) => (
-                    <Link
-                      key={request.id}
-                      href={`/${locale}/specialist/requests/${request.id}`}
-                      className="block bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500">
-                            {t('requestFrom')}{' '}
-                            {request.client
-                              ? `${request.client.firstName} ${request.client.lastName}`
-                              : request.clientId}
-                          </p>
-                          <p className="text-gray-800 mt-1 line-clamp-2">
-                            {request.description}
-                          </p>
-                          {request.quoteAmount && (
-                            <p className="text-sm font-medium text-green-600 mt-2">
-                              {t('quote')}: ${request.quoteAmount}
-                            </p>
-                          )}
-                          <p className="text-xs text-gray-500 mt-2">
-                            {new Date(request.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusLabel(request.status)}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+            <ApplicationsList applications={openApplications} locale={locale} />
 
-            {/* Completed Requests */}
-            {completedRequests.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {t('sections.completed')}
-                </h2>
-                <div className="space-y-3">
-                  {completedRequests.map((request) => (
-                    <Link
-                      key={request.id}
-                      href={`/${locale}/specialist/requests/${request.id}`}
-                      className="block bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500">
-                            {t('requestFrom')}{' '}
-                            {request.client
-                              ? `${request.client.firstName} ${request.client.lastName}`
-                              : request.clientId}
-                          </p>
-                          <p className="text-gray-800 mt-1 line-clamp-2">
-                            {request.description}
-                          </p>
-                          {request.quoteAmount && (
-                            <p className="text-sm font-medium text-green-600 mt-2">
-                              {t('quote')}: ${request.quoteAmount}
-                            </p>
-                          )}
-                          <p className="text-xs text-gray-500 mt-2">
-                            {new Date(request.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusBadgeColor(
-                            request.status
-                          )}`}
-                        >
-                          {getStatusLabel(request.status)}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+            <FinalRequestsStrip requests={buckets.final} role="provider" locale={locale} />
 
             {/* Empty State */}
-            {requests?.length === 0 && (
+            {requests?.length === 0 && openApplications.length === 0 && (
               <div className="text-center py-12">
                 <div className="max-w-md mx-auto">
                   <svg
