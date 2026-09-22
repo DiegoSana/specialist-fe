@@ -17,7 +17,7 @@ const TABS: RequestTab[] = ['yours', 'waiting', 'closed'];
 export default function RequestTabs({ active, counts, onChange }: RequestTabsProps) {
   const t = useTranslations('requestStatus.tabs');
   return (
-    <div role="tablist" className="flex gap-2 overflow-x-auto border-b border-gray-200">
+    <div role="tablist" className="flex gap-2 overflow-x-auto overflow-y-hidden border-b border-gray-200">
       {TABS.map((tab) => {
         const isActive = tab === active;
         return (

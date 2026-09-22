@@ -407,6 +407,7 @@
       },
       "requestFrom": "Solicitud de",
       "new": "Nuevo",
+      "viewAllInJobBoard": "Ver todas en la bolsa de trabajo",
       "empty": {
         "title": "No tienes solicitudes asignadas",
         "description": "Explorá las solicitudes públicas para encontrar trabajos"
