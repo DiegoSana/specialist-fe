@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
 import { useAssignProfessional, useRequestInterests } from '@/hooks/use-requests';
+import { useSearchProviders } from '@/hooks/use-providers';
+import ProviderDetailModal from '@/components/providers/provider-detail-modal';
 
 interface InterestedSpecialistsProps {
   requestId: string;
@@ -15,9 +18,21 @@ interface InterestedSpecialistsProps {
  */
 export default function InterestedSpecialists({ requestId }: InterestedSpecialistsProps) {
   const tInterest = useTranslations('client.requestDetail.interests');
+  const params = useParams();
+  const locale = params.locale as string;
   const { data: interests, isLoading } = useRequestInterests(requestId);
   const assign = useAssignProfessional();
   const [assigningId, setAssigningId] = useState<string | null>(null);
+  const [viewingServiceProviderId, setViewingServiceProviderId] = useState<string | null>(null);
+
+  // Interest rows only carry a name/rating summary (no trades/description/city — see
+  // InterestedProvider in types/index.ts); fetch the public catalog to feed the full profile
+  // popup, only once a row is actually opened.
+  const { data: catalogProviders } = useSearchProviders(
+    {},
+    { enabled: viewingServiceProviderId !== null }
+  );
+  const viewingProvider = catalogProviders?.find((p) => p.serviceProviderId === viewingServiceProviderId);
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-5">
@@ -65,6 +80,14 @@ export default function InterestedSpecialists({ requestId }: InterestedSpecialis
                   <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
                     <button
                       type="button"
+                      data-testid="view-profile-button"
+                      onClick={() => setViewingServiceProviderId(interest.serviceProviderId)}
+                      className="whitespace-nowrap rounded-lg border border-gray-300 px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      {tInterest('viewProfile')}
+                    </button>
+                    <button
+                      type="button"
                       disabled={assign.isPending}
                       onClick={async () => {
                         setAssigningId(interest.serviceProviderId);
@@ -91,6 +114,15 @@ export default function InterestedSpecialists({ requestId }: InterestedSpecialis
           <h4 className="mb-1 text-base font-medium text-gray-800">{tInterest('noInterested')}</h4>
           <p className="mx-auto max-w-sm text-sm text-gray-500">{tInterest('noInterestedDescription')}</p>
         </div>
+      )}
+
+      {viewingProvider && (
+        <ProviderDetailModal
+          provider={viewingProvider}
+          locale={locale}
+          onClose={() => setViewingServiceProviderId(null)}
+          showCreateRequestCta={false}
+        />
       )}
     </div>
   );

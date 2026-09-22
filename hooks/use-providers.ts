@@ -38,7 +38,7 @@ export interface UnifiedProvider {
   };
 }
 
-export function useSearchProviders(params: SearchProvidersParams = {}) {
+export function useSearchProviders(params: SearchProvidersParams = {}, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['providers', 'search', params],
     queryFn: async (): Promise<UnifiedProvider[]> => {
@@ -47,6 +47,7 @@ export function useSearchProviders(params: SearchProvidersParams = {}) {
       });
       return response.data;
     },
+    enabled: options?.enabled ?? true,
   });
 }
 
