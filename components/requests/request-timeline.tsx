@@ -149,11 +149,15 @@ export default function RequestTimeline({
             return (
               <div key={stepStatus} className="flex flex-col items-center relative flex-1">
                 {!isLast && (
+                  // Spans from this step's center to the next step's center: left-1/2 (this
+                  // container's center) + w-full (one more step-width) already lands exactly on
+                  // the next center. An extra translateX(50%) here double-shifted it another
+                  // half-step-width right, overflowing the row (and on the last connector, the
+                  // whole page) on narrow screens - do not re-add it.
                   <div
                     className={`absolute top-5 left-1/2 w-full h-0.5 ${
                       connectorDone ? 'bg-green-500' : 'bg-gray-200'
                     }`}
-                    style={{ transform: 'translateX(50%)' }}
                   />
                 )}
 

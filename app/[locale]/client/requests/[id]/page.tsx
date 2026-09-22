@@ -106,7 +106,10 @@ export default function RequestDetailPage() {
           />
 
           <div className="grid items-start gap-6 lg:grid-cols-3">
-            <div className="space-y-4 lg:col-span-2">
+            {/* min-w-0: grid items default to min-width:auto (their content's min-content size),
+                so without it long-but-wrappable content can still force this column - and the
+                whole page - wider than the viewport on narrow screens. */}
+            <div className="min-w-0 space-y-4 lg:col-span-2">
               <RequestSummaryCard
                 request={request}
                 originTitle={tDetail('requestType')}
@@ -161,7 +164,7 @@ export default function RequestDetailPage() {
               <RequestPhotosSection request={request} canManage={canManagePhotos} namespace="client.requestDetail" />
             </div>
 
-            <div className="space-y-3.5">
+            <div className="min-w-0 space-y-3.5">
               {showActionCard && (
                 <div className="rounded-lg border border-gray-200 bg-white p-4">
                   <RequestPrimaryAction request={request} role="client" locale={locale} variant="detail" />
