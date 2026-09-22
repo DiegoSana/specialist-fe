@@ -316,7 +316,7 @@
       "removeError": "Error al eliminar la imagen",
       "interests": {
         "title": "Especialistas Interesados",
-        "description": "Estos especialistas han mostrado interés en tu solicitud. Contactá por WhatsApp para coordinar detalles y elegí al que mejor te convenga.",
+        "description": "Estos especialistas mostraron interés en tu solicitud. Vas a poder contactarlos por WhatsApp una vez que elijas a uno.",
         "publicRequest": "Solicitud Pública",
         "waitingForInterest": "Esperando especialistas interesados",
         "hasInterests": "Elige un especialista o espera más opciones",

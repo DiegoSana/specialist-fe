@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useAssignProfessional, useRequestInterests } from '@/hooks/use-requests';
-import { whatsappUrl } from '@/lib/request-participants';
 
 interface InterestedSpecialistsProps {
   requestId: string;
 }
 
-/** Client-facing list of INTERESTED specialists on a published request, with "Elegir" (assign). */
+/**
+ * Client-facing list of INTERESTED specialists on a published request, with "Elegir" (assign).
+ * Contact info is intentionally never included here — it's released only once the client
+ * chooses one (status CONTACT_RELEASED), so there's nothing to show before that.
+ */
 export default function InterestedSpecialists({ requestId }: InterestedSpecialistsProps) {
-  const t = useTranslations('client.requestDetail');
   const tInterest = useTranslations('client.requestDetail.interests');
   const { data: interests, isLoading } = useRequestInterests(requestId);
   const assign = useAssignProfessional();
@@ -29,7 +31,6 @@ export default function InterestedSpecialists({ requestId }: InterestedSpecialis
         <div className="space-y-3">
           <p className="mb-2 text-sm text-gray-500">{tInterest('description')}</p>
           {interests.map((interest: any) => {
-            const phone = interest.provider?.whatsapp || interest.provider?.phone;
             return (
               <div
                 key={interest.id}
@@ -62,16 +63,6 @@ export default function InterestedSpecialists({ requestId }: InterestedSpecialis
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
-                    {phone && (
-                      <a
-                        href={whatsappUrl(phone)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="whitespace-nowrap rounded-lg bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700"
-                      >
-                        {t('contactWhatsApp')}
-                      </a>
-                    )}
                     <button
                       type="button"
                       disabled={assign.isPending}

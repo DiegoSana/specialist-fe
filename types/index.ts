@@ -356,7 +356,7 @@ export interface InterestedProvider {
     profileImage?: string;
     averageRating: number;
     totalReviews: number;
-    whatsapp?: string | null;
-    phone?: string | null;
+    // No phone/whatsapp here: contact is only released once the client chooses this
+    // provider (status CONTACT_RELEASED), so the backend never sends it on an interest.
   };
 }
