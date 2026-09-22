@@ -231,9 +231,9 @@ describe('getReportOption', () => {
     expect(getReportOption(RequestStatus.CONTACT_RELEASED, 'provider')).toBe('NOT_COMPLETED');
   });
 
-  it('offers INTERRUPTED only to the specialist while in progress (mirrors the backend transitions)', () => {
+  it('offers INTERRUPTED to both roles while in progress (backend PR #66 allows either side, per handoff-brief.md)', () => {
     expect(getReportOption(RequestStatus.IN_PROGRESS, 'provider')).toBe('INTERRUPTED');
-    expect(getReportOption(RequestStatus.IN_PROGRESS, 'client')).toBeNull();
+    expect(getReportOption(RequestStatus.IN_PROGRESS, 'client')).toBe('INTERRUPTED');
   });
 
   it('offers nothing in other statuses', () => {

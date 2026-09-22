@@ -106,8 +106,13 @@ describe('RequestListCard', () => {
           status: RequestStatus.CONTACT_RELEASED,
           professional: {
             id: 'p1',
-            whatsapp: '+54 9 294 412-3456',
-            user: { id: 'u', firstName: 'Jorge', lastName: 'Fernández', email: 'j@x.com' },
+            user: {
+              id: 'u',
+              firstName: 'Jorge',
+              lastName: 'Fernández',
+              email: 'j@x.com',
+              phone: '+54 9 294 412-3456',
+            },
           } as any,
         })}
         role="client"

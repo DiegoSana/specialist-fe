@@ -117,6 +117,8 @@ export interface Professional {
     lastName: string;
     email: string;
     profilePictureUrl?: string;
+    // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
+    phone?: string;
   };
 }
 
@@ -179,6 +181,8 @@ export interface Request {
       firstName: string;
       lastName: string;
       email: string;
+      // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
+      phone?: string;
     };
   };
   trade?: Trade;
@@ -188,8 +192,7 @@ export interface Request {
     lastName: string;
     email: string;
     profilePictureUrl?: string;
-    // Not returned by the API today (specialist-be RequestUserDto); used for "Abrir WhatsApp"
-    // as soon as it is exposed to the assigned provider.
+    // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
     phone?: string;
   };
 }

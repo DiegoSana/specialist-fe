@@ -300,14 +300,13 @@ export const INTEREST_STATUS_META: Record<
 /** Which "informar" option (if any) the viewer has for this status: a reason-bearing final state. */
 export function getReportOption(
   status: RequestStatus,
-  role: RequestRole,
+  _role: RequestRole,
 ): 'NOT_COMPLETED' | 'INTERRUPTED' | null {
   // Mirrors specialist-be TRANSITIONS: CONTACT_RELEASED -> NOT_COMPLETED (either side),
-  // IN_PROGRESS -> INTERRUPTED (specialist only).
+  // IN_PROGRESS -> INTERRUPTED (either side, per handoff-brief.md item 6 — a deliberate
+  // divergence from the original spec doc, see specialist-be PR #66).
   if (status === RequestStatus.CONTACT_RELEASED) return 'NOT_COMPLETED';
-  if (status === RequestStatus.IN_PROGRESS && role === 'provider') {
-    return 'INTERRUPTED';
-  }
+  if (status === RequestStatus.IN_PROGRESS) return 'INTERRUPTED';
   return null;
 }
 

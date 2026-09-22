@@ -24,12 +24,12 @@ export function getCounterpart(request: Request, role: RequestRole): Counterpart
     let phone: string | null = null;
     if (request.company?.companyName) {
       name = request.company.companyName;
-      phone = request.company.phone ?? null;
+      phone = request.company.user?.phone ?? null;
     } else if (request.professional) {
       const user = request.professional.user;
       const full = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
       name = full || null;
-      phone = request.professional.whatsapp ?? null;
+      phone = user?.phone ?? null;
     }
     return { name, phone, initials: initialsOf(name) };
   }
