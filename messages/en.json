@@ -315,7 +315,8 @@
         "noInterestedDescription": "Specialists working in your area will see your request and can express interest.",
         "assign": "Choose",
         "assigning": "Assigning...",
-        "interestedSince": "Interested since"
+        "interestedSince": "Interested since",
+        "viewProfile": "View profile"
       }
     }
   },
