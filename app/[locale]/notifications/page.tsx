@@ -185,12 +185,18 @@ export default function NotificationsPage() {
                           <div className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center flex-shrink-0`}>
                             <span className="text-2xl">{icon}</span>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <p className={`text-sm ${!notification.readAt ? 'font-semibold text-gray-900' : 'text-gray-800'}`}>
+                          <div className="min-w-0 flex-1">
+                            {/* flex-col below sm: the title and date fought for the same row at
+                                narrow widths (title has no min-w-0, so it wouldn't shrink past
+                                its longest word, forcing the whole row - and the date - to
+                                overflow instead of wrapping); stacking them removes that fight
+                                entirely, matching the pattern already used for name+meta rows in
+                                interested-specialists.tsx. */}
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
+                              <p className={`min-w-0 text-sm ${!notification.readAt ? 'font-semibold text-gray-900' : 'text-gray-800'}`}>
                                 {notification.title}
                               </p>
-                              <span className="text-xs text-gray-400 whitespace-nowrap">
+                              <span className="flex-shrink-0 whitespace-nowrap text-xs text-gray-400">
                                 {formatDate(notification.createdAt)}
                               </span>
                             </div>
