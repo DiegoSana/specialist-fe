@@ -4,11 +4,10 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getUser, isAuthenticated } from '@/lib/auth';
 import { useCreateRequest } from '@/hooks/use-requests';
 import { useTradesWithProfessionals } from '@/hooks/use-professionals';
 import { useSearchProviders, UnifiedProvider } from '@/hooks/use-providers';
-import AppLayout from '@/components/layout/app-layout';
+import ProtectedLayout from '@/components/layout/protected-layout';
 import { Trade } from '@/types';
 
 type RequestType = 'public' | 'direct' | null;
@@ -19,7 +18,6 @@ export default function NewRequestPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const user = getUser();
 
   const [requestType, setRequestType] = useState<RequestType>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -121,12 +119,6 @@ export default function NewRequestPage() {
       p.trades?.some((t) => t.id === selectedTrade.id)
     );
   }, [selectedTrade, allProviders]);
-
-  if (!isAuthenticated() || !user) {
-    const locale = pathname?.split('/')[1] || 'es';
-    router.push(`/${locale}/login`);
-    return null;
-  }
 
   const handleTradeSelect = (trade: Trade) => {
     setSelectedTrade(trade);
@@ -244,11 +236,13 @@ export default function NewRequestPage() {
 
   const locale = pathname?.split('/')[1] || 'es';
 
-  const needsVerificationToCreate =
-    user && (user.emailVerified === false || user.phoneVerified === false);
-
   return (
-    <AppLayout>
+    <ProtectedLayout requireProfile={false}>
+      {(user) => {
+        const needsVerificationToCreate =
+          user && (user.emailVerified === false || user.phoneVerified === false);
+
+        return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Proactive message: need to verify before creating request */}
@@ -738,6 +732,8 @@ export default function NewRequestPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+        );
+      }}
+    </ProtectedLayout>
   );
 }

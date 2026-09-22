@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getUser, isAuthenticated } from '@/lib/auth';
 import {
   useProfessionalRequests,
   useAvailableRequests,
@@ -13,7 +12,7 @@ import {
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
 import { useMyCompanyProfile } from '@/hooks/use-company';
 import { bucketRequests } from '@/lib/request-status';
-import AppLayout from '@/components/layout/app-layout';
+import ProtectedLayout from '@/components/layout/protected-layout';
 import RequestTabs, { RequestTab } from '@/components/requests/request-tabs';
 import RequestListCard from '@/components/requests/request-list-card';
 import FinalRequestsStrip from '@/components/requests/final-requests-strip';
@@ -22,9 +21,8 @@ import ApplicationsList from '@/components/requests/applications-list';
 export default function SpecialistDashboardPage() {
   const t = useTranslations('specialist.dashboard');
   const tTabs = useTranslations('requestStatus.tabs');
-  const router = useRouter();
   const pathname = usePathname();
-  const user = getUser();
+  const locale = pathname?.split('/')[1] || 'es';
 
   const { data: requests, isLoading } = useProfessionalRequests();
   const { data: applications } = useMyInterestedRequests();
@@ -37,21 +35,6 @@ export default function SpecialistDashboardPage() {
     profile?.city,
     profile?.zone
   );
-
-
-  useEffect(() => {
-    if (!isAuthenticated() || !user) {
-      const locale = pathname?.split('/')[1] || 'es';
-      router.push(`/${locale}/login`);
-    } else if (!user.hasProfessionalProfile && !user.hasCompanyProfile) {
-      const locale = pathname?.split('/')[1] || 'es';
-      router.push(`/${locale}/specialist/setup`);
-    }
-  }, [router, user, pathname]);
-
-  if (!user) {
-    return null;
-  }
 
   const buckets = bucketRequests(requests ?? [], 'provider');
   const counts = {
@@ -72,10 +55,8 @@ export default function SpecialistDashboardPage() {
   );
   const visibleAvailableRequests = uninterestedAvailableRequests.slice(0, AVAILABLE_JOBS_LIMIT);
 
-  const locale = pathname?.split('/')[1] || 'es';
-
   return (
-    <AppLayout>
+    <ProtectedLayout requiredProfileType="provider" noProfileRedirectPath={`/${locale}/specialist/setup`}>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <div className="flex justify-between items-start">
@@ -210,7 +191,7 @@ export default function SpecialistDashboardPage() {
           </div>
         )}
       </div>
-    </AppLayout>
+    </ProtectedLayout>
   );
 }
 

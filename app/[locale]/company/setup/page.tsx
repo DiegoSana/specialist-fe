@@ -19,7 +19,11 @@ export default function CompanySetupPage() {
   const t = useTranslations('company.setup');
   const router = useRouter();
   const pathname = usePathname();
-  const user = getUser();
+  // Starts null identically on the server and on the client's hydration pass (getUser() reads
+  // localStorage, unavailable during SSR) - resolving it in an effect instead of synchronously
+  // during render avoids a hydration mismatch. See ProtectedLayout for the shared version of
+  // this pattern; this page renders without the app header, so it doesn't use ProtectedLayout.
+  const [user, setUserState] = useState<ReturnType<typeof getUser>>(null);
 
   // Check if this is edit mode (user already has company profile)
   const isEditMode = user?.hasCompanyProfile || false;
@@ -75,11 +79,17 @@ export default function CompanySetupPage() {
   }, [isEditMode, existingProfile, isInitialized]);
 
   useEffect(() => {
-    if (!isAuthenticated() || !user) {
+    if (!isAuthenticated()) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/login`);
+      return;
     }
-  }, [router, user, pathname]);
+    // Resolve the real user here (rather than a second, separately-scheduled effect) so this
+    // redirect check and the state update settle in the same effect pass - a same-render-order
+    // effect that reads the still-null user state, instead of calling getUser() fresh itself,
+    // would otherwise see the pre-mount null and incorrectly redirect on first mount.
+    setUserState(getUser());
+  }, [router, pathname]);
 
   if (!user) {
     return null;

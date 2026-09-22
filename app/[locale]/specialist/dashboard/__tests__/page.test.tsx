@@ -70,7 +70,7 @@ jest.mock('@/lib/auth', () => ({
   getUser: () => ({ id: 'u', hasProfessionalProfile: true }),
   isAuthenticated: () => true,
 }));
-jest.mock('@/components/layout/app-layout', () => ({
+jest.mock('@/components/layout/protected-layout', () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
