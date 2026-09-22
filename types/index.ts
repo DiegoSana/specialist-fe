@@ -50,12 +50,34 @@ export interface AuthResponse {
 }
 
 // Request types
+// Mirrors specialist-be `RequestStatus` (prisma enum). Main path: DRAFT -> PUBLISHED (bolsa) |
+// SENT (directo) -> CONTACT_RELEASED -> IN_PROGRESS -> FINISHED -> CLOSED, with UNDER_REVIEW as a
+// support-handled detour from FINISHED. Terminal alternates: EXPIRED, NO_RESPONSE, REJECTED,
+// CANCELLED, NOT_COMPLETED, INTERRUPTED, ABANDONED. Presentation lives in lib/request-status.ts.
 export enum RequestStatus {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
+  DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
+  SENT = 'SENT',
+  CONTACT_RELEASED = 'CONTACT_RELEASED',
   IN_PROGRESS = 'IN_PROGRESS',
-  DONE = 'DONE',
+  FINISHED = 'FINISHED',
+  CLOSED = 'CLOSED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  EXPIRED = 'EXPIRED',
+  NO_RESPONSE = 'NO_RESPONSE',
+  REJECTED = 'REJECTED',
   CANCELLED = 'CANCELLED',
+  NOT_COMPLETED = 'NOT_COMPLETED',
+  INTERRUPTED = 'INTERRUPTED',
+  ABANDONED = 'ABANDONED',
+}
+
+// Per-specialist state on a public ("bolsa") request; mirrors specialist-be `RequestInterestStatus`.
+export enum RequestInterestStatus {
+  INTERESTED = 'INTERESTED',
+  CHOSEN = 'CHOSEN',
+  NOT_CHOSEN = 'NOT_CHOSEN',
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export interface Trade {
@@ -95,6 +117,8 @@ export interface Professional {
     lastName: string;
     email: string;
     profilePictureUrl?: string;
+    // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
+    phone?: string;
   };
 }
 
@@ -116,6 +140,10 @@ export interface Request {
   // Client rating by professional
   clientRating?: number;
   clientRatingComment?: string;
+  // Reason for NOT_COMPLETED / INTERRUPTED (or a support resolution note).
+  statusReason?: string | null;
+  // Specialists currently INTERESTED; only present on the client's list response.
+  interestsCount?: number;
   createdAt: string;
   updatedAt: string;
   professional?: Professional;
@@ -153,6 +181,8 @@ export interface Request {
       firstName: string;
       lastName: string;
       email: string;
+      // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
+      phone?: string;
     };
   };
   trade?: Trade;
@@ -162,6 +192,8 @@ export interface Request {
     lastName: string;
     email: string;
     profilePictureUrl?: string;
+    // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
+    phone?: string;
   };
 }
 
@@ -181,11 +213,29 @@ export interface UpdateRequestDto {
   status?: RequestStatus;
   quoteAmount?: number;
   quoteNotes?: string;
+  /** Reason for NOT_COMPLETED / INTERRUPTED (max 500 chars). */
+  statusReason?: string;
 }
 
 // Request Interest types (for public requests)
 // RequestInterest is now an alias for InterestedProvider to maintain backward compatibility
 export interface RequestInterest extends InterestedProvider {}
+
+// Item of GET /requests/interested: a public request where the current specialist showed interest.
+export interface InterestedRequest {
+  interestId: string;
+  interestCreatedAt: string;
+  interestStatus: RequestInterestStatus;
+  interestMessage: string | null;
+  requestId: string;
+  title: string;
+  description: string;
+  status: RequestStatus;
+  requestCreatedAt: string;
+  assignedToOther: boolean;
+  assignedToMe: boolean;
+  fullRequest?: Request;
+}
 
 export interface ExpressInterestDto {
   message?: string;
@@ -296,6 +346,8 @@ export interface InterestedProvider {
   /** @deprecated Use serviceProviderId */
   professionalId: string;
   message?: string;
+  /** INTERESTED / CHOSEN / NOT_CHOSEN / WITHDRAWN (client-facing list excludes WITHDRAWN). */
+  status?: RequestInterestStatus;
   createdAt: string;
   provider?: {
     id: string;
@@ -304,7 +356,7 @@ export interface InterestedProvider {
     profileImage?: string;
     averageRating: number;
     totalReviews: number;
-    whatsapp?: string | null;
-    phone?: string | null;
+    // No phone/whatsapp here: contact is only released once the client chooses this
+    // provider (status CONTACT_RELEASED), so the backend never sends it on an interest.
   };
 }

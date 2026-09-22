@@ -88,7 +88,7 @@ export const createMockRequest = (overrides = {}) => ({
   address: 'Test Address 123',
   availability: 'Monday to Friday',
   photos: [],
-  status: 'PENDING',
+  status: 'PUBLISHED',
   quoteAmount: null,
   quoteNotes: null,
   createdAt: '2024-01-01T00:00:00.000Z',

@@ -116,7 +116,7 @@
       "lastName": "Apellido",
       "email": "Correo electrónico",
       "phone": "Teléfono",
-      "phoneRequired": "(requerido)",
+      "phoneRequired": "El teléfono es requerido",
       "password": "Contraseña",
       "confirmPassword": "Confirmar contraseña",
       "createAccount": "Crear cuenta",
@@ -132,7 +132,6 @@
       "passwordsNotMatch": "Las contraseñas no coinciden",
       "firstNameRequired": "El nombre es requerido",
       "lastNameRequired": "El apellido es requerido",
-      "phoneRequired": "El teléfono es requerido",
       "phoneInvalid": "El número de teléfono no es válido",
       "error": "Ocurrió un error. Por favor intenta de nuevo."
     }
@@ -173,10 +172,11 @@
       "empty": {
         "title": "No tienes solicitudes",
         "description": "Comienza creando tu primera solicitud"
-      }
+      },
+      "emptyTab": "No hay solicitudes en «{tab}»"
     },
     "newRequest": {
-      "title": "Crear Solicitud",
+      "title": "Título",
       "subtitle": "Elige cómo quieres publicar tu solicitud",
       "back": "Volver",
       "requestTypeTitle": "¿Cómo quieres crear tu solicitud?",
@@ -211,7 +211,6 @@
       "requestDetails": "Detalles de la solicitud",
       "selectTrade": "Selecciona el tipo de oficio",
       "selectSpecialist": "Selecciona un especialista",
-      "title": "Título",
       "titlePlaceholder": "Ej: Reparación de cañería en baño",
       "description": "Descripción",
       "descriptionPlaceholder": "Describe el trabajo que necesitas realizar...",
@@ -296,12 +295,6 @@
       "unassign": "Desasignar",
       "unassigning": "Desasignando...",
       "confirmUnassign": "¿Estás seguro de que deseas desasignar al especialista? La solicitud volverá a estar pendiente y será pública nuevamente.",
-      "quote": "Presupuesto",
-      "amount": "Monto",
-      "notes": "Notas",
-      "messages": "Mensajes",
-      "messagesNote": "Funcionalidad de mensajería próximamente",
-      "acceptQuote": "Aceptar presupuesto",
       "cancel": "Cancelar",
       "confirmCancel": "Confirmar cancelación",
       "no": "No",
@@ -323,7 +316,7 @@
       "removeError": "Error al eliminar la imagen",
       "interests": {
         "title": "Especialistas Interesados",
-        "description": "Estos especialistas han mostrado interés en tu solicitud. Contactá por WhatsApp para coordinar detalles y elegí al que mejor te convenga.",
+        "description": "Estos especialistas mostraron interés en tu solicitud. Vas a poder contactarlos por WhatsApp una vez que elijas a uno.",
         "publicRequest": "Solicitud Pública",
         "waitingForInterest": "Esperando especialistas interesados",
         "hasInterests": "Elige un especialista o espera más opciones",
@@ -412,12 +405,12 @@
         "rejected": "Rechazado"
       },
       "requestFrom": "Solicitud de",
-      "quote": "Presupuesto",
       "new": "Nuevo",
       "empty": {
         "title": "No tienes solicitudes asignadas",
         "description": "Explorá las solicitudes públicas para encontrar trabajos"
-      }
+      },
+      "emptyTab": "No hay solicitudes en «{tab}»"
     },
     "requestDetail": {
       "title": "Detalle de Solicitud",
@@ -432,17 +425,7 @@
       "address": "Dirección",
       "availability": "Disponibilidad",
       "photos": "Fotos",
-      "quoteSent": "Presupuesto enviado",
-      "sendQuote": "Enviar Presupuesto",
       "sending": "Enviando...",
-      "amount": "Monto",
-      "notes": "Notas",
-      "notesPlaceholder": "Detalles adicionales del presupuesto, tiempo estimado, etc.",
-      "actions": "Acciones",
-      "markInProgress": "Marcar como En Progreso",
-      "markCompleted": "Marcar como Completado",
-      "updating": "Actualizando...",
-      "completedMessage": "¡Trabajo completado! El cliente podrá calificar tu trabajo.",
       "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el cliente pueden agregar fotos.",
       "addPhoto": "Agregar foto/video",
       "removePhoto": "Eliminar",
@@ -450,10 +433,6 @@
       "uploadError": "Error al subir la imagen",
       "removeError": "Error al eliminar la imagen",
       "cancel": "Cancelar",
-      "directRequestReceived": "¡Tienes una solicitud directa!",
-      "directRequestDescription": "El cliente te ha elegido específicamente. Acepta la solicitud para comenzar a trabajar.",
-      "acceptRequest": "Aceptar Solicitud",
-      "accepting": "Aceptando...",
       "interestedInJob": "¿Te interesa este trabajo?",
       "interestedDescription": "Muestra tu interés al cliente y podrás contactarlo si te elige",
       "expressInterest": "Me interesa",
@@ -543,7 +522,13 @@
     "viewDetails": "Ver Detalles",
     "createRequest": "Solicitar",
     "contact": "Contactar",
-    "reviews": "reseñas",
+    "reviews": {
+      "loginRequired": {
+        "title": "Inicia sesión para ver las reseñas",
+        "description": "Las reseñas están disponibles solo para usuarios registrados",
+        "button": "Iniciar sesión"
+      }
+    },
     "noSpecialists": "No se encontraron especialistas",
     "details": {
       "info": "Información",
@@ -562,13 +547,6 @@
       "title": "¿Querés contactar a este especialista?",
       "description": "Para ver los datos de contacto del especialista, primero necesitás crear una solicitud describiendo el trabajo que necesitás.",
       "createRequest": "Crear Solicitud"
-    },
-    "reviews": {
-      "loginRequired": {
-        "title": "Inicia sesión para ver las reseñas",
-        "description": "Las reseñas están disponibles solo para usuarios registrados",
-        "button": "Iniciar sesión"
-      }
     }
   },
   "navigation": {
@@ -759,22 +737,186 @@
       "button": "Crear cuenta gratis"
     }
   },
+  "requestStatus": {
+    "status": {
+      "DRAFT": "Borrador",
+      "PUBLISHED": "Publicado en la bolsa",
+      "SENT": "Enviado",
+      "CONTACT_RELEASED": "Contacto liberado",
+      "IN_PROGRESS": "En curso",
+      "FINISHED": "Terminado",
+      "CLOSED": "Cerrado",
+      "UNDER_REVIEW": "En revisión",
+      "EXPIRED": "Vencido",
+      "NO_RESPONSE": "Sin respuesta",
+      "REJECTED": "Rechazado",
+      "CANCELLED": "Cancelado",
+      "NOT_COMPLETED": "No se concretó",
+      "INTERRUPTED": "Interrumpido",
+      "ABANDONED": "Abandonado"
+    },
+    "interest": {
+      "INTERESTED": "Interesado",
+      "CHOSEN": "Elegido",
+      "NOT_CHOSEN": "No elegido",
+      "WITHDRAWN": "Retirado"
+    },
+    "tabs": {
+      "yours": "Te toca a vos",
+      "waiting": "Esperando a la otra parte",
+      "closed": "Cerrados",
+      "final": "Finalizados sin acuerdo"
+    },
+    "finalStrip": {
+      "title": "Finalizados sin acuerdo ({count})",
+      "show": "mostrar",
+      "hide": "ocultar"
+    },
+    "interestedCount": "{count, plural, one {# especialista interesado} other {# especialistas interesados}}",
+    "applications": {
+      "title": "Tus postulaciones en la bolsa"
+    },
+    "actions": {
+      "continueDraft": "Continuar",
+      "viewInterests": "Ver interesados y elegir",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "openWhatsapp": "Abrir WhatsApp",
+      "markFinished": "Marcar como terminado",
+      "confirm": "Confirmar",
+      "object": "Objetar",
+      "rate": "Calificar",
+      "republish": "Volver a publicar",
+      "reportProblem": "¿Algo salió mal? Informar que no se concretó o se interrumpió",
+      "reasonLabel": "Motivo",
+      "startWork": "Ya nos pusimos de acuerdo: empezar el trabajo",
+      "viewDetail": "Ver pedido"
+    },
+    "hints": {
+      "client": {
+        "DRAFT": "Te toca a vos — completá y publicá",
+        "PUBLISHED": "Te toca a vos — elegí uno",
+        "PUBLISHED_NO_INTERESTS": "Esperando a la otra parte — todavía no hay interesados",
+        "SENT": "Esperando a la otra parte — el especialista tiene que responder",
+        "CONTACT_RELEASED": "Te toca a vos — coordiná por WhatsApp",
+        "IN_PROGRESS": "Esperando a la otra parte — el especialista está trabajando en esto",
+        "FINISHED": "Te toca a vos — confirmá que se completó",
+        "CLOSED": "Cerrado — dejá tu calificación",
+        "UNDER_REVIEW": "Esperando a la otra parte — soporte está revisando tu objeción",
+        "EXPIRED": "Nadie eligió a un interesado a tiempo",
+        "NO_RESPONSE": "El especialista no respondió",
+        "REJECTED": "El especialista rechazó la solicitud",
+        "CANCELLED": "Cancelaste esta solicitud",
+        "NOT_COMPLETED": "No se llegó a un acuerdo",
+        "INTERRUPTED": "El trabajo se interrumpió",
+        "ABANDONED": "Nadie respondió a los seguimientos"
+      },
+      "provider": {
+        "DRAFT": "Borrador del cliente",
+        "PUBLISHED": "Esperando a la otra parte — el cliente tiene que elegir",
+        "SENT": "Te toca a vos — respondé",
+        "CONTACT_RELEASED": "Te toca a vos — coordiná por WhatsApp",
+        "IN_PROGRESS": "Te toca a vos — marcá cuando termines",
+        "FINISHED": "Esperando a la otra parte — el cliente tiene que confirmar",
+        "CLOSED": "Cerrado — calificá al cliente",
+        "UNDER_REVIEW": "Esperando a la otra parte — soporte está revisando",
+        "EXPIRED": "La solicitud venció",
+        "NO_RESPONSE": "No respondiste a tiempo",
+        "REJECTED": "Rechazaste la solicitud",
+        "CANCELLED": "El cliente canceló la solicitud",
+        "NOT_COMPLETED": "No se llegó a un acuerdo",
+        "INTERRUPTED": "El trabajo se interrumpió",
+        "ABANDONED": "Nadie respondió a los seguimientos"
+      }
+    },
+    "card": {
+      "with": "Con",
+      "requestFrom": "Solicitud de"
+    },
+    "dialog": {
+      "reasonLabel": "Motivo (opcional)",
+      "reasonPlaceholder": "Contanos brevemente qué pasó",
+      "cancel": "Cancelar",
+      "send": "Enviar",
+      "objectTitle": "Objetar el trabajo",
+      "objectDescription": "Vamos a pasar el pedido a revisión de soporte. Contanos qué salió mal."
+    },
+    "report": {
+      "notCompleted": {
+        "link": "¿Algo salió mal? Informar que no se concretó",
+        "title": "Informar que no se concretó",
+        "description": "Se cierra el pedido sin acuerdo. Podés dejar el motivo."
+      },
+      "interrupted": {
+        "link": "¿Algo salió mal? Informar que se interrumpió",
+        "title": "Informar que se interrumpió",
+        "description": "El trabajo empezó pero no se terminó. Podés dejar el motivo."
+      }
+    },
+    "contact": {
+      "title": "Contacto",
+      "noPhone": "Todavía no tenemos un teléfono para mostrarte. Coordiná por los datos del perfil."
+    },
+    "detail": {
+      "backClient": "Volver a Mis Solicitudes",
+      "backSpecialist": "Volver a Mis Trabajos",
+      "createdOn": "Creado el {date}",
+      "receivedOn": "Recibido el {date}",
+      "description": "Descripción",
+      "trade": "Oficio",
+      "address": "Dirección",
+      "availability": "Disponibilidad",
+      "requestType": "Tipo de pedido",
+      "typePublic": "Publicado en la bolsa",
+      "typeDirect": "Directo a un especialista",
+      "howItArrived": "Cómo llegó",
+      "originDirect": "Solicitud directa de {name}",
+      "originPublic": "Bolsa de trabajo",
+      "notes": {
+        "client": {
+          "FINISHED": "El especialista terminó el trabajo. Confirmá si quedaste conforme para cerrar el pedido y calificar.",
+          "CONTACT_RELEASED": "Coordiná los detalles por WhatsApp. Cuando se pongan de acuerdo, avisá acá para empezar.",
+          "IN_PROGRESS": "{name} está trabajando en tu pedido. Te va a avisar por WhatsApp cuando lo termine, y vas a poder confirmarlo acá.",
+          "UNDER_REVIEW": "Soporte está revisando tu objeción. Te vamos a avisar cuando esté resuelto."
+        },
+        "provider": {
+          "SENT": "Podés aceptar o rechazar. Al aceptar se liberan los datos de contacto.",
+          "IN_PROGRESS": "Esto le va a pedir a {name} que confirme que el trabajo quedó bien.",
+          "FINISHED": "Esperando la conformidad del cliente. Te avisamos cuando responda.",
+          "CONTACT_RELEASED": "Coordiná los detalles por WhatsApp. Cuando se pongan de acuerdo, avisá acá para empezar.",
+          "UNDER_REVIEW": "Soporte está revisando el pedido."
+        }
+      }
+    }
+  },
   "components": {
     "timeline": {
       "title": "Progreso de la solicitud",
       "updated": "Actualizado",
-      "pending": "Pendiente",
-      "accepted": "Aceptado",
-      "inProgress": "En progreso",
-      "done": "Completado",
-      "cancelled": "Cancelada",
-      "cancelledDescription": "Esta solicitud fue cancelada",
+      "reason": "Motivo",
+      "steps": {
+        "contactReleased": "Contacto liberado",
+        "inProgress": "En curso",
+        "finished": "Terminado",
+        "closed": "Cerrado"
+      },
       "descriptions": {
-        "pending": "Esperando respuesta del especialista",
-        "pendingWithInterests": "Elige un especialista de los interesados o espera más opciones",
-        "accepted": "El especialista aceptó la solicitud. Preparando para comenzar",
-        "in_progress": "El especialista está trabajando en tu solicitud",
-        "done": "¡Trabajo completado! No olvides dejar una reseña"
+        "DRAFT": "Todavía no publicaste esta solicitud",
+        "PUBLISHED": "Esperando que se interesen especialistas",
+        "pendingWithInterests": "Elegí un especialista de los interesados o esperá más opciones",
+        "SENT": "Esperando respuesta del especialista",
+        "CONTACT_RELEASED": "Ya podés hablar por WhatsApp y ponerse de acuerdo",
+        "IN_PROGRESS": "El especialista está trabajando en tu solicitud",
+        "FINISHED": "El especialista terminó. Falta la conformidad del cliente",
+        "CLOSED": "¡Pedido cerrado! Ya se puede dejar una calificación",
+        "UNDER_REVIEW": "Soporte está revisando el pedido",
+        "EXPIRED": "Nadie eligió a un interesado a tiempo",
+        "NO_RESPONSE": "El especialista no respondió a tiempo",
+        "REJECTED": "El especialista rechazó la solicitud",
+        "CANCELLED": "Esta solicitud fue cancelada",
+        "NOT_COMPLETED": "Hablaron pero no llegaron a un acuerdo",
+        "INTERRUPTED": "El trabajo empezó pero no se terminó",
+        "ABANDONED": "Nadie respondió a los seguimientos"
       }
     },
     "receivedRating": {

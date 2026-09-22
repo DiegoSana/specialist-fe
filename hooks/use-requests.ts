@@ -2,7 +2,15 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
-import { Request, CreateRequestDto, UpdateRequestDto, RequestInterest, ExpressInterestDto } from '@/types';
+import {
+  Request,
+  CreateRequestDto,
+  UpdateRequestDto,
+  RequestInterest,
+  InterestedRequest,
+  ExpressInterestDto,
+  RequestStatus,
+} from '@/types';
 
 export function useClientRequests() {
   return useQuery({
@@ -89,21 +97,6 @@ export function useUpdateRequest() {
   });
 }
 
-export function useAcceptQuote() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (id: string): Promise<Request> => {
-      const response = await apiClient.post<Request>(`/requests/${id}/accept`);
-      return response.data;
-    },
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['requests'] });
-      queryClient.invalidateQueries({ queryKey: ['request', id] });
-    },
-  });
-}
-
 export function useUpdateRequestByClient() {
   const queryClient = useQueryClient();
 
@@ -124,6 +117,126 @@ export function useUpdateRequestByClient() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['requests'] });
       queryClient.invalidateQueries({ queryKey: ['request', variables.id] });
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// State-machine transitions. Every one is PATCH /requests/:id with the target status; the backend
+// (RequestEntity.canChangeStatusBy) is the authority on who may make each move, so the UI just
+// offers the action the status metadata says is primary for the viewer.
+// ---------------------------------------------------------------------------
+
+function useRequestTransition(
+  toStatus: RequestStatus,
+  extra?: (arg: { reason?: string }) => Partial<UpdateRequestDto>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      reason,
+    }: {
+      id: string;
+      reason?: string;
+    }): Promise<Request> => {
+      const response = await apiClient.patch<Request>(`/requests/${id}`, {
+        status: toStatus,
+        ...(extra ? extra({ reason }) : {}),
+      });
+      return response.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+      queryClient.invalidateQueries({ queryKey: ['request', variables.id] });
+    },
+  });
+}
+
+const withReason = ({ reason }: { reason?: string }): Partial<UpdateRequestDto> =>
+  reason ? { statusReason: reason.slice(0, 500) } : {};
+
+/** Specialist accepts a direct request: SENT -> CONTACT_RELEASED. */
+export const useAcceptRequest = () =>
+  useRequestTransition(RequestStatus.CONTACT_RELEASED);
+
+/** Specialist rejects a direct request: SENT -> REJECTED. */
+export const useRejectRequest = () =>
+  useRequestTransition(RequestStatus.REJECTED);
+
+/** Either party confirms an agreement was reached: CONTACT_RELEASED -> IN_PROGRESS. */
+export const useStartRequest = () =>
+  useRequestTransition(RequestStatus.IN_PROGRESS);
+
+/** Specialist marks the work done: IN_PROGRESS -> FINISHED. */
+export const useMarkRequestFinished = () =>
+  useRequestTransition(RequestStatus.FINISHED);
+
+/** Client confirms the work: FINISHED -> CLOSED (enables ratings). */
+export const useConfirmRequest = () =>
+  useRequestTransition(RequestStatus.CLOSED);
+
+/** Client objects to the work: FINISHED -> UNDER_REVIEW (handled by support). */
+export const useObjectRequest = () =>
+  useRequestTransition(RequestStatus.UNDER_REVIEW, withReason);
+
+/** Client cancels before contact is released: PUBLISHED | SENT -> CANCELLED. */
+export const useCancelRequest = () =>
+  useRequestTransition(RequestStatus.CANCELLED);
+
+/** Either party: CONTACT_RELEASED -> NOT_COMPLETED, with an optional reason (max 500 chars). */
+export const useReportNotCompleted = () =>
+  useRequestTransition(RequestStatus.NOT_COMPLETED, withReason);
+
+/** Specialist: IN_PROGRESS -> INTERRUPTED, with an optional reason (max 500 chars). */
+export const useReportInterrupted = () =>
+  useRequestTransition(RequestStatus.INTERRUPTED, withReason);
+
+/**
+ * "Volver a publicar": creates a NEW request copying the original's data (the original stays as
+ * history). There is no backend republish endpoint, so this is a plain POST /requests. A public
+ * request needs tradeId; a direct one needs the provider id — the caller passes the target
+ * (`providerTarget`) since Request only carries the ServiceProvider id, not the profile id.
+ */
+export function useRepublishRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      original,
+      isPublic,
+      providerTarget,
+    }: {
+      original: Request;
+      isPublic: boolean;
+      providerTarget?: { professionalId?: string; companyId?: string };
+    }): Promise<Request> => {
+      const dto: CreateRequestDto = {
+        title: original.title,
+        description: original.description,
+        address: original.address,
+        availability: original.availability,
+        photos: original.photos,
+        isPublic,
+        ...(isPublic ? { tradeId: original.tradeId } : providerTarget ?? {}),
+      };
+      const response = await apiClient.post<Request>('/requests', dto);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['requests'] });
+    },
+  });
+}
+
+/** Public requests where the current specialist showed interest, with their own interest status. */
+export function useMyInterestedRequests() {
+  return useQuery({
+    queryKey: ['requests', 'interested'],
+    queryFn: async (): Promise<InterestedRequest[]> => {
+      const response = await apiClient.get<InterestedRequest[]>('/requests/interested');
+      return response.data;
     },
   });
 }
