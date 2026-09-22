@@ -7,6 +7,27 @@ import Link from 'next/link';
 import { useLogin } from '@/hooks/use-auth';
 import { isAuthenticated, getUser } from '@/lib/auth';
 
+// Dev-only helper: every seeded user from specialist-be/prisma/seed.ts, all sharing
+// password 'Test1234!'. Keep in sync by hand if seed.ts adds/removes users.
+const DEV_SEED_USERS: { email: string; label: string; group: string }[] = [
+  { email: 'cliente1@test.com', label: 'Juan Pérez', group: '🔍 Clientes' },
+  { email: 'cliente2@test.com', label: 'María García', group: '🔍 Clientes' },
+  { email: 'cliente3@test.com', label: 'Ana Martínez', group: '🔍 Clientes' },
+  { email: 'cliente4@test.com', label: 'Carlos López', group: '🔍 Clientes' },
+  { email: 'electricista@test.com', label: 'Roberto Sánchez - Electricista ⭐4.8', group: '👤 Especialistas' },
+  { email: 'plomero@test.com', label: 'Miguel Torres - Plomero ⭐4.5', group: '👤 Especialistas' },
+  { email: 'gasista@test.com', label: 'Pedro Fernández - Gasista ⭐4.9', group: '👤 Especialistas' },
+  { email: 'carpintero@test.com', label: 'Diego Ruiz - Carpintero ⭐5.0', group: '👤 Especialistas' },
+  { email: 'pintor@test.com', label: 'Lucas Moreno - Pintor (pendiente de verificación)', group: '👤 Especialistas' },
+  { email: 'multioficio@test.com', label: 'Fernando Gómez - Electricista y plomero ⭐4.7', group: '👤 Especialistas' },
+  { email: 'constructora@test.com', label: 'Constructora del Sur SRL ⭐4.9', group: '🏢 Empresas' },
+  { email: 'serviciostech@test.com', label: 'Servicios Técnicos Patagonia ⭐4.6', group: '🏢 Empresas' },
+  { email: 'pinturasnorte@test.com', label: 'Pinturas del Norte ⭐4.4', group: '🏢 Empresas' },
+  { email: 'empresapendiente@test.com', label: 'Remodelaciones Express (pendiente de verificación)', group: '🏢 Empresas' },
+  { email: 'admin@specialist.com', label: 'Administrador', group: '⚙️ Admin' },
+];
+const DEV_SEED_PASSWORD = 'Test1234!';
+
 export default function LoginPage() {
   const t = useTranslations('auth.login');
   const router = useRouter();
@@ -253,7 +274,38 @@ export default function LoginPage() {
             <span className="text-amber-600 text-lg">🧪</span>
             <h3 className="font-semibold text-amber-800">Versión Beta - Cuentas de prueba</h3>
           </div>
-          
+
+          <div className="mb-4">
+            <label htmlFor="dev-user-select" className="block text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1.5">
+              Elegir cualquier usuario de prueba
+            </label>
+            <select
+              id="dev-user-select"
+              defaultValue=""
+              onChange={(e) => {
+                if (e.target.value) {
+                  setEmail(e.target.value);
+                  setPassword(DEV_SEED_PASSWORD);
+                }
+                e.target.value = '';
+              }}
+              className="w-full p-2 rounded-lg bg-white border border-amber-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            >
+              <option value="" disabled>
+                Seleccioná una cuenta ({DEV_SEED_USERS.length} disponibles)
+              </option>
+              {Array.from(new Set(DEV_SEED_USERS.map((u) => u.group))).map((group) => (
+                <optgroup key={group} label={group}>
+                  {DEV_SEED_USERS.filter((u) => u.group === group).map((u) => (
+                    <option key={u.email} value={u.email}>
+                      {u.email} — {u.label}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Specialists */}
             <div>
@@ -261,7 +313,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => { setEmail('electricista@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('electricista@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">electricista@test.com</p>
@@ -269,7 +321,7 @@ export default function LoginPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setEmail('plomero@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('plomero@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">plomero@test.com</p>
@@ -277,7 +329,7 @@ export default function LoginPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setEmail('carpintero@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('carpintero@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">carpintero@test.com</p>
@@ -292,7 +344,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => { setEmail('constructora@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('constructora@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">constructora@test.com</p>
@@ -300,7 +352,7 @@ export default function LoginPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setEmail('serviciostech@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('serviciostech@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">serviciostech@test.com</p>
@@ -315,7 +367,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => { setEmail('cliente1@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('cliente1@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">cliente1@test.com</p>
@@ -323,7 +375,7 @@ export default function LoginPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setEmail('cliente2@test.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('cliente2@test.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">cliente2@test.com</p>
@@ -338,7 +390,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => { setEmail('admin@specialist.com'); setPassword('Test1234!'); }}
+                  onClick={() => { setEmail('admin@specialist.com'); setPassword(DEV_SEED_PASSWORD); }}
                   className="w-full text-left p-2 rounded-lg bg-white border border-amber-200 hover:border-amber-400 transition-colors"
                 >
                   <p className="text-xs font-medium text-gray-700">admin@specialist.com</p>
