@@ -379,7 +379,8 @@ export default function NewRequestPage() {
                   <button
                     key={trade.id}
                     onClick={() => handleTradeSelect(trade)}
-                    className="bg-gray-50 rounded-xl p-4 hover:bg-blue-50 hover:border-blue-300 border-2 border-transparent transition-all text-left"
+                    // min-w-0: same CSS Grid min-width:auto footgun as the provider list below.
+                    className="min-w-0 bg-gray-50 rounded-xl p-4 hover:bg-blue-50 hover:border-blue-300 border-2 border-transparent transition-all text-left"
                   >
                     <h3 className="font-semibold text-gray-800">{trade.name}</h3>
                     {trade.description && (
@@ -439,9 +440,9 @@ export default function NewRequestPage() {
                                 </svg>
                               )}
                             </div>
-                            <div className="flex-1">
+                            <div className="min-w-0 flex-1">
                               <div className="flex items-center gap-2">
-                                <div className="font-medium text-gray-800">
+                                <div className="truncate font-medium text-gray-800">
                                   {provider.displayName}
                                 </div>
                                 {provider.type === 'COMPANY' && (
@@ -450,7 +451,7 @@ export default function NewRequestPage() {
                                   </span>
                                 )}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="truncate text-sm text-gray-500">
                                 {provider.trades?.map((t) => t.name).join(', ')}
                               </div>
                             </div>
@@ -475,7 +476,10 @@ export default function NewRequestPage() {
                   <button
                     key={provider.id}
                     onClick={() => handleProviderSelect(provider)}
-                    className="bg-gray-50 rounded-xl p-4 hover:bg-green-50 hover:border-green-300 border-2 border-transparent transition-all text-left flex items-center gap-4"
+                    // min-w-0: as a CSS Grid item (parent: "grid gap-3"), this button defaults
+                    // to min-width:auto, which lets its content force it - and the whole page -
+                    // wider than the viewport on narrow screens.
+                    className="min-w-0 bg-gray-50 rounded-xl p-4 hover:bg-green-50 hover:border-green-300 border-2 border-transparent transition-all text-left flex items-center gap-4"
                   >
                     <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                       {provider.profileImage || provider.user?.profilePictureUrl ? (
