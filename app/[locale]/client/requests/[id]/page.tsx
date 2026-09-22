@@ -1,16 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getUser, isAuthenticated } from '@/lib/auth';
 import { useRequest, useCancelRequest, useStartRequest } from '@/hooks/use-requests';
 import { useCreateReview, useReviewByRequestId } from '@/hooks/use-reviews';
 import { RequestStatus } from '@/types';
 import { getPrimaryAction, REQUEST_STATUS_META } from '@/lib/request-status';
 import { getCounterpart } from '@/lib/request-participants';
-import AppLayout from '@/components/layout/app-layout';
+import ProtectedLayout from '@/components/layout/protected-layout';
 import RequestTimeline from '@/components/requests/request-timeline';
 import ReviewCtaCard from '@/components/requests/review-cta-card';
 import ReceivedRatingCard from '@/components/requests/received-rating-card';
@@ -37,7 +36,6 @@ export default function RequestDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
-  const user = getUser();
   const requestId = params.id as string;
   const locale = pathname?.split('/')[1] || 'es';
 
@@ -48,27 +46,19 @@ export default function RequestDetailPage() {
   const start = useStartRequest();
   const [confirmingCancel, setConfirmingCancel] = useState(false);
 
-  useEffect(() => {
-    if (!isAuthenticated() || !user) {
-      router.push(`/${locale}/login`);
-    }
-  }, [router, user, locale]);
-
-  if (!user) return null;
-
   if (isLoading) {
     return (
-      <AppLayout>
+      <ProtectedLayout requireProfile={false}>
         <div className="flex min-h-screen items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
         </div>
-      </AppLayout>
+      </ProtectedLayout>
     );
   }
 
   if (!request) {
     return (
-      <AppLayout>
+      <ProtectedLayout requireProfile={false}>
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
             <h2 className="mb-4 text-2xl font-bold text-gray-800">{t('notFound')}</h2>
@@ -77,7 +67,7 @@ export default function RequestDetailPage() {
             </Link>
           </div>
         </div>
-      </AppLayout>
+      </ProtectedLayout>
     );
   }
 
@@ -94,7 +84,7 @@ export default function RequestDetailPage() {
   const firstName = counterpart.name?.split(' ')[0] ?? '';
 
   return (
-    <AppLayout>
+    <ProtectedLayout requireProfile={false}>
       <div className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-5xl">
           <RequestDetailHeader
@@ -241,6 +231,6 @@ export default function RequestDetailPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </ProtectedLayout>
   );
 }

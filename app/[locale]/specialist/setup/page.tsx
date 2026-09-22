@@ -13,7 +13,11 @@ export default function ProfessionalSetupPage() {
   const t = useTranslations('specialist.setup');
   const router = useRouter();
   const pathname = usePathname();
-  const user = getUser();
+  // Starts null identically on the server and on the client's hydration pass (getUser() reads
+  // localStorage, unavailable during SSR) - resolving it in an effect instead of synchronously
+  // during render avoids a hydration mismatch. See ProtectedLayout for the shared version of
+  // this pattern; this page renders without the app header, so it doesn't use ProtectedLayout.
+  const [user, setUserState] = useState<ReturnType<typeof getUser>>(null);
 
   // Check if this is edit mode (user already has professional profile)
   const isEditMode = user?.hasProfessionalProfile || false;
@@ -56,11 +60,13 @@ export default function ProfessionalSetupPage() {
   }, [isEditMode, existingProfile, isInitialized]);
 
   useEffect(() => {
-    if (!isAuthenticated() || !user) {
+    if (!isAuthenticated()) {
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/login`);
+      return;
     }
-  }, [router, user, pathname]);
+    setUserState(getUser());
+  }, [router, pathname]);
 
   if (!user) {
     return null;

@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getUser, isAuthenticated } from '@/lib/auth';
 import { useAvailableRequests, useExpressInterest, useRemoveInterest, useMyInterest } from '@/hooks/use-requests';
-import AppLayout from '@/components/layout/app-layout';
+import ProtectedLayout from '@/components/layout/protected-layout';
 import { Request } from '@/types';
 
 // Component for interest button with loading state
@@ -98,50 +97,14 @@ function InterestButton({ request }: { request: Request }) {
 
 export default function JobBoardPage() {
   const t = useTranslations('specialist.jobBoard');
-  const router = useRouter();
   const pathname = usePathname();
-  const [user, setUserState] = useState<any | null>(null);
-  const [isLoadingUser, setIsLoadingUser] = useState(true);
-  const isProvider = !!(user?.hasProfessionalProfile || user?.hasCompanyProfile);
-
-  useEffect(() => {
-    const initialUser = getUser();
-    if (initialUser) {
-      setUserState(initialUser);
-    }
-    setIsLoadingUser(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isLoadingUser && (!isAuthenticated() || !isProvider)) {
-      const locale = pathname?.split('/')[1] || 'es';
-      router.push(`/${locale}/login`);
-    }
-  }, [router, isProvider, pathname, isLoadingUser]);
+  const locale = pathname?.split('/')[1] || 'es';
 
   // Fetch available requests for professionals
   const { data: requests, isLoading } = useAvailableRequests();
 
-  const locale = pathname?.split('/')[1] || 'es';
-
-  if (isLoadingUser) {
-    return (
-      <AppLayout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  if (!isProvider) {
-    return null;
-  }
-
   return (
-    <AppLayout>
+    <ProtectedLayout requiredProfileType="provider" noProfileRedirectPath={`/${locale}/login`}>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-800">
@@ -252,6 +215,6 @@ export default function JobBoardPage() {
           </div>
         )}
       </div>
-    </AppLayout>
+    </ProtectedLayout>
   );
 }

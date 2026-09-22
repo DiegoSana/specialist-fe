@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { getUser, setUser } from '@/lib/auth';
+import { getUser, isAuthenticated, setUser } from '@/lib/auth';
 import { useCreateClientProfile } from '@/hooks/use-client';
 
 export default function ProfileSetupPage() {
@@ -13,11 +13,31 @@ export default function ProfileSetupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const createClientProfile = useCreateClientProfile();
-  const user = getUser();
+  // Starts null identically on the server and on the client's hydration pass (getUser() reads
+  // localStorage, unavailable during SSR) - resolving it in an effect instead of synchronously
+  // during render avoids a hydration mismatch, and calling router.push directly during render
+  // (the previous behavior here) is itself a React anti-pattern independent of that. This page
+  // renders without the app header, so it doesn't use ProtectedLayout - see that component for
+  // the shared version of this pattern.
+  const [user, setUserState] = useState<ReturnType<typeof getUser>>(null);
+  const [checkedAuth, setCheckedAuth] = useState(false);
 
-  // If user already has a profile, redirect
-  if (user?.hasClientProfile || user?.hasProfessionalProfile) {
-    router.push('/es/professionals');
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/es/login');
+      return;
+    }
+    const currentUser = getUser();
+    // If user already has a profile, redirect
+    if (currentUser?.hasClientProfile || currentUser?.hasProfessionalProfile) {
+      router.push('/es/professionals');
+      return;
+    }
+    setUserState(currentUser);
+    setCheckedAuth(true);
+  }, [router]);
+
+  if (!checkedAuth) {
     return null;
   }
 
