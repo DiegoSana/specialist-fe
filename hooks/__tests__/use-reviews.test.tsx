@@ -156,6 +156,15 @@ describe('use-reviews hooks', () => {
       expect(result.current.fetchStatus).toBe('idle');
       expect(mockApiClient.get).not.toHaveBeenCalled();
     });
+
+    it('should not fetch when enabled is false, even with a requestId', async () => {
+      const { result } = renderHook(() => useReviewByRequestId('request-123', false), {
+        wrapper: createWrapper(),
+      });
+
+      expect(result.current.fetchStatus).toBe('idle');
+      expect(mockApiClient.get).not.toHaveBeenCalled();
+    });
   });
 });
 

@@ -16,6 +16,11 @@ jest.mock('@/hooks/use-requests', () => {
   };
 });
 
+const useReviewByRequestId = jest.fn(() => ({ data: undefined }));
+jest.mock('@/hooks/use-reviews', () => ({
+  useReviewByRequestId: (...args: unknown[]) => useReviewByRequestId(...args),
+}));
+
 // Real Spanish copy with simple {var} interpolation (ICU plurals are out of scope for the mock).
 jest.mock('next-intl', () => ({
   useTranslations: (namespace: string) => (key: string, values?: Record<string, unknown>) => {
@@ -44,7 +49,10 @@ const make = (overrides: Partial<Request> = {}): Request =>
   }) as Request;
 
 describe('RequestListCard', () => {
-  beforeEach(() => mutate.mockClear());
+  beforeEach(() => {
+    mutate.mockClear();
+    useReviewByRequestId.mockReturnValue({ data: undefined });
+  });
 
   it('specialist: SENT shows Aceptar/Rechazar and it is their turn', () => {
     render(<RequestListCard request={make()} role="provider" locale="es" />);
@@ -133,6 +141,36 @@ describe('RequestListCard', () => {
       />,
     );
     expect(screen.queryByText(/5000|\$/)).toBeNull();
+  });
+
+  it('client: CLOSED without an existing review offers "Calificar"', () => {
+    useReviewByRequestId.mockReturnValue({ data: undefined });
+    render(<RequestListCard request={make({ status: RequestStatus.CLOSED })} role="client" locale="es" />);
+    expect(screen.getByText('Calificar')).toBeTruthy();
+  });
+
+  it('client: CLOSED with an existing review does not offer "Calificar" again', () => {
+    useReviewByRequestId.mockReturnValue({ data: { rating: 5, comment: 'Buenísimo' } });
+    render(<RequestListCard request={make({ status: RequestStatus.CLOSED })} role="client" locale="es" />);
+    expect(screen.queryByText('Calificar')).toBeNull();
+  });
+
+  it('specialist: CLOSED without clientRating offers "Calificar"', () => {
+    render(
+      <RequestListCard request={make({ status: RequestStatus.CLOSED })} role="provider" locale="es" />,
+    );
+    expect(screen.getByText('Calificar')).toBeTruthy();
+  });
+
+  it('specialist: CLOSED with clientRating already set does not offer "Calificar" again', () => {
+    render(
+      <RequestListCard
+        request={make({ status: RequestStatus.CLOSED, clientRating: 5, clientRatingComment: 'Buen cliente' })}
+        role="provider"
+        locale="es"
+      />,
+    );
+    expect(screen.queryByText('Calificar')).toBeNull();
   });
 });
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Request } from '@/types';
+import { Request, RequestStatus } from '@/types';
 import { getCounterpart, whatsappUrl } from '@/lib/request-participants';
 import { getPrimaryAction, RequestRole } from '@/lib/request-status';
 import {
@@ -15,6 +15,7 @@ import {
   useObjectRequest,
   useRepublishRequest,
 } from '@/hooks/use-requests';
+import { useReviewByRequestId } from '@/hooks/use-reviews';
 import ReasonDialog from '@/components/requests/reason-dialog';
 
 interface RequestPrimaryActionProps {
@@ -172,7 +173,19 @@ export default function RequestPrimaryAction({
   variant = 'card',
 }: RequestPrimaryActionProps) {
   const t = useTranslations('requestStatus.actions');
-  const action = getPrimaryAction(request.status, role, { interestCount: request.interestsCount });
+  const isClosed = request.status === RequestStatus.CLOSED;
+  // Client rates the specialist via a Review record; the specialist rates the client via
+  // Request.clientRating, already present on the request — no extra fetch needed for that side.
+  const { data: existingReview } = useReviewByRequestId(request.id, role === 'client' && isClosed);
+  const alreadyReviewed = isClosed
+    ? role === 'client'
+      ? !!existingReview
+      : request.clientRating !== null && request.clientRating !== undefined
+    : false;
+  const action = getPrimaryAction(request.status, role, {
+    interestCount: request.interestsCount,
+    alreadyReviewed,
+  });
   const href = detailHref(request, role, locale);
 
   switch (action) {
