@@ -63,6 +63,14 @@ export default function SpecialistDashboardPage() {
   // Requests the specialist was chosen for already show up as regular cards; the rest are "postulaciones".
   const ownedIds = new Set((requests ?? []).map((r) => r.id));
   const openApplications = (applications ?? []).filter((a) => !ownedIds.has(a.requestId));
+  // "Trabajos disponibles" should only offer requests the specialist hasn't already applied to -
+  // those already show up below, in the "postulaciones" (ApplicationsList) section.
+  const interestedRequestIds = new Set((applications ?? []).map((a) => a.requestId));
+  const AVAILABLE_JOBS_LIMIT = 4;
+  const uninterestedAvailableRequests = (availableRequests ?? []).filter(
+    (request) => !interestedRequestIds.has(request.id)
+  );
+  const visibleAvailableRequests = uninterestedAvailableRequests.slice(0, AVAILABLE_JOBS_LIMIT);
 
   const locale = pathname?.split('/')[1] || 'es';
 
@@ -110,13 +118,21 @@ export default function SpecialistDashboardPage() {
         ) : (
           <div className="space-y-8">
             {/* Available Jobs */}
-            {availableRequests && availableRequests.length > 0 && (
+            {uninterestedAvailableRequests.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                  {t('sections.available')}
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    {t('sections.available')}
+                  </h2>
+                  <Link
+                    href={`/${locale}/specialist/job-board`}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    {t('viewAllInJobBoard')}
+                  </Link>
+                </div>
                 <div className="space-y-3">
-                  {availableRequests.map((request) => (
+                  {visibleAvailableRequests.map((request) => (
                     <Link
                       key={request.id}
                       href={`/${locale}/specialist/requests/${request.id}`}
@@ -131,7 +147,7 @@ export default function SpecialistDashboardPage() {
                               : request.clientId}
                           </p>
                           <p className="text-gray-800 mt-1 line-clamp-2">
-                            {request.description}
+                            {request.title}
                           </p>
                           <p className="text-xs text-gray-500 mt-2">
                             {new Date(request.createdAt).toLocaleDateString()}

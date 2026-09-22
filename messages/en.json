@@ -372,6 +372,7 @@
       "requestFrom": "Request from",
       "quote": "Quote",
       "new": "New",
+      "viewAllInJobBoard": "View all in the job board",
       "empty": {
         "title": "You have no requests",
         "description": "Client requests will appear here when they contact you"
