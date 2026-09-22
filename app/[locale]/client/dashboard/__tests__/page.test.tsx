@@ -23,6 +23,9 @@ jest.mock('@/hooks/use-requests', () => {
     useRepublishRequest: mutation,
   };
 });
+jest.mock('@/hooks/use-reviews', () => ({
+  useReviewByRequestId: () => ({ data: undefined }),
+}));
 jest.mock('@/components/layout/protected-layout', () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,

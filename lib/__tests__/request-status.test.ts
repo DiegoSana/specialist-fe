@@ -133,6 +133,13 @@ describe('primary action', () => {
     expect(getPrimaryAction(RequestStatus.REJECTED, 'provider')).toBe('NONE');
   });
 
+  it('CLOSED does not offer RATE again once the viewer already reviewed', () => {
+    expect(getPrimaryAction(RequestStatus.CLOSED, 'client', { alreadyReviewed: true })).toBe('NONE');
+    expect(getPrimaryAction(RequestStatus.CLOSED, 'client', { alreadyReviewed: false })).toBe('RATE');
+    expect(getPrimaryAction(RequestStatus.CLOSED, 'provider', { alreadyReviewed: true })).toBe('NONE');
+    expect(getPrimaryAction(RequestStatus.CLOSED, 'provider', { alreadyReviewed: false })).toBe('RATE');
+  });
+
   it('every status resolves an action for both roles without throwing', () => {
     for (const status of ALL) {
       expect(getPrimaryAction(status, 'client')).toBeDefined();

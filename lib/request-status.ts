@@ -178,6 +178,8 @@ export function getRequestStatusMeta(status: RequestStatus): RequestStatusMeta {
 export interface RequestStatusContext {
   /** Number of specialists currently INTERESTED (PUBLISHED requests only). */
   interestCount?: number;
+  /** Whether the viewer already left their review/rating for this CLOSED request. */
+  alreadyReviewed?: boolean;
 }
 
 /**
@@ -226,7 +228,7 @@ export function getPrimaryAction(
       case RequestStatus.FINISHED:
         return 'CONFIRM_OBJECT';
       case RequestStatus.CLOSED:
-        return 'RATE';
+        return ctx.alreadyReviewed ? 'NONE' : 'RATE';
       default:
         return REQUEST_STATUS_META[status].canRepublish ? 'REPUBLISH' : 'NONE';
     }
@@ -239,7 +241,7 @@ export function getPrimaryAction(
     case RequestStatus.IN_PROGRESS:
       return 'MARK_FINISHED';
     case RequestStatus.CLOSED:
-      return 'RATE';
+      return ctx.alreadyReviewed ? 'NONE' : 'RATE';
     default:
       return 'NONE';
   }

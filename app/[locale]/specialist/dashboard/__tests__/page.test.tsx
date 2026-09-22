@@ -39,6 +39,9 @@ jest.mock('@/hooks/use-requests', () => {
     useRepublishRequest: mutation,
   };
 });
+jest.mock('@/hooks/use-reviews', () => ({
+  useReviewByRequestId: () => ({ data: undefined }),
+}));
 jest.mock('@/hooks/use-professional-profile', () => ({
   useMyProfessionalProfile: () => ({ data: { status: 'ACTIVE', city: 'Bariloche' }, isLoading: false }),
 }));

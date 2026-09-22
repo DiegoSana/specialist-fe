@@ -57,14 +57,14 @@ export function useProfessionalReviews(professionalId: string) {
   });
 }
 
-export function useReviewByRequestId(requestId: string) {
+export function useReviewByRequestId(requestId: string, enabled = true) {
   return useQuery({
     queryKey: ['review', 'request', requestId],
     queryFn: async (): Promise<Review | null> => {
       const response = await apiClient.get<Review | null>(`/reviews?requestId=${requestId}`);
       return response.data ?? null;
     },
-    enabled: !!requestId,
+    enabled: enabled && !!requestId,
     retry: false,
   });
 }
