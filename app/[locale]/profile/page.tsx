@@ -31,6 +31,7 @@ const companyStatusUi = (status: string) =>
 export default function ProfilePage() {
   const t = useTranslations('profile');
   const tVerification = useTranslations('verification');
+  const tWhatsapp = useTranslations('profile.whatsappOptOut');
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -105,6 +106,17 @@ export default function ProfilePage() {
       }
       queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
       setIsEditingPersonal(false);
+    },
+  });
+
+  // Reactivate WhatsApp messages mutation
+  const reactivateWhatsappMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post('/users/me/whatsapp-reactivate');
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
     },
   });
 
@@ -220,6 +232,18 @@ export default function ProfilePage() {
       await activateClientMutation.mutateAsync();
     } catch (error: any) {
       setErrors({ general: error.response?.data?.message || 'Error al activar perfil de cliente' });
+    }
+  };
+
+  const handleReactivateWhatsapp = async () => {
+    try {
+      await reactivateWhatsappMutation.mutateAsync();
+      setErrors((prev) => ({ ...prev, whatsapp: undefined }));
+    } catch (error: any) {
+      setErrors((prev) => ({
+        ...prev,
+        whatsapp: error.response?.data?.message || tWhatsapp('reactivateError'),
+      }));
     }
   };
 
@@ -493,6 +517,63 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* WhatsApp Opt-Out Status Section */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="font-semibold text-gray-800">{tWhatsapp('title')}</h2>
+                  <p className="text-xs text-gray-500">{tWhatsapp('subtitle')}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <svg className="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-800">
+                      {userProfile?.whatsappOptedOut ? tWhatsapp('optedOutMessage') : tWhatsapp('activeMessage')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  {userProfile?.whatsappOptedOut ? (
+                    <button
+                      onClick={handleReactivateWhatsapp}
+                      disabled={reactivateWhatsappMutation.isPending}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors whitespace-nowrap"
+                    >
+                      {reactivateWhatsappMutation.isPending ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          {tWhatsapp('reactivating')}
+                        </>
+                      ) : (
+                        tWhatsapp('reactivate')
+                      )}
+                    </button>
+                  ) : (
+                    <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full whitespace-nowrap">
+                      {tVerification('verified')}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {errors.whatsapp && (
+                <p className="text-sm text-red-600">{errors.whatsapp}</p>
+              )}
             </div>
           </div>
 

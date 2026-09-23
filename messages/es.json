@@ -625,6 +625,15 @@
       "subtitle": "Configuración de tu perfil como cliente",
       "noSettings": "No hay configuraciones adicionales disponibles para el perfil de cliente"
     },
+    "whatsappOptOut": {
+      "title": "WhatsApp",
+      "subtitle": "Estado de tus mensajes por WhatsApp",
+      "optedOutMessage": "No estás recibiendo mensajes por WhatsApp",
+      "activeMessage": "Estás recibiendo mensajes por WhatsApp",
+      "reactivate": "Reactivar",
+      "reactivating": "Reactivando...",
+      "reactivateError": "Error al reactivar los mensajes de WhatsApp. Por favor intenta de nuevo."
+    },
     "specialist": {
       "title": "Perfil de Especialista",
       "subtitle": "Gestiona tu información como especialista",

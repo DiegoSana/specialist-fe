@@ -28,6 +28,8 @@ export interface User {
   isAdmin: boolean;
   phoneVerified: boolean;
   emailVerified: boolean;
+  whatsappOptedOut: boolean;
+  whatsappOptedOutAt: string | null;
 }
 
 export interface LoginRequest {
