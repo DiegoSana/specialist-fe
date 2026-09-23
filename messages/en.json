@@ -728,6 +728,15 @@
       "subtitle": "Your client profile settings",
       "noSettings": "No additional settings available for client profile"
     },
+    "whatsappOptOut": {
+      "title": "WhatsApp",
+      "subtitle": "Status of your WhatsApp messages",
+      "optedOutMessage": "You are not receiving WhatsApp messages",
+      "activeMessage": "You are receiving WhatsApp messages",
+      "reactivate": "Reactivate",
+      "reactivating": "Reactivating...",
+      "reactivateError": "Error reactivating WhatsApp messages. Please try again."
+    },
     "professional": {
       "title": "Professional Profile",
       "subtitle": "Manage your professional information",
