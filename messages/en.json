@@ -762,11 +762,7 @@
       "optedOutMessage": "You are not receiving WhatsApp messages",
       "optedOutWarning": "You can't create requests or contact professionals while opted out of WhatsApp.",
       "activeMessage": "You are receiving WhatsApp messages",
-      "reactivate": "Reactivate",
-      "reactivating": "Reactivating...",
       "reactivateError": "Error reactivating WhatsApp messages. Please try again.",
-      "deactivate": "Deactivate",
-      "deactivating": "Deactivating...",
       "optOutError": "Error deactivating WhatsApp messages. Please try again."
     },
     "professional": {

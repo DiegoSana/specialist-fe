@@ -504,42 +504,32 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                   {userProfile?.phoneVerified ? (
-                    userProfile?.whatsappOptedOut ? (
-                      <button
-                        onClick={handleReactivateWhatsapp}
-                        disabled={reactivateWhatsappMutation.isPending}
-                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors whitespace-nowrap"
-                      >
-                        {reactivateWhatsappMutation.isPending ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                            {tWhatsapp('reactivating')}
-                          </>
-                        ) : (
-                          tWhatsapp('reactivate')
-                        )}
-                      </button>
-                    ) : (
-                      <>
+                    <>
+                      {!userProfile?.whatsappOptedOut && (
                         <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full whitespace-nowrap">
                           {tVerification('verified')}
                         </span>
-                        <button
-                          onClick={handleOptOutWhatsapp}
-                          disabled={optOutWhatsappMutation.isPending}
-                          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors whitespace-nowrap"
-                        >
-                          {optOutWhatsappMutation.isPending ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-700"></div>
-                              {tWhatsapp('deactivating')}
-                            </>
-                          ) : (
-                            tWhatsapp('deactivate')
-                          )}
-                        </button>
-                      </>
-                    )
+                      )}
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={!userProfile?.whatsappOptedOut}
+                        aria-label={
+                          userProfile?.whatsappOptedOut ? tWhatsapp('optedOutMessage') : tWhatsapp('activeMessage')
+                        }
+                        onClick={userProfile?.whatsappOptedOut ? handleReactivateWhatsapp : handleOptOutWhatsapp}
+                        disabled={reactivateWhatsappMutation.isPending || optOutWhatsappMutation.isPending}
+                        className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${
+                          userProfile?.whatsappOptedOut ? 'bg-gray-300' : 'bg-green-500'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                            userProfile?.whatsappOptedOut ? 'translate-x-1' : 'translate-x-6'
+                          }`}
+                        />
+                      </button>
+                    </>
                   ) : (
                     <>
                       <span className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full whitespace-nowrap">
