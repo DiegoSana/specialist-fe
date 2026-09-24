@@ -13,6 +13,11 @@ import ProtectedLayout from '@/components/layout/protected-layout';
 import { Trade } from '@/types';
 
 const MAX_NEW_REQUEST_MEDIA = 6;
+// Mirrors specialist-be's FileSizeVO caps (src/storage/domain/value-objects/file-type.vo.ts) -
+// checked client-side so a too-large file is rejected the moment it's picked, not silently
+// dropped later when the post-create upload fails (see submitRequest()).
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
+const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
 
 type RequestType = 'public' | 'direct' | null;
 
@@ -45,6 +50,7 @@ export default function NewRequestPage() {
     previewUrl: string;
   }
   const [stagedFiles, setStagedFiles] = useState<StagedMedia[]>([]);
+  const [stagingError, setStagingError] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<{
     title?: string;
@@ -56,6 +62,13 @@ export default function NewRequestPage() {
   const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
   const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
   const [showNoPhotosModal, setShowNoPhotosModal] = useState(false);
+  // Set once the request itself was created successfully but one or more staged files failed to
+  // upload/attach afterwards (e.g. over the size limit) - holds navigation so that failure is
+  // shown instead of silently landing on the dashboard with the file just missing.
+  const [createdRequestResult, setCreatedRequestResult] = useState<{
+    id: string;
+    failedFiles: { name: string; reason: string }[];
+  } | null>(null);
 
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -235,8 +248,9 @@ export default function NewRequestPage() {
       // The request now has a real id, so request-photo uploads can be correctly attributed
       // (see the StagedMedia comment above) - upload and attach each staged file, sequentially so
       // they share the same useUploadFile() mutation instance predictably. A failure here doesn't
-      // block navigation: the request itself already exists, and photos are optional - we just
-      // don't want one bad file to strand the user on this page after a successful create.
+      // roll back the request (it already exists and photos are optional) - but it must not be
+      // silent either, so failures are collected and shown instead of navigating straight away.
+      const failed: { name: string; reason: string }[] = [];
       for (const { file } of stagedFiles) {
         try {
           const uploaded = await uploadFileMutation.mutateAsync({
@@ -248,9 +262,17 @@ export default function NewRequestPage() {
             requestId: createdRequest.id,
             url: uploaded.url,
           });
-        } catch (err) {
-          console.error('Failed to attach a photo/video to the new request:', err);
+        } catch (err: any) {
+          failed.push({
+            name: file.name,
+            reason: err.response?.data?.message || t('uploadError'),
+          });
         }
+      }
+
+      if (failed.length > 0) {
+        setCreatedRequestResult({ id: createdRequest.id, failedFiles: failed });
+        return;
       }
 
       const locale = pathname?.split('/')[1] || 'es';
@@ -288,10 +310,29 @@ export default function NewRequestPage() {
     e.target.value = '';
     if (files.length === 0) return;
 
+    setStagingError(null);
+
+    // Reject oversized files right here instead of staging them - otherwise the same file would
+    // only fail once actually uploaded after the request is created (see submitRequest()), which
+    // is a much worse place for the user to find out.
+    const oversized = files.filter((file) => {
+      const limit = file.type.startsWith('video/') ? MAX_VIDEO_SIZE_BYTES : MAX_IMAGE_SIZE_BYTES;
+      return file.size > limit;
+    });
+    const validFiles = files.filter((file) => !oversized.includes(file));
+
+    if (oversized.length > 0) {
+      setStagingError(
+        t('errors.fileTooLarge', {
+          names: oversized.map((f) => f.name).join(', '),
+        })
+      );
+    }
+
     // Cap applies to the whole batch, not per-file - selecting 4 files with 2 slots left only
     // stages the first 2 (rather than rejecting the whole selection).
     const remainingSlots = MAX_NEW_REQUEST_MEDIA - stagedFiles.length;
-    const newlyStaged = files.slice(0, remainingSlots).map((file) => ({
+    const newlyStaged = validFiles.slice(0, remainingSlots).map((file) => ({
       file,
       previewUrl: URL.createObjectURL(file),
     }));
@@ -329,6 +370,49 @@ export default function NewRequestPage() {
       {(user) => {
         const needsVerificationToCreate =
           user && (user.emailVerified === false || user.phoneVerified === false);
+
+        if (createdRequestResult) {
+          return (
+            <div className="container mx-auto px-4 py-8">
+              <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800">{t('created.title')}</h2>
+
+                <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-left">
+                  <p className="text-sm font-medium text-amber-800 mb-2">
+                    {t('created.uploadIssuesTitle')}
+                  </p>
+                  <ul className="space-y-1 list-disc list-inside">
+                    {createdRequestResult.failedFiles.map((f, i) => (
+                      <li key={i} className="text-sm text-amber-700">
+                        <span className="font-medium">{f.name}</span>: {f.reason}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                  <Link
+                    href={`/${locale}/client/requests/${createdRequestResult.id}`}
+                    className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm bg-blue-600 hover:bg-blue-700"
+                  >
+                    {t('created.viewRequest')}
+                  </Link>
+                  <Link
+                    href={`/${locale}/client/dashboard`}
+                    className="px-6 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 font-medium text-sm"
+                  >
+                    {t('created.goToDashboard')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        }
 
         return (
       <>
@@ -824,6 +908,10 @@ export default function NewRequestPage() {
                 <p className="mb-3 text-xs text-gray-400">
                   {requestType === 'public' ? t('photosPrivacy.public') : t('photosPrivacy.direct')}
                 </p>
+
+                {stagingError && (
+                  <p className="mb-3 text-sm text-red-600">{stagingError}</p>
+                )}
 
                 {stagedFiles.length > 0 && (
                   <div className="grid grid-cols-3 gap-3 mb-3 sm:grid-cols-4">

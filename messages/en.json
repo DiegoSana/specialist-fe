@@ -249,6 +249,12 @@
         "addPhotos": "Add photos",
         "continueWithoutPhotos": "Continue without photos"
       },
+      "created": {
+        "title": "Your request was created",
+        "uploadIssuesTitle": "We couldn't upload some files",
+        "viewRequest": "View my request",
+        "goToDashboard": "Go to my requests"
+      },
       "cancel": "Cancel",
       "create": "Create request",
       "creating": "Creating...",
@@ -268,6 +274,7 @@
         "descriptionRequired": "Description is required",
         "descriptionMinLength": "Description must be at least 10 characters",
         "addressRequired": "Address is required",
+        "fileTooLarge": "{names} wasn't added because it exceeds the maximum allowed size (10MB for photos, 100MB for videos).",
         "general": "An error occurred. Please try again."
       }
     },

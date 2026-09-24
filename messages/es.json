@@ -250,6 +250,12 @@
         "addPhotos": "Agregar fotos",
         "continueWithoutPhotos": "Continuar sin fotos"
       },
+      "created": {
+        "title": "Tu solicitud fue creada",
+        "uploadIssuesTitle": "No pudimos subir algunos archivos",
+        "viewRequest": "Ver mi solicitud",
+        "goToDashboard": "Ir a mis solicitudes"
+      },
       "cancel": "Cancelar",
       "create": "Crear solicitud",
       "createPublic": "Publicar en Bolsa de Trabajo",
@@ -271,6 +277,7 @@
         "descriptionRequired": "La descripción es requerida",
         "descriptionMinLength": "La descripción debe tener al menos 10 caracteres",
         "addressRequired": "La dirección es requerida",
+        "fileTooLarge": "No se agregó {names} porque supera el tamaño máximo permitido (10MB para fotos, 100MB para videos).",
         "general": "Ocurrió un error. Por favor intenta de nuevo."
       }
     },
