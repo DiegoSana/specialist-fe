@@ -220,13 +220,32 @@
       "availabilityPlaceholder": "Ej: Lunes a Viernes, 9:00 - 18:00",
       "photos": "Fotos",
       "optional": "Opcional",
-      "photosNote": "Funcionalidad de subida de fotos próximamente",
+      "photosBenefit": {
+        "title": "Las solicitudes con fotos tienen más chances de ser elegidas",
+        "description": "A los especialistas les resulta más fácil entender el problema y armar una propuesta cuando pueden ver fotos del trabajo."
+      },
       "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el especialista pueden agregar fotos.",
       "addPhoto": "Agregar foto/video",
+      "uploadingPhoto": "Subiendo...",
       "removePhoto": "Eliminar",
       "noPhotos": "Aún no hay fotos. Agrega la primera foto del trabajo.",
       "uploadError": "Error al subir la imagen",
       "removeError": "Error al eliminar la imagen",
+      "bestPractices": {
+        "title": "Consejos para una buena solicitud",
+        "tips": [
+          "Sé específico: contá qué pasa, desde cuándo y qué probaste hacer.",
+          "Mencioná si es urgente o si tenés un horario preferido.",
+          "Si aplica, incluí medidas, marca o modelo del equipo o material.",
+          "Agregá fotos: ayudan a que te elijan más rápido."
+        ]
+      },
+      "noPhotosModal": {
+        "title": "¿Continuar sin fotos?",
+        "body": "Las solicitudes con fotos tienen más chances de ser elegidas por un especialista. Podés agregar una foto ahora o continuar sin fotos.",
+        "addPhotos": "Agregar fotos",
+        "continueWithoutPhotos": "Continuar sin fotos"
+      },
       "cancel": "Cancelar",
       "create": "Crear solicitud",
       "createPublic": "Publicar en Bolsa de Trabajo",

@@ -219,13 +219,32 @@
       "availabilityPlaceholder": "E.g.: Monday to Friday, 9:00 AM - 6:00 PM",
       "photos": "Photos",
       "optional": "Optional",
-      "photosNote": "Photo upload functionality coming soon",
+      "photosBenefit": {
+        "title": "Requests with photos are more likely to get chosen",
+        "description": "It's easier for professionals to understand the problem and put together a proposal when they can see photos of the job."
+      },
       "photosDescription": "Share photos and videos of the work. Both you and the professional can add photos.",
       "addPhoto": "Add photo/video",
+      "uploadingPhoto": "Uploading...",
       "removePhoto": "Remove",
       "noPhotos": "No photos yet. Add the first photo of the work.",
       "uploadError": "Error uploading image",
       "removeError": "Error removing image",
+      "bestPractices": {
+        "title": "Tips for a good request",
+        "tips": [
+          "Be specific: describe what's wrong, since when, and what you've already tried.",
+          "Mention if it's urgent or if you have a preferred time window.",
+          "If relevant, include measurements, brand or model of the equipment or material.",
+          "Add photos: they help you get chosen faster."
+        ]
+      },
+      "noPhotosModal": {
+        "title": "Continue without photos?",
+        "body": "Requests with photos are more likely to be chosen by a specialist. You can add a photo now or continue without photos.",
+        "addPhotos": "Add photos",
+        "continueWithoutPhotos": "Continue without photos"
+      },
       "cancel": "Cancel",
       "create": "Create request",
       "creating": "Creating...",

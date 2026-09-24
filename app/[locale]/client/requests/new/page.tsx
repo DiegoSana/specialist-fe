@@ -7,8 +7,12 @@ import Link from 'next/link';
 import { useCreateRequest } from '@/hooks/use-requests';
 import { useTradesWithProfessionals } from '@/hooks/use-professionals';
 import { useSearchProviders, UnifiedProvider } from '@/hooks/use-providers';
+import { useUploadFile } from '@/hooks/use-file-upload';
 import ProtectedLayout from '@/components/layout/protected-layout';
+import AuthenticatedImage from '@/components/images/authenticated-image';
 import { Trade } from '@/types';
+
+const MAX_NEW_REQUEST_PHOTOS = 6;
 
 type RequestType = 'public' | 'direct' | null;
 
@@ -40,12 +44,15 @@ export default function NewRequestPage() {
   }>({});
 
   const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const [showNoPhotosModal, setShowNoPhotosModal] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
 
   const { data: trades } = useTradesWithProfessionals();
   const { data: allProviders } = useSearchProviders({ providerType: 'ALL' });
   const createRequestMutation = useCreateRequest();
+  const uploadFileMutation = useUploadFile();
 
   // Pre-select provider if professionalId or companyId is in URL
   useEffect(() => {
@@ -178,6 +185,20 @@ export default function NewRequestPage() {
       return;
     }
 
+    if (formData.photos.length === 0) {
+      setShowNoPhotosModal(true);
+      return;
+    }
+
+    await submitRequest();
+  };
+
+  const handleContinueWithoutPhotos = async () => {
+    setShowNoPhotosModal(false);
+    await submitRequest();
+  };
+
+  const submitRequest = async () => {
     try {
       await createRequestMutation.mutateAsync({
         professionalId: requestType === 'direct' && selectedProvider?.type === 'PROFESSIONAL' ? selectedProvider.id : undefined,
@@ -219,6 +240,28 @@ export default function NewRequestPage() {
     }
   };
 
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setPhotoError(null);
+      const uploaded = await uploadFileMutation.mutateAsync({
+        file,
+        category: 'request-photo',
+      });
+      setFormData((prev) => ({ ...prev, photos: [...prev.photos, uploaded.url] }));
+    } catch (err: any) {
+      setPhotoError(err.response?.data?.message || t('uploadError'));
+    } finally {
+      e.target.value = '';
+    }
+  };
+
+  const handleRemovePhoto = (url: string) => {
+    setFormData((prev) => ({ ...prev, photos: prev.photos.filter((p) => p !== url) }));
+  };
+
   const goBack = () => {
     if (selectedProvider) {
       setSelectedProvider(null);
@@ -243,6 +286,7 @@ export default function NewRequestPage() {
           user && (user.emailVerified === false || user.phoneVerified === false);
 
         return (
+      <>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Proactive message: need to verify before creating request */}
@@ -615,6 +659,23 @@ export default function NewRequestPage() {
                 </div>
               )}
 
+              {/* Best practices tips */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                  {t('bestPractices.title')}
+                </h3>
+                <ul className="space-y-1.5">
+                  {(t.raw('bestPractices.tips') as string[]).map((tip, i) => (
+                    <li key={i} className="flex items-start text-sm text-gray-600">
+                      <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -697,14 +758,79 @@ export default function NewRequestPage() {
                 />
               </div>
 
-              {/* Photos placeholder */}
+              {/* Photos */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('photos')} <span className="text-gray-400 text-xs">({t('optional')})</span>
                 </label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center">
-                  <p className="text-sm text-gray-400">{t('photosNote')}</p>
+
+                {/* Prominent benefit message */}
+                <div className="mb-3 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                  <svg className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-amber-800">{t('photosBenefit.title')}</p>
+                    <p className="text-sm text-amber-700">{t('photosBenefit.description')}</p>
+                  </div>
                 </div>
+
+                <p className="mb-3 text-xs text-gray-500">{t('photosDescription')}</p>
+
+                {photoError && (
+                  <p className="mb-3 text-sm text-red-600">{photoError}</p>
+                )}
+
+                {formData.photos.length > 0 && (
+                  <div className="grid grid-cols-3 gap-3 mb-3 sm:grid-cols-4">
+                    {formData.photos.map((url) => (
+                      <div key={url} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                        <AuthenticatedImage
+                          src={url}
+                          alt={t('photos')}
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          title={t('removePhoto')}
+                          onClick={() => handleRemovePhoto(url)}
+                          className="absolute right-1.5 top-1.5 rounded-full bg-red-600 p-1 text-white opacity-0 transition-opacity hover:bg-red-700 group-hover:opacity-100"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {formData.photos.length === 0 && (
+                  <p className="mb-3 text-sm text-gray-400">{t('noPhotos')}</p>
+                )}
+
+                {formData.photos.length < MAX_NEW_REQUEST_PHOTOS && (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="new-request-photo-upload"
+                      className="hidden"
+                      onChange={handlePhotoSelect}
+                      disabled={uploadFileMutation.isPending}
+                    />
+                    <label
+                      htmlFor="new-request-photo-upload"
+                      className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${
+                        uploadFileMutation.isPending
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                      }`}
+                    >
+                      {uploadFileMutation.isPending ? t('uploadingPhoto') : t('addPhoto')}
+                    </label>
+                  </>
+                )}
               </div>
 
               {/* Submit */}
@@ -736,6 +862,37 @@ export default function NewRequestPage() {
           )}
         </div>
       </div>
+
+      {showNoPhotosModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              {t('noPhotosModal.title')}
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              {t('noPhotosModal.body')}
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowNoPhotosModal(false)}
+                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 font-medium text-sm"
+              >
+                {t('noPhotosModal.addPhotos')}
+              </button>
+              <button
+                type="button"
+                onClick={handleContinueWithoutPhotos}
+                disabled={createRequestMutation.isPending}
+                className="flex-1 px-4 py-2.5 rounded-xl text-white font-semibold text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t('noPhotosModal.continueWithoutPhotos')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      </>
         );
       }}
     </ProtectedLayout>
