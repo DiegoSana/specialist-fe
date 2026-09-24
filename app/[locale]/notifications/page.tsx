@@ -5,8 +5,9 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import AppLayout from '@/components/layout/app-layout';
-import { 
-  useNotifications, 
+import { useRequireProfile } from '@/hooks/use-require-profile';
+import {
+  useNotifications,
   useMarkNotificationRead, 
   useMarkAllNotificationsRead,
   InAppNotification 
@@ -19,8 +20,9 @@ export default function NotificationsPage() {
   const params = useParams();
   const locale = params.locale as string;
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const { canRender } = useRequireProfile();
 
-  const { data: notifications, isLoading } = useNotifications({ 
+  const { data: notifications, isLoading } = useNotifications({
     unreadOnly: filter === 'unread',
     take: 100 
   });
@@ -108,6 +110,10 @@ export default function NotificationsPage() {
     groups[key].push(notification);
     return groups;
   }, {} as Record<string, InAppNotification[]>) ?? {};
+
+  if (!canRender) {
+    return null;
+  }
 
   return (
     <AppLayout>
