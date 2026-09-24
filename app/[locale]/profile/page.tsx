@@ -122,6 +122,17 @@ export default function ProfilePage() {
     },
   });
 
+  // Opt out of WhatsApp messages mutation
+  const optOutWhatsappMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiClient.post('/users/me/whatsapp-opt-out');
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
+    },
+  });
+
   // Activate client profile mutation
   const activateClientMutation = useMutation({
     mutationFn: async () => {
@@ -253,6 +264,18 @@ export default function ProfilePage() {
       setErrors((prev) => ({
         ...prev,
         whatsapp: error.response?.data?.message || tWhatsapp('reactivateError'),
+      }));
+    }
+  };
+
+  const handleOptOutWhatsapp = async () => {
+    try {
+      await optOutWhatsappMutation.mutateAsync();
+      setErrors((prev) => ({ ...prev, whatsapp: undefined }));
+    } catch (error: any) {
+      setErrors((prev) => ({
+        ...prev,
+        whatsapp: error.response?.data?.message || tWhatsapp('optOutError'),
       }));
     }
   };
@@ -497,9 +520,25 @@ export default function ProfilePage() {
                         )}
                       </button>
                     ) : (
-                      <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full whitespace-nowrap">
-                        {tVerification('verified')}
-                      </span>
+                      <>
+                        <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full whitespace-nowrap">
+                          {tVerification('verified')}
+                        </span>
+                        <button
+                          onClick={handleOptOutWhatsapp}
+                          disabled={optOutWhatsappMutation.isPending}
+                          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors whitespace-nowrap"
+                        >
+                          {optOutWhatsappMutation.isPending ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-700"></div>
+                              {tWhatsapp('deactivating')}
+                            </>
+                          ) : (
+                            tWhatsapp('deactivate')
+                          )}
+                        </button>
+                      </>
                     )
                   ) : (
                     <>

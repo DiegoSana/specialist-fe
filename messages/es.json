@@ -661,7 +661,10 @@
       "activeMessage": "Estás recibiendo mensajes por WhatsApp",
       "reactivate": "Reactivar",
       "reactivating": "Reactivando...",
-      "reactivateError": "Error al reactivar los mensajes de WhatsApp. Por favor intenta de nuevo."
+      "reactivateError": "Error al reactivar los mensajes de WhatsApp. Por favor intenta de nuevo.",
+      "deactivate": "Desactivar",
+      "deactivating": "Desactivando...",
+      "optOutError": "Error al desactivar los mensajes de WhatsApp. Por favor intenta de nuevo."
     },
     "specialist": {
       "title": "Perfil de Especialista",
