@@ -10,9 +10,14 @@ import { useSearchProviders, UnifiedProvider } from '@/hooks/use-providers';
 import { useUploadFile } from '@/hooks/use-file-upload';
 import ProtectedLayout from '@/components/layout/protected-layout';
 import AuthenticatedImage from '@/components/images/authenticated-image';
+import AuthenticatedVideo from '@/components/videos/authenticated-video';
 import { Trade } from '@/types';
 
-const MAX_NEW_REQUEST_PHOTOS = 6;
+const MAX_NEW_REQUEST_MEDIA = 6;
+// Matches the extension check in components/requests/request-photos-section.tsx - kept in sync
+// there too so both pickers recognize the same set of video extensions (quicktime uploads use
+// .mov, which was missing from the original regex).
+const isVideoUrl = (url: string) => /\.(mp4|webm|ogg|mov)$/i.test(url);
 
 type RequestType = 'public' | 'direct' | null;
 
@@ -45,6 +50,7 @@ export default function NewRequestPage() {
 
   const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
   const [showNoPhotosModal, setShowNoPhotosModal] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
@@ -241,20 +247,33 @@ export default function NewRequestPage() {
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = '';
+    if (files.length === 0) return;
 
+    // Cap applies to the whole batch, not per-file - selecting 4 files with 2 slots left only
+    // uploads the first 2 (rather than rejecting the whole selection).
+    const remainingSlots = MAX_NEW_REQUEST_MEDIA - formData.photos.length;
+    const filesToUpload = files.slice(0, remainingSlots);
+
+    setPhotoError(null);
+    setIsUploadingPhotos(true);
     try {
-      setPhotoError(null);
-      const uploaded = await uploadFileMutation.mutateAsync({
-        file,
-        category: 'request-photo',
-      });
-      setFormData((prev) => ({ ...prev, photos: [...prev.photos, uploaded.url] }));
-    } catch (err: any) {
-      setPhotoError(err.response?.data?.message || t('uploadError'));
+      // Sequential, not Promise.all: these share one useUploadFile() mutation instance, and
+      // concurrent mutateAsync calls on the same mutation would fight over its isPending state.
+      for (const file of filesToUpload) {
+        try {
+          const uploaded = await uploadFileMutation.mutateAsync({
+            file,
+            category: 'request-photo',
+          });
+          setFormData((prev) => ({ ...prev, photos: [...prev.photos, uploaded.url] }));
+        } catch (err: any) {
+          setPhotoError(err.response?.data?.message || t('uploadError'));
+        }
+      }
     } finally {
-      e.target.value = '';
+      setIsUploadingPhotos(false);
     }
   };
 
@@ -775,7 +794,10 @@ export default function NewRequestPage() {
                   </div>
                 </div>
 
-                <p className="mb-3 text-xs text-gray-500">{t('photosDescription')}</p>
+                <p className="mb-1 text-xs text-gray-500">{t('photosDescription')}</p>
+                <p className="mb-3 text-xs text-gray-400">
+                  {requestType === 'public' ? t('photosPrivacy.public') : t('photosPrivacy.direct')}
+                </p>
 
                 {photoError && (
                   <p className="mb-3 text-sm text-red-600">{photoError}</p>
@@ -785,11 +807,21 @@ export default function NewRequestPage() {
                   <div className="grid grid-cols-3 gap-3 mb-3 sm:grid-cols-4">
                     {formData.photos.map((url) => (
                       <div key={url} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
-                        <AuthenticatedImage
-                          src={url}
-                          alt={t('photos')}
-                          className="h-full w-full object-cover"
-                        />
+                        {isVideoUrl(url) ? (
+                          <AuthenticatedVideo
+                            src={url}
+                            className="h-full w-full object-cover"
+                            controls
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          <AuthenticatedImage
+                            src={url}
+                            alt={t('photos')}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
                         <button
                           type="button"
                           title={t('removePhoto')}
@@ -809,25 +841,26 @@ export default function NewRequestPage() {
                   <p className="mb-3 text-sm text-gray-400">{t('noPhotos')}</p>
                 )}
 
-                {formData.photos.length < MAX_NEW_REQUEST_PHOTOS && (
+                {formData.photos.length < MAX_NEW_REQUEST_MEDIA && (
                   <>
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,video/*"
+                      multiple
                       id="new-request-photo-upload"
                       className="hidden"
                       onChange={handlePhotoSelect}
-                      disabled={uploadFileMutation.isPending}
+                      disabled={isUploadingPhotos}
                     />
                     <label
                       htmlFor="new-request-photo-upload"
                       className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${
-                        uploadFileMutation.isPending
+                        isUploadingPhotos
                           ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                       }`}
                     >
-                      {uploadFileMutation.isPending ? t('uploadingPhoto') : t('addPhoto')}
+                      {isUploadingPhotos ? t('uploadingPhoto') : t('addPhoto')}
                     </label>
                   </>
                 )}

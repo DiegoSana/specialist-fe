@@ -72,7 +72,7 @@ export default function RequestPhotosSection({ request, canManage, namespace }: 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {photos.map((url, index) => (
             <div key={url} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-200">
-              {url.match(/\.(mp4|webm|ogg)$/i) ? (
+              {url.match(/\.(mp4|webm|ogg|mov)$/i) ? (
                 <AuthenticatedVideo src={url} className="h-full w-full object-cover" controls muted playsInline />
               ) : (
                 <AuthenticatedImage
