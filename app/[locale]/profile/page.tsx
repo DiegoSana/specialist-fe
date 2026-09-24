@@ -169,6 +169,13 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
+  // MVP restriction (mirrors a backend 403 on POST /professionals/me and /companies/me): a user
+  // who only has a client profile (no provider profile of either kind yet) cannot create a
+  // Professional or Company profile. A user who already has one provider profile can still create
+  // the other one, so this must not gate on hasClientProfile alone.
+  const isPureClient =
+    !!user?.hasClientProfile && !user?.hasProfessionalProfile && !user?.hasCompanyProfile;
+
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUserFormData((prev) => ({ ...prev, [name]: value }));
@@ -748,6 +755,12 @@ export default function ProfilePage() {
                     </Link>
                   </div>
                 </div>
+              ) : isPureClient ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-600">
+                    Los usuarios con perfil de cliente no pueden crear un perfil de especialista por el momento.
+                  </p>
+                </div>
               ) : (
                 <div className="text-center py-4">
                   <p className="text-sm text-gray-600 mb-4">
@@ -857,6 +870,12 @@ export default function ProfilePage() {
                       Ver bolsa de trabajo
                     </Link>
                   </div>
+                </div>
+              ) : isPureClient ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-gray-600">
+                    Los usuarios con perfil de cliente no pueden crear un perfil de empresa por el momento.
+                  </p>
                 </div>
               ) : (
                 <div className="text-center py-4">
