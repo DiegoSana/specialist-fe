@@ -20,12 +20,12 @@
   },
   "verification": {
     "title": "Verificación de Cuenta",
-    "subtitle": "Verifica tu teléfono y email para mayor seguridad",
+    "subtitle": "Verifica tu WhatsApp y email para mayor seguridad",
     "verified": "Verificado",
     "notVerified": "No verificado",
     "verify": "Verificar",
     "phone": {
-      "label": "Teléfono",
+      "label": "WhatsApp",
       "title": "Verificar Teléfono",
       "description": "Necesitamos verificar tu número de teléfono para continuar.",
       "currentPhone": "Teléfono actual",
@@ -115,7 +115,7 @@
       "firstName": "Nombre",
       "lastName": "Apellido",
       "email": "Correo electrónico",
-      "phone": "Teléfono",
+      "phone": "WhatsApp",
       "phoneRequired": "El teléfono es requerido",
       "password": "Contraseña",
       "confirmPassword": "Confirmar contraseña",
@@ -656,9 +656,8 @@
       "noSettings": "No hay configuraciones adicionales disponibles para el perfil de cliente"
     },
     "whatsappOptOut": {
-      "title": "WhatsApp",
-      "subtitle": "Estado de tus mensajes por WhatsApp",
       "optedOutMessage": "No estás recibiendo mensajes por WhatsApp",
+      "optedOutWarning": "No podés crear solicitudes ni contactar especialistas mientras estés dado de baja de WhatsApp.",
       "activeMessage": "Estás recibiendo mensajes por WhatsApp",
       "reactivate": "Reactivar",
       "reactivating": "Reactivando...",
