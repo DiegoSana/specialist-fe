@@ -19,10 +19,10 @@
   },
   "verification": {
     "title": "Account Verification",
-    "subtitle": "Verify your phone and email for added security",
+    "subtitle": "Verify your WhatsApp and email for added security",
     "verify": "Verify",
     "phone": {
-      "label": "Phone",
+      "label": "WhatsApp",
       "title": "Verify Phone",
       "description": "We need to verify your phone number to continue.",
       "currentPhone": "Current phone",
@@ -114,7 +114,7 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email address",
-      "phone": "Phone",
+      "phone": "WhatsApp",
       "phoneOptional": "(optional)",
       "password": "Password",
       "confirmPassword": "Confirm Password",
@@ -759,13 +759,15 @@
       "noSettings": "No additional settings available for client profile"
     },
     "whatsappOptOut": {
-      "title": "WhatsApp",
-      "subtitle": "Status of your WhatsApp messages",
       "optedOutMessage": "You are not receiving WhatsApp messages",
+      "optedOutWarning": "You can't create requests or contact professionals while opted out of WhatsApp.",
       "activeMessage": "You are receiving WhatsApp messages",
       "reactivate": "Reactivate",
       "reactivating": "Reactivating...",
-      "reactivateError": "Error reactivating WhatsApp messages. Please try again."
+      "reactivateError": "Error reactivating WhatsApp messages. Please try again.",
+      "deactivate": "Deactivate",
+      "deactivating": "Deactivating...",
+      "optOutError": "Error deactivating WhatsApp messages. Please try again."
     },
     "professional": {
       "title": "Professional Profile",
