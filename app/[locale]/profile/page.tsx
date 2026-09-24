@@ -658,7 +658,8 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Specialist Profile Section */}
+          {/* Specialist Profile Section (hidden for pure-client users: MVP restriction, see canCreateProfessionalProfile in specialist-be) */}
+          {!isPureClient && (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
@@ -755,12 +756,6 @@ export default function ProfilePage() {
                     </Link>
                   </div>
                 </div>
-              ) : isPureClient ? (
-                <div className="text-center py-4">
-                  <p className="text-sm text-gray-600">
-                    Los usuarios con perfil de cliente no pueden crear un perfil de especialista por el momento.
-                  </p>
-                </div>
               ) : (
                 <div className="text-center py-4">
                   <p className="text-sm text-gray-600 mb-4">
@@ -779,8 +774,10 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+          )}
 
-          {/* Company Profile Section */}
+          {/* Company Profile Section (hidden for pure-client users: MVP restriction, see canCreateCompanyProfile in specialist-be) */}
+          {!isPureClient && (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
@@ -871,12 +868,6 @@ export default function ProfilePage() {
                     </Link>
                   </div>
                 </div>
-              ) : isPureClient ? (
-                <div className="text-center py-4">
-                  <p className="text-sm text-gray-600">
-                    Los usuarios con perfil de cliente no pueden crear un perfil de empresa por el momento.
-                  </p>
-                </div>
               ) : (
                 <div className="text-center py-4">
                   <p className="text-sm text-gray-600 mb-4">
@@ -895,6 +886,7 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+          )}
 
         </div>
       </div>
