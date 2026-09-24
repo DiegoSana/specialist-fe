@@ -14,7 +14,7 @@ Runs on port **3001** in dev (backend runs on 5000). Detailed, path-scoped rules
 ```bash
 npm run dev                  # next dev -p 3001, http://localhost:3001
 npm run build                # next build
-npm run lint                 # next lint (eslint-config-next, .eslintrc.json)
+npm run lint                 # eslint . (flat config: eslint.config.mjs, eslint-config-next)
 npm run format                # prettier --write "**/*.{ts,tsx,json,css,md}"
 npm test                     # jest (jsdom)
 npm test -- hooks/__tests__/use-requests.test.tsx   # single spec
@@ -96,8 +96,10 @@ token/user; there is no Redux/Zustand/Context store for domain data.
   `protected-layout.tsx` redirects to `/es/login`, `api-client.ts`'s 401 handler reads
   `window.location.pathname.split('/')[1] || 'es'`) rather than importing `defaultLocale` from
   `i18n.ts`. Follow the existing pattern in a file rather than mixing both.
-- `eslint-config-next` versions are misaligned (`next` `^16.0.10` vs `eslint-config-next`
-  `^15.0.0` in `package.json`) — a leftover from the Next 15→16 upgrade; don't be surprised by
-  version-mismatch warnings from `npm run lint`.
+- Next.js 16 removed the `next lint` subcommand; linting runs via the ESLint CLI directly
+  (`"lint": "eslint ."`) against a flat `eslint.config.mjs` that imports
+  `eslint-config-next/core-web-vitals` (native flat-config export, no `FlatCompat`/`.eslintrc.json`
+  needed). `eslint-config-next` and `eslint` are pinned to `^16.0.10`/`^9.39.0` to match — both
+  need `eslint-config-next`'s peer dep `eslint >=9.0.0`, which the old `^8.55.0` didn't satisfy.
 - No `.claude/rules` enforcement test exists in this repo (unlike `specialist-be`'s
   `architecture.spec.ts`) — these are documented conventions, not fitness-function-enforced ones.
