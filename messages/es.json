@@ -218,15 +218,44 @@
       "addressPlaceholder": "Ej: Av. San Martín 123, Bariloche o Oeste KM13",
       "availability": "Disponibilidad",
       "availabilityPlaceholder": "Ej: Lunes a Viernes, 9:00 - 18:00",
-      "photos": "Fotos",
+      "photos": "Fotos y videos",
       "optional": "Opcional",
-      "photosNote": "Funcionalidad de subida de fotos próximamente",
-      "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el especialista pueden agregar fotos.",
-      "addPhoto": "Agregar foto/video",
+      "photosBenefit": {
+        "title": "Las solicitudes con fotos o videos tienen más chances de ser elegidas",
+        "description": "A los especialistas les resulta más fácil entender el problema y armar una propuesta cuando pueden ver fotos o un video del trabajo."
+      },
+      "photosDescription": "Compartí fotos o un video del trabajo para que el especialista entienda mejor qué necesitás.",
+      "photosPrivacy": {
+        "direct": "Estas fotos y videos son privados: solo los va a ver el especialista o la empresa que elegiste.",
+        "public": "Estas fotos y videos los van a ver los especialistas que consulten tu solicitud en la bolsa de trabajo (no son públicos para cualquier visitante sin cuenta)."
+      },
+      "addPhoto": "Agregar foto o video",
+      "uploadingPhoto": "Subiendo...",
       "removePhoto": "Eliminar",
-      "noPhotos": "Aún no hay fotos. Agrega la primera foto del trabajo.",
-      "uploadError": "Error al subir la imagen",
-      "removeError": "Error al eliminar la imagen",
+      "noPhotos": "Aún no hay fotos ni videos. Agregá el primero del trabajo.",
+      "uploadError": "Error al subir el archivo",
+      "removeError": "Error al eliminar el archivo",
+      "bestPractices": {
+        "title": "Consejos para una buena solicitud",
+        "tips": [
+          "Sé específico: contá qué pasa, desde cuándo y qué probaste hacer.",
+          "Mencioná si es urgente o si tenés un horario preferido.",
+          "Si aplica, incluí medidas, marca o modelo del equipo o material.",
+          "Agregá fotos o un video: ayudan a que te elijan más rápido."
+        ]
+      },
+      "noPhotosModal": {
+        "title": "¿Continuar sin fotos?",
+        "body": "Las solicitudes con fotos o videos tienen más chances de ser elegidas por un especialista. Podés agregar una foto o video ahora o continuar sin fotos.",
+        "addPhotos": "Agregar fotos",
+        "continueWithoutPhotos": "Continuar sin fotos"
+      },
+      "created": {
+        "title": "Tu solicitud fue creada",
+        "uploadIssuesTitle": "No pudimos subir algunos archivos",
+        "viewRequest": "Ver mi solicitud",
+        "goToDashboard": "Ir a mis solicitudes"
+      },
       "cancel": "Cancelar",
       "create": "Crear solicitud",
       "createPublic": "Publicar en Bolsa de Trabajo",
@@ -248,6 +277,7 @@
         "descriptionRequired": "La descripción es requerida",
         "descriptionMinLength": "La descripción debe tener al menos 10 caracteres",
         "addressRequired": "La dirección es requerida",
+        "fileTooLarge": "No se agregó {names} porque supera el tamaño máximo permitido (10MB para fotos, 100MB para videos).",
         "general": "Ocurrió un error. Por favor intenta de nuevo."
       }
     },

@@ -217,15 +217,44 @@
       "addressPlaceholder": "E.g.: Av. San Martín 123, Bariloche or West KM13",
       "availability": "Availability",
       "availabilityPlaceholder": "E.g.: Monday to Friday, 9:00 AM - 6:00 PM",
-      "photos": "Photos",
+      "photos": "Photos and videos",
       "optional": "Optional",
-      "photosNote": "Photo upload functionality coming soon",
-      "photosDescription": "Share photos and videos of the work. Both you and the professional can add photos.",
-      "addPhoto": "Add photo/video",
+      "photosBenefit": {
+        "title": "Requests with photos or videos are more likely to get chosen",
+        "description": "It's easier for professionals to understand the problem and put together a proposal when they can see photos or a video of the job."
+      },
+      "photosDescription": "Share photos or a video of the work so the specialist understands what you need.",
+      "photosPrivacy": {
+        "direct": "These photos and videos are private: only the specialist or company you chose can see them.",
+        "public": "These photos and videos will be visible to specialists who view your request on the job board (not public to visitors without an account)."
+      },
+      "addPhoto": "Add photo or video",
+      "uploadingPhoto": "Uploading...",
       "removePhoto": "Remove",
-      "noPhotos": "No photos yet. Add the first photo of the work.",
-      "uploadError": "Error uploading image",
-      "removeError": "Error removing image",
+      "noPhotos": "No photos or videos yet. Add the first one from the job.",
+      "uploadError": "Error uploading file",
+      "removeError": "Error removing file",
+      "bestPractices": {
+        "title": "Tips for a good request",
+        "tips": [
+          "Be specific: describe what's wrong, since when, and what you've already tried.",
+          "Mention if it's urgent or if you have a preferred time window.",
+          "If relevant, include measurements, brand or model of the equipment or material.",
+          "Add photos or a video: they help you get chosen faster."
+        ]
+      },
+      "noPhotosModal": {
+        "title": "Continue without photos?",
+        "body": "Requests with photos or videos are more likely to be chosen by a specialist. You can add a photo or video now or continue without photos.",
+        "addPhotos": "Add photos",
+        "continueWithoutPhotos": "Continue without photos"
+      },
+      "created": {
+        "title": "Your request was created",
+        "uploadIssuesTitle": "We couldn't upload some files",
+        "viewRequest": "View my request",
+        "goToDashboard": "Go to my requests"
+      },
       "cancel": "Cancel",
       "create": "Create request",
       "creating": "Creating...",
@@ -245,6 +274,7 @@
         "descriptionRequired": "Description is required",
         "descriptionMinLength": "Description must be at least 10 characters",
         "addressRequired": "Address is required",
+        "fileTooLarge": "{names} wasn't added because it exceeds the maximum allowed size (10MB for photos, 100MB for videos).",
         "general": "An error occurred. Please try again."
       }
     },

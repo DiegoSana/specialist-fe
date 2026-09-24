@@ -7,8 +7,17 @@ import Link from 'next/link';
 import { useCreateRequest } from '@/hooks/use-requests';
 import { useTradesWithProfessionals } from '@/hooks/use-professionals';
 import { useSearchProviders, UnifiedProvider } from '@/hooks/use-providers';
+import { useUploadFile } from '@/hooks/use-file-upload';
+import { useAddRequestPhoto } from '@/hooks/use-completed-work-photos';
 import ProtectedLayout from '@/components/layout/protected-layout';
 import { Trade } from '@/types';
+
+const MAX_NEW_REQUEST_MEDIA = 6;
+// Mirrors specialist-be's FileSizeVO caps (src/storage/domain/value-objects/file-type.vo.ts) -
+// checked client-side so a too-large file is rejected the moment it's picked, not silently
+// dropped later when the post-create upload fails (see submitRequest()).
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
+const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
 
 type RequestType = 'public' | 'direct' | null;
 
@@ -29,8 +38,19 @@ export default function NewRequestPage() {
     description: '',
     address: '',
     availability: '',
-    photos: [] as string[],
   });
+
+  // Photos/videos are staged locally (as File objects + local blob previews) and only uploaded
+  // to the server after the request itself is successfully created - see submitRequest(). The
+  // request-photo storage path has no concept of "owned but not yet attached to any request", so
+  // uploading before the request exists 403s when the app tries to read it back (see commit
+  // message for the full diagnosis). Staging locally sidesteps that entirely.
+  interface StagedMedia {
+    file: File;
+    previewUrl: string;
+  }
+  const [stagedFiles, setStagedFiles] = useState<StagedMedia[]>([]);
+  const [stagingError, setStagingError] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<{
     title?: string;
@@ -40,12 +60,32 @@ export default function NewRequestPage() {
   }>({});
 
   const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
+  const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
+  const [showNoPhotosModal, setShowNoPhotosModal] = useState(false);
+  // Set once the request itself was created successfully but one or more staged files failed to
+  // upload/attach afterwards (e.g. over the size limit) - holds navigation so that failure is
+  // shown instead of silently landing on the dashboard with the file just missing.
+  const [createdRequestResult, setCreatedRequestResult] = useState<{
+    id: string;
+    failedFiles: { name: string; reason: string }[];
+  } | null>(null);
 
   const searchRef = useRef<HTMLDivElement>(null);
 
   const { data: trades } = useTradesWithProfessionals();
   const { data: allProviders } = useSearchProviders({ providerType: 'ALL' });
   const createRequestMutation = useCreateRequest();
+  const uploadFileMutation = useUploadFile();
+  const addRequestPhotoMutation = useAddRequestPhoto();
+
+  // Revoke every staged blob preview URL on unmount, so an abandoned flow doesn't leak them.
+  const stagedFilesRef = useRef<StagedMedia[]>([]);
+  stagedFilesRef.current = stagedFiles;
+  useEffect(() => {
+    return () => {
+      stagedFilesRef.current.forEach((m) => URL.revokeObjectURL(m.previewUrl));
+    };
+  }, []);
 
   // Pre-select provider if professionalId or companyId is in URL
   useEffect(() => {
@@ -178,8 +218,23 @@ export default function NewRequestPage() {
       return;
     }
 
+    if (stagedFiles.length === 0) {
+      setShowNoPhotosModal(true);
+      return;
+    }
+
+    await submitRequest();
+  };
+
+  const handleContinueWithoutPhotos = async () => {
+    setShowNoPhotosModal(false);
+    await submitRequest();
+  };
+
+  const submitRequest = async () => {
+    setIsSubmittingRequest(true);
     try {
-      await createRequestMutation.mutateAsync({
+      const createdRequest = await createRequestMutation.mutateAsync({
         professionalId: requestType === 'direct' && selectedProvider?.type === 'PROFESSIONAL' ? selectedProvider.id : undefined,
         companyId: requestType === 'direct' && selectedProvider?.type === 'COMPANY' ? selectedProvider.id : undefined,
         tradeId: selectedTrade?.id,
@@ -188,8 +243,37 @@ export default function NewRequestPage() {
         description: formData.description,
         address: formData.address,
         availability: formData.availability,
-        photos: formData.photos,
       });
+
+      // The request now has a real id, so request-photo uploads can be correctly attributed
+      // (see the StagedMedia comment above) - upload and attach each staged file, sequentially so
+      // they share the same useUploadFile() mutation instance predictably. A failure here doesn't
+      // roll back the request (it already exists and photos are optional) - but it must not be
+      // silent either, so failures are collected and shown instead of navigating straight away.
+      const failed: { name: string; reason: string }[] = [];
+      for (const { file } of stagedFiles) {
+        try {
+          const uploaded = await uploadFileMutation.mutateAsync({
+            file,
+            category: 'request-photo',
+            requestId: createdRequest.id,
+          });
+          await addRequestPhotoMutation.mutateAsync({
+            requestId: createdRequest.id,
+            url: uploaded.url,
+          });
+        } catch (err: any) {
+          failed.push({
+            name: file.name,
+            reason: err.response?.data?.message || t('uploadError'),
+          });
+        }
+      }
+
+      if (failed.length > 0) {
+        setCreatedRequestResult({ id: createdRequest.id, failedFiles: failed });
+        return;
+      }
 
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/client/dashboard`);
@@ -206,6 +290,8 @@ export default function NewRequestPage() {
           : msg || t('errors.general'),
       });
       setIsProfileInactiveError(isProfileInactive);
+    } finally {
+      setIsSubmittingRequest(false);
     }
   };
 
@@ -217,6 +303,49 @@ export default function NewRequestPage() {
     if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
+  };
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = '';
+    if (files.length === 0) return;
+
+    setStagingError(null);
+
+    // Reject oversized files right here instead of staging them - otherwise the same file would
+    // only fail once actually uploaded after the request is created (see submitRequest()), which
+    // is a much worse place for the user to find out.
+    const oversized = files.filter((file) => {
+      const limit = file.type.startsWith('video/') ? MAX_VIDEO_SIZE_BYTES : MAX_IMAGE_SIZE_BYTES;
+      return file.size > limit;
+    });
+    const validFiles = files.filter((file) => !oversized.includes(file));
+
+    if (oversized.length > 0) {
+      setStagingError(
+        t('errors.fileTooLarge', {
+          names: oversized.map((f) => f.name).join(', '),
+        })
+      );
+    }
+
+    // Cap applies to the whole batch, not per-file - selecting 4 files with 2 slots left only
+    // stages the first 2 (rather than rejecting the whole selection).
+    const remainingSlots = MAX_NEW_REQUEST_MEDIA - stagedFiles.length;
+    const newlyStaged = validFiles.slice(0, remainingSlots).map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+
+    setStagedFiles((prev) => [...prev, ...newlyStaged]);
+  };
+
+  const handleRemoveStagedFile = (previewUrl: string) => {
+    setStagedFiles((prev) => {
+      const toRemove = prev.find((m) => m.previewUrl === previewUrl);
+      if (toRemove) URL.revokeObjectURL(toRemove.previewUrl);
+      return prev.filter((m) => m.previewUrl !== previewUrl);
+    });
   };
 
   const goBack = () => {
@@ -242,7 +371,51 @@ export default function NewRequestPage() {
         const needsVerificationToCreate =
           user && (user.emailVerified === false || user.phoneVerified === false);
 
+        if (createdRequestResult) {
+          return (
+            <div className="container mx-auto px-4 py-8">
+              <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h2 className="text-lg font-semibold text-gray-800">{t('created.title')}</h2>
+
+                <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-left">
+                  <p className="text-sm font-medium text-amber-800 mb-2">
+                    {t('created.uploadIssuesTitle')}
+                  </p>
+                  <ul className="space-y-1 list-disc list-inside">
+                    {createdRequestResult.failedFiles.map((f, i) => (
+                      <li key={i} className="text-sm text-amber-700">
+                        <span className="font-medium">{f.name}</span>: {f.reason}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                  <Link
+                    href={`/${locale}/client/requests/${createdRequestResult.id}`}
+                    className="px-6 py-2.5 rounded-xl text-white font-semibold text-sm bg-blue-600 hover:bg-blue-700"
+                  >
+                    {t('created.viewRequest')}
+                  </Link>
+                  <Link
+                    href={`/${locale}/client/dashboard`}
+                    className="px-6 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 font-medium text-sm"
+                  >
+                    {t('created.goToDashboard')}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
         return (
+      <>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Proactive message: need to verify before creating request */}
@@ -615,6 +788,23 @@ export default function NewRequestPage() {
                 </div>
               )}
 
+              {/* Best practices tips */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                  {t('bestPractices.title')}
+                </h3>
+                <ul className="space-y-1.5">
+                  {(t.raw('bestPractices.tips') as string[]).map((tip, i) => (
+                    <li key={i} className="flex items-start text-sm text-gray-600">
+                      <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -697,14 +887,89 @@ export default function NewRequestPage() {
                 />
               </div>
 
-              {/* Photos placeholder */}
+              {/* Photos */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('photos')} <span className="text-gray-400 text-xs">({t('optional')})</span>
                 </label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center">
-                  <p className="text-sm text-gray-400">{t('photosNote')}</p>
+
+                {/* Prominent benefit message */}
+                <div className="mb-3 bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                  <svg className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-amber-800">{t('photosBenefit.title')}</p>
+                    <p className="text-sm text-amber-700">{t('photosBenefit.description')}</p>
+                  </div>
                 </div>
+
+                <p className="mb-1 text-xs text-gray-500">{t('photosDescription')}</p>
+                <p className="mb-3 text-xs text-gray-400">
+                  {requestType === 'public' ? t('photosPrivacy.public') : t('photosPrivacy.direct')}
+                </p>
+
+                {stagingError && (
+                  <p className="mb-3 text-sm text-red-600">{stagingError}</p>
+                )}
+
+                {stagedFiles.length > 0 && (
+                  <div className="grid grid-cols-3 gap-3 mb-3 sm:grid-cols-4">
+                    {stagedFiles.map(({ file, previewUrl }) => (
+                      <div key={previewUrl} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                        {file.type.startsWith('video/') ? (
+                          <video
+                            src={previewUrl}
+                            className="h-full w-full object-cover"
+                            controls
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element -- local blob: preview, not an optimizable remote image
+                          <img
+                            src={previewUrl}
+                            alt={t('photos')}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                        <button
+                          type="button"
+                          title={t('removePhoto')}
+                          onClick={() => handleRemoveStagedFile(previewUrl)}
+                          className="absolute right-1.5 top-1.5 rounded-full bg-red-600 p-1 text-white opacity-0 transition-opacity hover:bg-red-700 group-hover:opacity-100"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {stagedFiles.length === 0 && (
+                  <p className="mb-3 text-sm text-gray-400">{t('noPhotos')}</p>
+                )}
+
+                {stagedFiles.length < MAX_NEW_REQUEST_MEDIA && (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      multiple
+                      id="new-request-photo-upload"
+                      className="hidden"
+                      onChange={handlePhotoSelect}
+                    />
+                    <label
+                      htmlFor="new-request-photo-upload"
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors bg-blue-50 text-blue-600 hover:bg-blue-100"
+                    >
+                      {t('addPhoto')}
+                    </label>
+                  </>
+                )}
               </div>
 
               {/* Submit */}
@@ -718,14 +983,14 @@ export default function NewRequestPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={createRequestMutation.isPending}
+                  disabled={isSubmittingRequest}
                   className={`flex-1 px-6 py-3 rounded-xl text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
                     requestType === 'public'
                       ? 'bg-blue-600 hover:bg-blue-700'
                       : 'bg-green-600 hover:bg-green-700'
                   }`}
                 >
-                  {createRequestMutation.isPending
+                  {isSubmittingRequest
                     ? t('creating')
                     : requestType === 'public'
                     ? t('createPublic')
@@ -736,6 +1001,37 @@ export default function NewRequestPage() {
           )}
         </div>
       </div>
+
+      {showNoPhotosModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              {t('noPhotosModal.title')}
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              {t('noPhotosModal.body')}
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowNoPhotosModal(false)}
+                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 font-medium text-sm"
+              >
+                {t('noPhotosModal.addPhotos')}
+              </button>
+              <button
+                type="button"
+                onClick={handleContinueWithoutPhotos}
+                disabled={isSubmittingRequest}
+                className="flex-1 px-4 py-2.5 rounded-xl text-white font-semibold text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t('noPhotosModal.continueWithoutPhotos')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      </>
         );
       }}
     </ProtectedLayout>
