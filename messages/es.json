@@ -224,8 +224,8 @@
         "title": "Las solicitudes con fotos tienen más chances de ser elegidas",
         "description": "A los especialistas les resulta más fácil entender el problema y armar una propuesta cuando pueden ver fotos del trabajo."
       },
-      "photosDescription": "Comparte fotos y videos del trabajo. Tanto tú como el especialista pueden agregar fotos.",
-      "addPhoto": "Agregar foto/video",
+      "photosDescription": "Compartí fotos del trabajo para que el especialista entienda mejor qué necesitás.",
+      "addPhoto": "Agregar foto",
       "uploadingPhoto": "Subiendo...",
       "removePhoto": "Eliminar",
       "noPhotos": "Aún no hay fotos. Agrega la primera foto del trabajo.",

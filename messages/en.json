@@ -223,8 +223,8 @@
         "title": "Requests with photos are more likely to get chosen",
         "description": "It's easier for professionals to understand the problem and put together a proposal when they can see photos of the job."
       },
-      "photosDescription": "Share photos and videos of the work. Both you and the professional can add photos.",
-      "addPhoto": "Add photo/video",
+      "photosDescription": "Share photos of the work so the specialist understands what you need.",
+      "addPhoto": "Add photo",
       "uploadingPhoto": "Uploading...",
       "removePhoto": "Remove",
       "noPhotos": "No photos yet. Add the first photo of the work.",
