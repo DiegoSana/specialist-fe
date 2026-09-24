@@ -226,7 +226,7 @@
       "photosDescription": "Share photos or a video of the work so the specialist understands what you need.",
       "photosPrivacy": {
         "direct": "These photos and videos are private: only the specialist or company you chose can see them.",
-        "public": "These photos and videos will be visible to specialists who view your request on the job board (not public to visitors without an account)."
+        "public": "While your request is posted on the job board, any specialist who views it will be able to see these photos and videos, so they can quote the job accurately (they're not public to visitors without an account). Once you choose a specialist or company, they stop being visible to everyone else: from that point on, only you and the one you chose will be able to see them."
       },
       "addPhoto": "Add photo or video",
       "uploadingPhoto": "Uploading...",
