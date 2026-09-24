@@ -659,11 +659,7 @@
       "optedOutMessage": "No estás recibiendo mensajes por WhatsApp",
       "optedOutWarning": "No podés crear solicitudes ni contactar especialistas mientras estés dado de baja de WhatsApp.",
       "activeMessage": "Estás recibiendo mensajes por WhatsApp",
-      "reactivate": "Reactivar",
-      "reactivating": "Reactivando...",
       "reactivateError": "Error al reactivar los mensajes de WhatsApp. Por favor intenta de nuevo.",
-      "deactivate": "Desactivar",
-      "deactivating": "Desactivando...",
       "optOutError": "Error al desactivar los mensajes de WhatsApp. Por favor intenta de nuevo."
     },
     "specialist": {
