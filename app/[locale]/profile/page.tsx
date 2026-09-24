@@ -169,6 +169,13 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
+  // MVP restriction (mirrors a backend 403 on POST /professionals/me and /companies/me): a user
+  // who only has a client profile (no provider profile of either kind yet) cannot create a
+  // Professional or Company profile. A user who already has one provider profile can still create
+  // the other one, so this must not gate on hasClientProfile alone.
+  const isPureClient =
+    !!user?.hasClientProfile && !user?.hasProfessionalProfile && !user?.hasCompanyProfile;
+
   const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUserFormData((prev) => ({ ...prev, [name]: value }));
@@ -651,7 +658,8 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Specialist Profile Section */}
+          {/* Specialist Profile Section (hidden for pure-client users: MVP restriction, see canCreateProfessionalProfile in specialist-be) */}
+          {!isPureClient && (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
@@ -766,8 +774,10 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+          )}
 
-          {/* Company Profile Section */}
+          {/* Company Profile Section (hidden for pure-client users: MVP restriction, see canCreateCompanyProfile in specialist-be) */}
+          {!isPureClient && (
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
               <div className="flex items-center gap-3">
@@ -876,6 +886,7 @@ export default function ProfilePage() {
               )}
             </div>
           </div>
+          )}
 
         </div>
       </div>
