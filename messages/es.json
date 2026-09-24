@@ -227,7 +227,7 @@
       "photosDescription": "Compartí fotos o un video del trabajo para que el especialista entienda mejor qué necesitás.",
       "photosPrivacy": {
         "direct": "Estas fotos y videos son privados: solo los va a ver el especialista o la empresa que elegiste.",
-        "public": "Estas fotos y videos los van a ver los especialistas que consulten tu solicitud en la bolsa de trabajo (no son públicos para cualquier visitante sin cuenta)."
+        "public": "Mientras tu solicitud esté publicada en la bolsa de trabajo, estas fotos y videos los va a poder ver cualquier especialista que la consulte, así puede cotizar el trabajo con precisión (no son públicos para visitantes sin cuenta). En cuanto elijas un especialista o empresa, dejan de ser visibles para el resto: a partir de ese momento, solo los van a poder ver vos y la persona que elegiste."
       },
       "addPhoto": "Agregar foto o video",
       "uploadingPhoto": "Subiendo...",
