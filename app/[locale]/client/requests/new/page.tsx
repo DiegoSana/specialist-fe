@@ -8,16 +8,11 @@ import { useCreateRequest } from '@/hooks/use-requests';
 import { useTradesWithProfessionals } from '@/hooks/use-professionals';
 import { useSearchProviders, UnifiedProvider } from '@/hooks/use-providers';
 import { useUploadFile } from '@/hooks/use-file-upload';
+import { useAddRequestPhoto } from '@/hooks/use-completed-work-photos';
 import ProtectedLayout from '@/components/layout/protected-layout';
-import AuthenticatedImage from '@/components/images/authenticated-image';
-import AuthenticatedVideo from '@/components/videos/authenticated-video';
 import { Trade } from '@/types';
 
 const MAX_NEW_REQUEST_MEDIA = 6;
-// Matches the extension check in components/requests/request-photos-section.tsx - kept in sync
-// there too so both pickers recognize the same set of video extensions (quicktime uploads use
-// .mov, which was missing from the original regex).
-const isVideoUrl = (url: string) => /\.(mp4|webm|ogg|mov)$/i.test(url);
 
 type RequestType = 'public' | 'direct' | null;
 
@@ -38,8 +33,18 @@ export default function NewRequestPage() {
     description: '',
     address: '',
     availability: '',
-    photos: [] as string[],
   });
+
+  // Photos/videos are staged locally (as File objects + local blob previews) and only uploaded
+  // to the server after the request itself is successfully created - see submitRequest(). The
+  // request-photo storage path has no concept of "owned but not yet attached to any request", so
+  // uploading before the request exists 403s when the app tries to read it back (see commit
+  // message for the full diagnosis). Staging locally sidesteps that entirely.
+  interface StagedMedia {
+    file: File;
+    previewUrl: string;
+  }
+  const [stagedFiles, setStagedFiles] = useState<StagedMedia[]>([]);
 
   const [errors, setErrors] = useState<{
     title?: string;
@@ -49,8 +54,7 @@ export default function NewRequestPage() {
   }>({});
 
   const [isProfileInactiveError, setIsProfileInactiveError] = useState(false);
-  const [photoError, setPhotoError] = useState<string | null>(null);
-  const [isUploadingPhotos, setIsUploadingPhotos] = useState(false);
+  const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
   const [showNoPhotosModal, setShowNoPhotosModal] = useState(false);
 
   const searchRef = useRef<HTMLDivElement>(null);
@@ -59,6 +63,16 @@ export default function NewRequestPage() {
   const { data: allProviders } = useSearchProviders({ providerType: 'ALL' });
   const createRequestMutation = useCreateRequest();
   const uploadFileMutation = useUploadFile();
+  const addRequestPhotoMutation = useAddRequestPhoto();
+
+  // Revoke every staged blob preview URL on unmount, so an abandoned flow doesn't leak them.
+  const stagedFilesRef = useRef<StagedMedia[]>([]);
+  stagedFilesRef.current = stagedFiles;
+  useEffect(() => {
+    return () => {
+      stagedFilesRef.current.forEach((m) => URL.revokeObjectURL(m.previewUrl));
+    };
+  }, []);
 
   // Pre-select provider if professionalId or companyId is in URL
   useEffect(() => {
@@ -191,7 +205,7 @@ export default function NewRequestPage() {
       return;
     }
 
-    if (formData.photos.length === 0) {
+    if (stagedFiles.length === 0) {
       setShowNoPhotosModal(true);
       return;
     }
@@ -205,8 +219,9 @@ export default function NewRequestPage() {
   };
 
   const submitRequest = async () => {
+    setIsSubmittingRequest(true);
     try {
-      await createRequestMutation.mutateAsync({
+      const createdRequest = await createRequestMutation.mutateAsync({
         professionalId: requestType === 'direct' && selectedProvider?.type === 'PROFESSIONAL' ? selectedProvider.id : undefined,
         companyId: requestType === 'direct' && selectedProvider?.type === 'COMPANY' ? selectedProvider.id : undefined,
         tradeId: selectedTrade?.id,
@@ -215,8 +230,28 @@ export default function NewRequestPage() {
         description: formData.description,
         address: formData.address,
         availability: formData.availability,
-        photos: formData.photos,
       });
+
+      // The request now has a real id, so request-photo uploads can be correctly attributed
+      // (see the StagedMedia comment above) - upload and attach each staged file, sequentially so
+      // they share the same useUploadFile() mutation instance predictably. A failure here doesn't
+      // block navigation: the request itself already exists, and photos are optional - we just
+      // don't want one bad file to strand the user on this page after a successful create.
+      for (const { file } of stagedFiles) {
+        try {
+          const uploaded = await uploadFileMutation.mutateAsync({
+            file,
+            category: 'request-photo',
+            requestId: createdRequest.id,
+          });
+          await addRequestPhotoMutation.mutateAsync({
+            requestId: createdRequest.id,
+            url: uploaded.url,
+          });
+        } catch (err) {
+          console.error('Failed to attach a photo/video to the new request:', err);
+        }
+      }
 
       const locale = pathname?.split('/')[1] || 'es';
       router.push(`/${locale}/client/dashboard`);
@@ -233,6 +268,8 @@ export default function NewRequestPage() {
           : msg || t('errors.general'),
       });
       setIsProfileInactiveError(isProfileInactive);
+    } finally {
+      setIsSubmittingRequest(false);
     }
   };
 
@@ -246,39 +283,28 @@ export default function NewRequestPage() {
     }
   };
 
-  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     e.target.value = '';
     if (files.length === 0) return;
 
     // Cap applies to the whole batch, not per-file - selecting 4 files with 2 slots left only
-    // uploads the first 2 (rather than rejecting the whole selection).
-    const remainingSlots = MAX_NEW_REQUEST_MEDIA - formData.photos.length;
-    const filesToUpload = files.slice(0, remainingSlots);
+    // stages the first 2 (rather than rejecting the whole selection).
+    const remainingSlots = MAX_NEW_REQUEST_MEDIA - stagedFiles.length;
+    const newlyStaged = files.slice(0, remainingSlots).map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
 
-    setPhotoError(null);
-    setIsUploadingPhotos(true);
-    try {
-      // Sequential, not Promise.all: these share one useUploadFile() mutation instance, and
-      // concurrent mutateAsync calls on the same mutation would fight over its isPending state.
-      for (const file of filesToUpload) {
-        try {
-          const uploaded = await uploadFileMutation.mutateAsync({
-            file,
-            category: 'request-photo',
-          });
-          setFormData((prev) => ({ ...prev, photos: [...prev.photos, uploaded.url] }));
-        } catch (err: any) {
-          setPhotoError(err.response?.data?.message || t('uploadError'));
-        }
-      }
-    } finally {
-      setIsUploadingPhotos(false);
-    }
+    setStagedFiles((prev) => [...prev, ...newlyStaged]);
   };
 
-  const handleRemovePhoto = (url: string) => {
-    setFormData((prev) => ({ ...prev, photos: prev.photos.filter((p) => p !== url) }));
+  const handleRemoveStagedFile = (previewUrl: string) => {
+    setStagedFiles((prev) => {
+      const toRemove = prev.find((m) => m.previewUrl === previewUrl);
+      if (toRemove) URL.revokeObjectURL(toRemove.previewUrl);
+      return prev.filter((m) => m.previewUrl !== previewUrl);
+    });
   };
 
   const goBack = () => {
@@ -799,25 +825,22 @@ export default function NewRequestPage() {
                   {requestType === 'public' ? t('photosPrivacy.public') : t('photosPrivacy.direct')}
                 </p>
 
-                {photoError && (
-                  <p className="mb-3 text-sm text-red-600">{photoError}</p>
-                )}
-
-                {formData.photos.length > 0 && (
+                {stagedFiles.length > 0 && (
                   <div className="grid grid-cols-3 gap-3 mb-3 sm:grid-cols-4">
-                    {formData.photos.map((url) => (
-                      <div key={url} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
-                        {isVideoUrl(url) ? (
-                          <AuthenticatedVideo
-                            src={url}
+                    {stagedFiles.map(({ file, previewUrl }) => (
+                      <div key={previewUrl} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                        {file.type.startsWith('video/') ? (
+                          <video
+                            src={previewUrl}
                             className="h-full w-full object-cover"
                             controls
                             muted
                             playsInline
                           />
                         ) : (
-                          <AuthenticatedImage
-                            src={url}
+                          // eslint-disable-next-line @next/next/no-img-element -- local blob: preview, not an optimizable remote image
+                          <img
+                            src={previewUrl}
                             alt={t('photos')}
                             className="h-full w-full object-cover"
                           />
@@ -825,7 +848,7 @@ export default function NewRequestPage() {
                         <button
                           type="button"
                           title={t('removePhoto')}
-                          onClick={() => handleRemovePhoto(url)}
+                          onClick={() => handleRemoveStagedFile(previewUrl)}
                           className="absolute right-1.5 top-1.5 rounded-full bg-red-600 p-1 text-white opacity-0 transition-opacity hover:bg-red-700 group-hover:opacity-100"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -837,11 +860,11 @@ export default function NewRequestPage() {
                   </div>
                 )}
 
-                {formData.photos.length === 0 && (
+                {stagedFiles.length === 0 && (
                   <p className="mb-3 text-sm text-gray-400">{t('noPhotos')}</p>
                 )}
 
-                {formData.photos.length < MAX_NEW_REQUEST_MEDIA && (
+                {stagedFiles.length < MAX_NEW_REQUEST_MEDIA && (
                   <>
                     <input
                       type="file"
@@ -850,17 +873,12 @@ export default function NewRequestPage() {
                       id="new-request-photo-upload"
                       className="hidden"
                       onChange={handlePhotoSelect}
-                      disabled={isUploadingPhotos}
                     />
                     <label
                       htmlFor="new-request-photo-upload"
-                      className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${
-                        isUploadingPhotos
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                      }`}
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors bg-blue-50 text-blue-600 hover:bg-blue-100"
                     >
-                      {isUploadingPhotos ? t('uploadingPhoto') : t('addPhoto')}
+                      {t('addPhoto')}
                     </label>
                   </>
                 )}
@@ -877,14 +895,14 @@ export default function NewRequestPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={createRequestMutation.isPending}
+                  disabled={isSubmittingRequest}
                   className={`flex-1 px-6 py-3 rounded-xl text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
                     requestType === 'public'
                       ? 'bg-blue-600 hover:bg-blue-700'
                       : 'bg-green-600 hover:bg-green-700'
                   }`}
                 >
-                  {createRequestMutation.isPending
+                  {isSubmittingRequest
                     ? t('creating')
                     : requestType === 'public'
                     ? t('createPublic')
@@ -916,7 +934,7 @@ export default function NewRequestPage() {
               <button
                 type="button"
                 onClick={handleContinueWithoutPhotos}
-                disabled={createRequestMutation.isPending}
+                disabled={isSubmittingRequest}
                 className="flex-1 px-4 py-2.5 rounded-xl text-white font-semibold text-sm bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t('noPhotosModal.continueWithoutPhotos')}
