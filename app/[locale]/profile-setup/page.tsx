@@ -29,7 +29,11 @@ export default function ProfileSetupPage() {
     }
     const currentUser = getUser();
     // If user already has a profile, redirect
-    if (currentUser?.hasClientProfile || currentUser?.hasProfessionalProfile) {
+    if (
+      currentUser?.hasClientProfile ||
+      currentUser?.hasProfessionalProfile ||
+      currentUser?.hasCompanyProfile
+    ) {
       router.push('/es/professionals');
       return;
     }

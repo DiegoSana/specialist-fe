@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { getUser, isAuthenticated, setUser } from '@/lib/auth';
+import { useRequireProfile } from '@/hooks/use-require-profile';
 import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
 import { useMyCompanyProfile } from '@/hooks/use-company';
 import { useUploadFile } from '@/hooks/use-file-upload';
@@ -36,7 +37,8 @@ export default function ProfilePage() {
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const locale = pathname?.split('/')[1] || 'es';
-  
+  const { canRender } = useRequireProfile();
+
   const [user, setUserState] = useState<any | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
@@ -168,6 +170,7 @@ export default function ProfilePage() {
   }
 
   if (!user) return null;
+  if (!canRender) return null;
 
   // MVP restriction (mirrors a backend 403 on POST /professionals/me and /companies/me): a user
   // who only has a client profile (no provider profile of either kind yet) cannot create a
