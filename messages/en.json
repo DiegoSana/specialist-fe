@@ -765,6 +765,13 @@
       "reactivateError": "Error reactivating WhatsApp messages. Please try again.",
       "optOutError": "Error deactivating WhatsApp messages. Please try again."
     },
+    "visibility": {
+      "label": "Search visibility",
+      "visibleMessage": "Your profile is visible in public search results",
+      "hiddenMessage": "Your profile is hidden from public search results",
+      "showError": "Error showing your profile. Please try again.",
+      "hideError": "Error hiding your profile. Please try again."
+    },
     "professional": {
       "title": "Professional Profile",
       "subtitle": "Manage your professional information",
