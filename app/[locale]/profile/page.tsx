@@ -7,8 +7,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { getUser, isAuthenticated, setUser } from '@/lib/auth';
 import { useRequireProfile } from '@/hooks/use-require-profile';
-import { useMyProfessionalProfile } from '@/hooks/use-professional-profile';
-import { useMyCompanyProfile } from '@/hooks/use-company';
+import {
+  useMyProfessionalProfile,
+  useUpdateProfessionalVisibility,
+} from '@/hooks/use-professional-profile';
+import { useMyCompanyProfile, useUpdateCompany } from '@/hooks/use-company';
 import { useUploadFile } from '@/hooks/use-file-upload';
 import { openVerificationModal } from '@/lib/verification';
 import apiClient from '@/lib/api-client';
@@ -33,6 +36,7 @@ export default function ProfilePage() {
   const t = useTranslations('profile');
   const tVerification = useTranslations('verification');
   const tWhatsapp = useTranslations('profile.whatsappOptOut');
+  const tVisibility = useTranslations('profile.visibility');
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -132,6 +136,12 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ['user', 'profile'] });
     },
   });
+
+  // Update professional profile visibility mutation
+  const updateProfessionalVisibilityMutation = useUpdateProfessionalVisibility();
+
+  // Update company profile visibility mutation
+  const updateCompanyVisibilityMutation = useUpdateCompany();
 
   // Activate client profile mutation
   const activateClientMutation = useMutation({
@@ -276,6 +286,34 @@ export default function ProfilePage() {
       setErrors((prev) => ({
         ...prev,
         whatsapp: error.response?.data?.message || tWhatsapp('optOutError'),
+      }));
+    }
+  };
+
+  const handleToggleProfessionalVisibility = async () => {
+    try {
+      await updateProfessionalVisibilityMutation.mutateAsync(!professionalProfile?.isVisible);
+      setErrors((prev) => ({ ...prev, professionalVisibility: undefined }));
+    } catch (error: any) {
+      setErrors((prev) => ({
+        ...prev,
+        professionalVisibility:
+          error.response?.data?.message ||
+          (professionalProfile?.isVisible ? tVisibility('hideError') : tVisibility('showError')),
+      }));
+    }
+  };
+
+  const handleToggleCompanyVisibility = async () => {
+    try {
+      await updateCompanyVisibilityMutation.mutateAsync({ isVisible: !companyProfile?.isVisible });
+      setErrors((prev) => ({ ...prev, companyVisibility: undefined }));
+    } catch (error: any) {
+      setErrors((prev) => ({
+        ...prev,
+        companyVisibility:
+          error.response?.data?.message ||
+          (companyProfile?.isVisible ? tVisibility('hideError') : tVisibility('showError')),
       }));
     }
   };
@@ -747,6 +785,42 @@ export default function ProfilePage() {
                     )}
                   </div>
 
+                  {/* Visibility toggle */}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-800">{tVisibility('label')}</p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {professionalProfile.isVisible
+                          ? tVisibility('visibleMessage')
+                          : tVisibility('hiddenMessage')}
+                      </p>
+                      {errors.professionalVisibility && (
+                        <p className="text-xs text-red-600 mt-1">{errors.professionalVisibility}</p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={professionalProfile.isVisible}
+                      aria-label={
+                        professionalProfile.isVisible
+                          ? tVisibility('visibleMessage')
+                          : tVisibility('hiddenMessage')
+                      }
+                      onClick={handleToggleProfessionalVisibility}
+                      disabled={updateProfessionalVisibilityMutation.isPending}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${
+                        professionalProfile.isVisible ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                          professionalProfile.isVisible ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
                   <div className="flex gap-3 pt-2">
                     <Link
                       href={`/${locale}/specialist/setup`}
@@ -857,6 +931,42 @@ export default function ProfilePage() {
                     {companyProfile.foundedYear && (
                       <p>📅 Fundada en {companyProfile.foundedYear}</p>
                     )}
+                  </div>
+
+                  {/* Visibility toggle */}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-800">{tVisibility('label')}</p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {companyProfile.isVisible
+                          ? tVisibility('visibleMessage')
+                          : tVisibility('hiddenMessage')}
+                      </p>
+                      {errors.companyVisibility && (
+                        <p className="text-xs text-red-600 mt-1">{errors.companyVisibility}</p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={companyProfile.isVisible}
+                      aria-label={
+                        companyProfile.isVisible
+                          ? tVisibility('visibleMessage')
+                          : tVisibility('hiddenMessage')
+                      }
+                      onClick={handleToggleCompanyVisibility}
+                      disabled={updateCompanyVisibilityMutation.isPending}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${
+                        companyProfile.isVisible ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                          companyProfile.isVisible ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
 
                   <div className="flex gap-3 pt-2">

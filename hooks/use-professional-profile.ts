@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
 import { Professional } from '@/types';
 import { getUser } from '@/lib/auth';
@@ -25,6 +25,23 @@ export function useMyProfessionalProfile() {
     },
     enabled: hasProfessionalProfile, // Only fetch if user has professional profile
     retry: false, // Don't retry on 404
+  });
+}
+
+/**
+ * Update the current user's professional profile visibility in public search/listing results.
+ */
+export function useUpdateProfessionalVisibility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (isVisible: boolean): Promise<Professional> => {
+      const response = await apiClient.patch<Professional>('/professionals/me', { isVisible });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['professional', 'me'] });
+    },
   });
 }
 

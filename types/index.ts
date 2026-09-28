@@ -113,6 +113,7 @@ export interface Professional {
   gallery: string[];
   combinedGallery?: string[]; // Gallery + completed work photos
   active: boolean;
+  isVisible: boolean; // Whether this professional appears in public search/listing results
   user?: {
     id: string;
     firstName: string;
@@ -296,6 +297,7 @@ export interface Company {
   gallery: string[];
   status: CompanyStatus;
   active: boolean;
+  isVisible: boolean; // Whether this company appears in public search/listing results
   averageRating: number;
   totalReviews: number;
   createdAt: string;
@@ -330,6 +332,7 @@ export interface CreateCompanyDto {
 export interface UpdateCompanyDto extends Partial<CreateCompanyDto> {
   status?: CompanyStatus;
   active?: boolean;
+  isVisible?: boolean;
 }
 
 export interface SearchCompaniesParams {

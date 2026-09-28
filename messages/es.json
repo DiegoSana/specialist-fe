@@ -662,6 +662,13 @@
       "reactivateError": "Error al reactivar los mensajes de WhatsApp. Por favor intenta de nuevo.",
       "optOutError": "Error al desactivar los mensajes de WhatsApp. Por favor intenta de nuevo."
     },
+    "visibility": {
+      "label": "Visibilidad en búsquedas",
+      "visibleMessage": "Tu perfil es visible en las búsquedas públicas",
+      "hiddenMessage": "Tu perfil está oculto de las búsquedas públicas",
+      "showError": "Error al mostrar el perfil. Por favor intenta de nuevo.",
+      "hideError": "Error al ocultar el perfil. Por favor intenta de nuevo."
+    },
     "specialist": {
       "title": "Perfil de Especialista",
       "subtitle": "Gestiona tu información como especialista",
