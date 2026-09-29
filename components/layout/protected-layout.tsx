@@ -1,9 +1,10 @@
 'use client';
 
 import { ReactNode, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { getUser, isAuthenticated } from '@/lib/auth';
 import MainNav from '../navigation/main-nav';
+import Footer from './footer';
 
 type AuthUser = ReturnType<typeof getUser>;
 
@@ -30,6 +31,8 @@ export default function ProtectedLayout({
   noAuthRedirectPath = '/es/login',
 }: ProtectedLayoutProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = typeof params.locale === 'string' ? params.locale : 'es';
   const [isLoading, setIsLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
   const [user, setUserState] = useState<AuthUser>(null);
@@ -69,13 +72,14 @@ export default function ProtectedLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen flex flex-col bg-gray-50">
         <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
           <MainNav />
         </header>
-        <main className="flex items-center justify-center min-h-[60vh]">
+        <main className="flex-1 flex items-center justify-center min-h-[60vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </main>
+        <Footer locale={locale} />
       </div>
     );
   }
@@ -85,11 +89,12 @@ export default function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
         <MainNav />
       </header>
-      <main>{typeof children === 'function' ? children(user) : children}</main>
+      <main className="flex-1">{typeof children === 'function' ? children(user) : children}</main>
+      <Footer locale={locale} />
     </div>
   );
 }

@@ -6,11 +6,17 @@ const push = jest.fn();
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
+  useParams: () => ({ locale: 'es' }),
 }));
 
 jest.mock('@/components/navigation/main-nav', () => ({
   __esModule: true,
   default: () => <nav data-testid="main-nav" />,
+}));
+
+jest.mock('@/components/layout/footer', () => ({
+  __esModule: true,
+  default: () => <footer data-testid="footer" />,
 }));
 
 jest.mock('@/lib/auth', () => ({

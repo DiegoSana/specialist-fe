@@ -1091,7 +1091,58 @@
     }
   },
   "footer": {
-    "copyright": "© 2024 Specialist. All rights reserved."
+    "copyright": "© 2024 Specialist. All rights reserved.",
+    "links": {
+      "about": "About us",
+      "contact": "Contact",
+      "terms": "Terms and conditions"
+    }
+  },
+  "about": {
+    "title": "About us",
+    "paragraph1": "Specialist is a platform that connects people in Bariloche with verified service professionals and companies, so finding reliable help for your home is simple and transparent.",
+    "paragraph2": "We believe hiring a service shouldn't depend on random recommendations. That's why we verify the identity and details of every specialist before they can offer their services on the platform, and we give clients all the information they need to choose with confidence.",
+    "paragraph3": "We're still in an early stage of development: we keep adding features and adjusting the platform based on feedback from the people who use it. If you have suggestions or find something we could improve, we'd love to hear from you."
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "notice": "Important notice: Specialist is currently in a testing and development stage. These Terms and Conditions are a preliminary version, pending formal legal review before the platform's official launch. Using Specialist during this stage means accepting that the service may change, be interrupted, or be discontinued without prior notice.",
+    "section1": {
+      "title": "1. About Specialist",
+      "body": "Specialist is a platform that connects clients who need a service with independent professionals and companies who offer it. Specialist does not perform the requested services nor employ the professionals or companies registered on the platform: it acts solely as a technological intermediary between the parties."
+    },
+    "section2": {
+      "title": "2. Use of the platform",
+      "body": "By registering on Specialist, you agree to provide truthful information and keep it up to date. You are responsible for the activity that occurs under your account and for communicating in good faith with the other party in each request."
+    },
+    "section3": {
+      "title": "3. Specialist verification",
+      "body": "Specialist performs basic identity and contact verification of professionals and companies before enabling them on the platform. This verification does not constitute a guarantee about the quality, suitability, or outcome of the work performed by a specialist."
+    },
+    "section4": {
+      "title": "4. Liability",
+      "body": "Specialist is not responsible for damages, losses, or disputes arising between clients and specialists as a result of a service hired through the platform. Any agreement about price, scope of work, or payment terms is exclusively between the parties involved."
+    },
+    "section5": {
+      "title": "5. Accounts and moderation",
+      "body": "Specialist reserves the right to suspend or deactivate accounts that violate these terms, provide false information, or misuse the platform."
+    },
+    "section6": {
+      "title": "6. Changes",
+      "body": "These terms may be updated as the platform evolves. We recommend reviewing them periodically."
+    },
+    "section7": {
+      "title": "7. Contact",
+      "body": "For any questions about these terms, you can reach us from the Contact page."
+    },
+    "legalEntity": "Legal entity: to be defined (Specialist is in the process of legal incorporation)."
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Have a question, suggestion, or found a problem? Write to us, we'd like to hear from you.",
+    "emailLabel": "Email",
+    "email": "contacto@specialist.com",
+    "outro": "We're still in an early stage of the platform, so your feedback helps us improve a lot."
   },
   "company": {
     "setup": {

@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useLogin } from '@/hooks/use-auth';
 import { isAuthenticated, getUser } from '@/lib/auth';
+import Footer from '@/components/layout/footer';
 
 // Dev-only helper: every seeded user from specialist-be/prisma/seed.ts, all sharing
 // password 'Test1234!'. Keep in sync by hand if seed.ts adds/removes users.
@@ -31,6 +32,8 @@ const DEV_SEED_PASSWORD = 'Test1234!';
 export default function LoginPage() {
   const t = useTranslations('auth.login');
   const router = useRouter();
+  const params = useParams();
+  const locale = typeof params.locale === 'string' ? params.locale : 'es';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{
@@ -101,7 +104,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
         <div className="text-center">
@@ -405,6 +409,8 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+      </div>
+      <Footer locale={locale} />
     </div>
   );
 }
