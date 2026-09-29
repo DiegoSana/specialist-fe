@@ -988,7 +988,58 @@
     }
   },
   "footer": {
-    "copyright": "© 2024 Specialist. Todos los derechos reservados."
+    "copyright": "© 2024 Specialist. Todos los derechos reservados.",
+    "links": {
+      "about": "Quiénes somos",
+      "contact": "Contacto",
+      "terms": "Términos y condiciones"
+    }
+  },
+  "about": {
+    "title": "Quiénes somos",
+    "paragraph1": "Specialist es una plataforma que conecta a personas de Bariloche con profesionales y empresas de servicios verificados, para que encontrar ayuda confiable para el hogar sea simple y transparente.",
+    "paragraph2": "Creemos que contratar un servicio no debería depender de recomendaciones al azar. Por eso verificamos la identidad y los datos de cada especialista antes de que pueda ofrecer sus servicios en la plataforma, y ponemos a disposición de los clientes toda la información que necesitan para elegir con confianza.",
+    "paragraph3": "Todavía estamos en una etapa temprana de desarrollo: seguimos sumando funcionalidades y ajustando la plataforma a partir del feedback de quienes la usan. Si tenés sugerencias o encontrás algo que podamos mejorar, nos encantaría escucharte."
+  },
+  "terms": {
+    "title": "Términos y Condiciones",
+    "notice": "Aviso importante: Specialist se encuentra actualmente en una etapa de prueba y desarrollo. Estos Términos y Condiciones son una versión preliminar, pendiente de revisión legal formal antes del lanzamiento definitivo de la plataforma. El uso de Specialist durante esta etapa implica la aceptación de que el servicio puede cambiar, interrumpirse o discontinuarse sin previo aviso.",
+    "section1": {
+      "title": "1. Sobre Specialist",
+      "body": "Specialist es una plataforma que conecta a clientes que necesitan un servicio con profesionales y empresas independientes que lo ofrecen. Specialist no presta los servicios solicitados ni emplea a los profesionales o empresas que se registran en la plataforma: actúa únicamente como intermediario tecnológico entre las partes."
+    },
+    "section2": {
+      "title": "2. Uso de la plataforma",
+      "body": "Al registrarte en Specialist, aceptás brindar información veraz y mantenerla actualizada. Sos responsable de la actividad que ocurra bajo tu cuenta y de comunicarte de buena fe con la otra parte de cada solicitud."
+    },
+    "section3": {
+      "title": "3. Verificación de especialistas",
+      "body": "Specialist realiza verificaciones básicas de identidad y contacto de los profesionales y empresas antes de habilitarlos en la plataforma. Esta verificación no constituye una garantía sobre la calidad, idoneidad o resultado del trabajo realizado por un especialista."
+    },
+    "section4": {
+      "title": "4. Responsabilidad",
+      "body": "Specialist no es responsable por daños, pérdidas o disputas que surjan entre clientes y especialistas a raíz de un servicio contratado a través de la plataforma. Cualquier acuerdo sobre precio, alcance del trabajo o condiciones de pago es exclusivamente entre las partes involucradas."
+    },
+    "section5": {
+      "title": "5. Cuentas y moderación",
+      "body": "Specialist se reserva el derecho de suspender o dar de baja cuentas que incumplan estos términos, que proporcionen información falsa, o que hagan un uso indebido de la plataforma."
+    },
+    "section6": {
+      "title": "6. Modificaciones",
+      "body": "Estos términos pueden actualizarse a medida que la plataforma evoluciona. Te recomendamos revisarlos periódicamente."
+    },
+    "section7": {
+      "title": "7. Contacto",
+      "body": "Ante cualquier consulta sobre estos términos, podés escribirnos desde la página de Contacto."
+    },
+    "legalEntity": "Razón social: a definir (Specialist se encuentra en proceso de constitución legal)."
+  },
+  "contact": {
+    "title": "Contacto",
+    "intro": "¿Tenés una consulta, sugerencia o encontraste un problema? Escribinos, nos gustaría saber de vos.",
+    "emailLabel": "Email",
+    "email": "contacto@specialist.com",
+    "outro": "Estamos en una etapa temprana de la plataforma, así que tu feedback nos ayuda mucho a mejorar."
   },
   "company": {
     "setup": {

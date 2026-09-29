@@ -2,11 +2,11 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import MainNav from '@/components/navigation/main-nav';
 import SpecialistCtaButton from '@/components/cta/specialist-cta-button';
+import Footer from '@/components/layout/footer';
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations('home');
-  const tFooter = await getTranslations('footer');
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -387,14 +387,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </section>
       </main>
 
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-2xl font-bold">Specialist</div>
-            <p className="text-gray-400 text-sm">{tFooter('copyright')}</p>
-          </div>
-        </div>
-      </footer>
+      <Footer locale={locale} />
     </div>
   );
 }
