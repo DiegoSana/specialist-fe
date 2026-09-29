@@ -1,18 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRegister } from '@/hooks/use-auth';
 import { UserRole } from '@/types';
 import { isAuthenticated, getUser } from '@/lib/auth';
+import Footer from '@/components/layout/footer';
 
 export default function RegisterPage() {
   const t = useTranslations('auth.register');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const params = useParams();
+  const locale = typeof params.locale === 'string' ? params.locale : 'es';
   
   // Redirect if already logged in
   useEffect(() => {
@@ -153,7 +156,8 @@ export default function RegisterPage() {
   // Step 1: Role Selection Screen
   if (!selectedRole) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <div className="text-center">
@@ -246,12 +250,15 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+      <Footer locale={locale} />
+    </div>
     );
   }
 
   // Step 2: Registration Form
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
         <div className="text-center">
@@ -462,6 +469,8 @@ export default function RegisterPage() {
           </form>
         </div>
       </div>
+      </div>
+      <Footer locale={locale} />
     </div>
   );
 }
