@@ -82,6 +82,40 @@ export enum RequestInterestStatus {
   WITHDRAWN = 'WITHDRAWN',
 }
 
+// Reviews (bidirectional: CLIENT_TO_PROVIDER and PROVIDER_TO_CLIENT — see REVIEWS_REDESIGN.md).
+// Mirrors specialist-be `ReviewStatus` (prisma enum, moderation state).
+export enum ReviewStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+/**
+ * A review's own content, as embedded in `Request.myReview` / `Request.counterpartReview`
+ * (`RequestReviewSummaryDto` on the backend). `revealedAt` is null until both parties rated or
+ * the reveal timeout elapsed (doble-ciego con timeout) — only relevant for `counterpartReview`,
+ * since the author can always see their own review via `myReview`.
+ */
+export interface RequestReviewSummary {
+  id: string;
+  rating: number;
+  comment: string | null;
+  status: ReviewStatus;
+  revealedAt: string | null;
+  createdAt: string;
+}
+
+/** `counterpartReview` before it's revealed: content hidden, only existence shown. */
+export interface PendingCounterpartReview {
+  pending: true;
+}
+
+export function isPendingReview(
+  review: RequestReviewSummary | PendingCounterpartReview | null | undefined,
+): review is PendingCounterpartReview {
+  return !!review && 'pending' in review && review.pending === true;
+}
+
 export interface Trade {
   id: string;
   name: string;
@@ -140,9 +174,27 @@ export interface Request {
   status: RequestStatus;
   quoteAmount?: number;
   quoteNotes?: string;
-  // Client rating by professional
-  clientRating?: number;
-  clientRatingComment?: string;
+  /**
+   * @deprecated Legacy flat field: client rating by professional. Read-only compat for requests
+   * closed before the bidirectional reviews redesign (no longer written by
+   * `POST /requests/:id/rate-client`) — use `myReview`/`counterpartReview` instead.
+   */
+  clientRating?: number | null;
+  /** @deprecated See clientRating. */
+  clientRatingComment?: string | null;
+  /**
+   * The viewer's own review for this request (client's review of the provider, or provider's
+   * review of the client, depending on who is asking). Always visible to its author regardless
+   * of reveal state. Only populated on single-request detail responses (GET/PATCH /requests/:id,
+   * POST /requests/:id/rate-client) — undefined on list endpoints.
+   */
+  myReview?: RequestReviewSummary | null;
+  /**
+   * The counterpart's review. Hidden behind `{ pending: true }` until both parties rated or the
+   * reveal timeout elapsed (doble-ciego con timeout). Only populated on single-request detail
+   * responses — undefined on list endpoints.
+   */
+  counterpartReview?: RequestReviewSummary | PendingCounterpartReview | null;
   // Reason for NOT_COMPLETED / INTERRUPTED (or a support resolution note).
   statusReason?: string | null;
   // Specialists currently INTERESTED; only present on the client's list response.
@@ -197,6 +249,17 @@ export interface Request {
     profilePictureUrl?: string;
     // Only returned once contact was released for this request (RequestEntity.canViewCounterpartContactBy).
     phone?: string;
+    /** Client aggregate rating from PROVIDER_TO_CLIENT reviews. */
+    averageRating?: number;
+    totalReviews?: number;
+    /**
+     * Admin-curated (isFeatured) approved reviews of this client, for the provider-facing
+     * "in context" view (no dedicated client profile page — REVIEWS_REDESIGN.md section 2).
+     * Only populated on single-request detail responses (GET/PATCH /requests/:id,
+     * POST /requests/:id/rate-client) — undefined on list endpoints, including
+     * `InterestedRequest.fullRequest`.
+     */
+    featuredReviews?: RequestReviewSummary[];
   };
 }
 

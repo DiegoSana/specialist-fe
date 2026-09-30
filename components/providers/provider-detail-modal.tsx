@@ -35,6 +35,16 @@ export default function ProviderDetailModal({
     setIsLoggedIn(isAuthenticated());
   }, []);
 
+  // NOTE: the `provider.type === 'PROFESSIONAL'` gate below is still needed at the data-fetching
+  // level (unlike the display-level one removed above, REVIEWS_REDESIGN.md section 4.3): the
+  // backend endpoint this hook calls (`GET /professionals/:professionalId/reviews`,
+  // `ProfessionalReviewsController.findByProfessionalId`) resolves the id via
+  // `ProfessionalService.getByIdOrFail`, which throws 404 for a Company id — confirmed still true
+  // on `specialist-be`'s `feat/bidirectional-reviews` branch (only `ReviewService` grew a generic
+  // `findByServiceProviderId`; the controller route was never rewired to use it). Passing a
+  // Company's id here would 404 instead of returning its reviews. Fixing this for real needs a
+  // backend change (e.g. rewiring that route to `findByServiceProviderId`, or a new
+  // `/providers/:id/reviews` endpoint) — out of scope for this FE-only pass.
   const { data: reviews } = useProfessionalReviews(provider.type === 'PROFESSIONAL' ? provider.id : '');
 
   return (
@@ -152,9 +162,9 @@ export default function ProviderDetailModal({
             </div>
           )}
 
-          {/* Reviews - Only show for professionals */}
-          {provider.type === 'PROFESSIONAL' && (
-            <div>
+          {/* Reviews. ServiceProvider.reviews is the shared parent relation for both Professional
+              and Company (REVIEWS_REDESIGN.md section 4.3) — no type filter needed here. */}
+          <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 {t('details.reviews')} ({reviews?.length || 0})
               </h3>
@@ -240,8 +250,7 @@ export default function ProviderDetailModal({
               ) : (
                 <p className="text-gray-500">{t('details.noReviews')}</p>
               )}
-            </div>
-          )}
+          </div>
 
           {/* Contact CTA */}
           {showCreateRequestCta && (

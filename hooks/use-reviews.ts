@@ -57,11 +57,28 @@ export function useProfessionalReviews(professionalId: string) {
   });
 }
 
-export function useReviewByRequestId(requestId: string, enabled = true) {
+/**
+ * CLIENT_TO_PROVIDER: client's review of the provider. PROVIDER_TO_CLIENT: provider's review of
+ * the client. Mirrors specialist-be `ReviewDirection` (prisma enum).
+ */
+export type ReviewDirection = 'CLIENT_TO_PROVIDER' | 'PROVIDER_TO_CLIENT';
+
+/**
+ * Fetches the viewer's own review for a request by direction (`GET /reviews?requestId=&direction=`,
+ * defaults to CLIENT_TO_PROVIDER on the backend for compat). Used where a component needs "did I
+ * already review this?" outside a request-detail response (which carries `myReview` directly) —
+ * e.g. list/card contexts where `Request.myReview` isn't populated.
+ */
+export function useReviewByRequestId(
+  requestId: string,
+  enabled = true,
+  direction?: ReviewDirection,
+) {
   return useQuery({
-    queryKey: ['review', 'request', requestId],
+    queryKey: ['review', 'request', requestId, direction ?? 'CLIENT_TO_PROVIDER'],
     queryFn: async (): Promise<Review | null> => {
-      const response = await apiClient.get<Review | null>(`/reviews?requestId=${requestId}`);
+      const params = direction ? `requestId=${requestId}&direction=${direction}` : `requestId=${requestId}`;
+      const response = await apiClient.get<Review | null>(`/reviews?${params}`);
       return response.data ?? null;
     },
     enabled: enabled && !!requestId,

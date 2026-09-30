@@ -968,7 +968,9 @@
     "receivedRating": {
       "ratingFromSpecialist": "Calificación recibida",
       "ratingFromClient": "Calificación recibida",
-      "ratedYou": "te calificó"
+      "ratedYou": "te calificó",
+      "pendingTitle": "Calificación recibida, todavía oculta",
+      "pendingDescription": "La otra parte ya te calificó, pero no vas a poder ver el detalle hasta que ambos hayan calificado (o venza el plazo)."
     },
     "reviewCta": {
       "rateSpecialist": "¡Califica al especialista!",
@@ -984,7 +986,13 @@
       "submitReview": "Enviar reseña",
       "submitting": "Enviando...",
       "alreadyReviewed": "¡Gracias por tu reseña!",
-      "thankYou": "Tu opinión ayuda a mejorar nuestra comunidad"
+      "thankYou": "Tu opinión ayuda a mejorar nuestra comunidad",
+      "waitingForCounterpart": "Esperando a que la otra parte también califique (o venza el plazo) para revelar ambas calificaciones."
+    },
+    "clientReputation": {
+      "title": "Reputación de {name} como cliente",
+      "reviewCount": "{count, plural, one {# reseña} other {# reseñas}}",
+      "featuredTitle": "Comentarios destacados"
     }
   },
   "footer": {

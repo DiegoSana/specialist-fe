@@ -59,4 +59,15 @@ describe('ProviderDetailModal', () => {
     fireEvent.click(screen.getByRole('button'));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('shows the reviews section for a COMPANY provider too (ServiceProvider.reviews is shared)', () => {
+    render(
+      <ProviderDetailModal
+        provider={provider({ type: 'COMPANY', companyName: 'Acme SRL' })}
+        locale="es"
+        onClose={jest.fn()}
+      />,
+    );
+    expect(screen.getByRole('heading', { name: /Reseñas/ })).toBeTruthy();
+  });
 });

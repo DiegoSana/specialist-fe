@@ -1071,7 +1071,9 @@
     "receivedRating": {
       "ratingFromSpecialist": "Rating received",
       "ratingFromClient": "Rating received",
-      "ratedYou": "rated you"
+      "ratedYou": "rated you",
+      "pendingTitle": "Rating received, still hidden",
+      "pendingDescription": "The other party already rated you, but you won't see the details until both of you have rated (or the deadline passes)."
     },
     "reviewCta": {
       "rateSpecialist": "Rate the specialist!",
@@ -1087,7 +1089,13 @@
       "submitReview": "Submit review",
       "submitting": "Submitting...",
       "alreadyReviewed": "Thanks for your review!",
-      "thankYou": "Your feedback helps improve our community"
+      "thankYou": "Your feedback helps improve our community",
+      "waitingForCounterpart": "Waiting for the other party to also rate (or the deadline to pass) to reveal both ratings."
+    },
+    "clientReputation": {
+      "title": "{name}'s reputation as a client",
+      "reviewCount": "{count, plural, one {# review} other {# reviews}}",
+      "featuredTitle": "Featured comments"
     }
   },
   "footer": {

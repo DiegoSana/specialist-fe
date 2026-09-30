@@ -7,12 +7,18 @@ interface ReviewCtaCardProps {
   hasExistingReview: boolean;
   existingReview?: {
     rating: number;
-    comment?: string;
+    comment?: string | null;
   };
   onSubmitReview: (rating: number, comment: string) => Promise<void>;
   isPending?: boolean;
   type: 'client-to-professional' | 'professional-to-client';
   recipientName: string;
+  /**
+   * True when `hasExistingReview` and the counterpart hasn't rated yet (or the reveal timeout
+   * hasn't elapsed) — i.e. `Request.counterpartReview` is `{ pending: true }`. Shows an extra
+   * note that their own review stays hidden from the counterpart, and vice versa, until then.
+   */
+  counterpartPending?: boolean;
 }
 
 export default function ReviewCtaCard({
@@ -22,6 +28,7 @@ export default function ReviewCtaCard({
   isPending = false,
   type,
   recipientName,
+  counterpartPending = false,
 }: ReviewCtaCardProps) {
   const t = useTranslations('components.reviewCta');
   const [showForm, setShowForm] = useState(false);
@@ -73,6 +80,20 @@ export default function ReviewCtaCard({
             <p className="text-gray-600 text-sm italic">"{existingReview.comment}"</p>
           )}
         </div>
+
+        {counterpartPending && (
+          <p className="mt-4 flex items-start gap-2 text-xs text-green-700">
+            <svg className="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            {t('waitingForCounterpart')}
+          </p>
+        )}
       </div>
     );
   }

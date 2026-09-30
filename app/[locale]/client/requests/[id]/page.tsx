@@ -5,8 +5,8 @@ import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRequest, useCancelRequest, useStartRequest } from '@/hooks/use-requests';
-import { useCreateReview, useReviewByRequestId } from '@/hooks/use-reviews';
-import { RequestStatus } from '@/types';
+import { useCreateReview } from '@/hooks/use-reviews';
+import { RequestStatus, isPendingReview } from '@/types';
 import { getPrimaryAction, REQUEST_STATUS_META } from '@/lib/request-status';
 import { getCounterpart } from '@/lib/request-participants';
 import ProtectedLayout from '@/components/layout/protected-layout';
@@ -40,7 +40,6 @@ export default function RequestDetailPage() {
   const locale = pathname?.split('/')[1] || 'es';
 
   const { data: request, isLoading } = useRequest(requestId);
-  const { data: existingReview } = useReviewByRequestId(requestId);
   const createReview = useCreateReview();
   const cancel = useCancelRequest();
   const start = useStartRequest();
@@ -119,10 +118,10 @@ export default function RequestDetailPage() {
 
               {request.status === RequestStatus.CLOSED && request.professional && (
                 <ReviewCtaCard
-                  hasExistingReview={!!existingReview}
+                  hasExistingReview={!!request.myReview}
                   existingReview={
-                    existingReview
-                      ? { rating: existingReview.rating, comment: existingReview.comment }
+                    request.myReview
+                      ? { rating: request.myReview.rating, comment: request.myReview.comment }
                       : undefined
                   }
                   onSubmitReview={async (rating, comment) => {
@@ -136,20 +135,17 @@ export default function RequestDetailPage() {
                   isPending={createReview.isPending}
                   type="client-to-professional"
                   recipientName={`${request.professional.user?.firstName} ${request.professional.user?.lastName}`}
+                  counterpartPending={!!request.myReview && isPendingReview(request.counterpartReview)}
                 />
               )}
 
-              {request.status === RequestStatus.CLOSED &&
-                existingReview &&
-                request.clientRating &&
-                request.professional && (
-                  <ReceivedRatingCard
-                    rating={request.clientRating}
-                    comment={request.clientRatingComment}
-                    reviewerName={`${request.professional.user?.firstName} ${request.professional.user?.lastName}`}
-                    type="from-professional"
-                  />
-                )}
+              {request.status === RequestStatus.CLOSED && request.professional && (
+                <ReceivedRatingCard
+                  review={request.counterpartReview}
+                  reviewerName={`${request.professional.user?.firstName} ${request.professional.user?.lastName}`}
+                  type="from-professional"
+                />
+              )}
 
               <RequestPhotosSection request={request} canManage={canManagePhotos} namespace="client.requestDetail" />
             </div>
