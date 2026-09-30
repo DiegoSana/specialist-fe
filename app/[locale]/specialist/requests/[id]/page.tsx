@@ -4,8 +4,7 @@ import { usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRequest, useRateClient, useStartRequest } from '@/hooks/use-requests';
-import { useReviewByRequestId } from '@/hooks/use-reviews';
-import { RequestStatus } from '@/types';
+import { RequestStatus, isPendingReview } from '@/types';
 import { getPrimaryAction, REQUEST_STATUS_META } from '@/lib/request-status';
 import { getCounterpart } from '@/lib/request-participants';
 import ProtectedLayout from '@/components/layout/protected-layout';
@@ -16,6 +15,7 @@ import RequestDetailHeader from '@/components/requests/request-detail-header';
 import RequestSummaryCard from '@/components/requests/request-summary-card';
 import RequestPrimaryAction from '@/components/requests/request-primary-action';
 import ContactCard from '@/components/requests/contact-card';
+import ClientReputationCard from '@/components/requests/client-reputation-card';
 import ReportProblem from '@/components/requests/report-problem';
 import ExpressInterestCard from '@/components/requests/express-interest-card';
 import RequestPhotosSection from '@/components/requests/request-photos-section';
@@ -38,7 +38,6 @@ export default function SpecialistRequestDetailPage() {
   const locale = pathname?.split('/')[1] || 'es';
 
   const { data: request, isLoading } = useRequest(requestId);
-  const { data: clientReview } = useReviewByRequestId(requestId);
   const rateClient = useRateClient();
   const start = useStartRequest();
 
@@ -116,10 +115,10 @@ export default function SpecialistRequestDetailPage() {
 
               {request.status === RequestStatus.CLOSED && request.client && (
                 <ReviewCtaCard
-                  hasExistingReview={request.clientRating !== null && request.clientRating !== undefined}
+                  hasExistingReview={!!request.myReview}
                   existingReview={
-                    request.clientRating
-                      ? { rating: request.clientRating, comment: request.clientRatingComment }
+                    request.myReview
+                      ? { rating: request.myReview.rating, comment: request.myReview.comment }
                       : undefined
                   }
                   onSubmitReview={async (rating, comment) => {
@@ -132,20 +131,17 @@ export default function SpecialistRequestDetailPage() {
                   isPending={rateClient.isPending}
                   type="professional-to-client"
                   recipientName={`${request.client.firstName} ${request.client.lastName}`}
+                  counterpartPending={!!request.myReview && isPendingReview(request.counterpartReview)}
                 />
               )}
 
-              {request.status === RequestStatus.CLOSED &&
-                request.clientRating &&
-                clientReview &&
-                request.client && (
-                  <ReceivedRatingCard
-                    rating={clientReview.rating}
-                    comment={clientReview.comment}
-                    reviewerName={`${request.client.firstName} ${request.client.lastName}`}
-                    type="from-client"
-                  />
-                )}
+              {request.status === RequestStatus.CLOSED && request.client && (
+                <ReceivedRatingCard
+                  review={request.counterpartReview}
+                  reviewerName={`${request.client.firstName} ${request.client.lastName}`}
+                  type="from-client"
+                />
+              )}
 
               <RequestPhotosSection
                 request={request}
@@ -172,6 +168,15 @@ export default function SpecialistRequestDetailPage() {
               )}
 
               <ContactCard counterpart={counterpart} released={contactReleased} accent="blue" />
+
+              {request.client && (
+                <ClientReputationCard
+                  averageRating={request.client.averageRating}
+                  totalReviews={request.client.totalReviews}
+                  featuredReviews={request.client.featuredReviews}
+                  clientName={`${request.client.firstName} ${request.client.lastName}`}
+                />
+              )}
 
               {tDetail.has(`notes.provider.${request.status}`) && !showActionCard && (
                 <div className="rounded-lg bg-gray-100 px-4 py-3.5">

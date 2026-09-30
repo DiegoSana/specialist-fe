@@ -155,20 +155,18 @@ describe('RequestListCard', () => {
     expect(screen.queryByText('Calificar')).toBeNull();
   });
 
-  it('specialist: CLOSED without clientRating offers "Calificar"', () => {
+  it('specialist: CLOSED without an existing PROVIDER_TO_CLIENT review offers "Calificar"', () => {
+    useReviewByRequestId.mockReturnValue({ data: undefined });
     render(
       <RequestListCard request={make({ status: RequestStatus.CLOSED })} role="provider" locale="es" />,
     );
     expect(screen.getByText('Calificar')).toBeTruthy();
   });
 
-  it('specialist: CLOSED with clientRating already set does not offer "Calificar" again', () => {
+  it('specialist: CLOSED with an existing PROVIDER_TO_CLIENT review does not offer "Calificar" again', () => {
+    useReviewByRequestId.mockReturnValue({ data: { rating: 5, comment: 'Buen cliente' } });
     render(
-      <RequestListCard
-        request={make({ status: RequestStatus.CLOSED, clientRating: 5, clientRatingComment: 'Buen cliente' })}
-        role="provider"
-        locale="es"
-      />,
+      <RequestListCard request={make({ status: RequestStatus.CLOSED })} role="provider" locale="es" />,
     );
     expect(screen.queryByText('Calificar')).toBeNull();
   });

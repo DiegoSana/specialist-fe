@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { UnifiedProvider } from '@/hooks/use-providers';
-import { useProfessionalReviews } from '@/hooks/use-reviews';
+import { useServiceProviderReviews } from '@/hooks/use-reviews';
 import { isAuthenticated } from '@/lib/auth';
 
 interface ProviderDetailModalProps {
@@ -35,7 +35,10 @@ export default function ProviderDetailModal({
     setIsLoggedIn(isAuthenticated());
   }, []);
 
-  const { data: reviews } = useProfessionalReviews(provider.type === 'PROFESSIONAL' ? provider.id : '');
+  // GET /providers/:serviceProviderId/reviews (ServiceProviderReviewsController, added
+  // specialist-be feat/bidirectional-reviews commit bb15051) works for both Professional and
+  // Company — takes the ServiceProvider id, not the Professional/Company's own id.
+  const { data: reviews } = useServiceProviderReviews(provider.serviceProviderId);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -152,9 +155,9 @@ export default function ProviderDetailModal({
             </div>
           )}
 
-          {/* Reviews - Only show for professionals */}
-          {provider.type === 'PROFESSIONAL' && (
-            <div>
+          {/* Reviews. ServiceProvider.reviews is the shared parent relation for both Professional
+              and Company (REVIEWS_REDESIGN.md section 4.3) — no type filter needed here. */}
+          <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 {t('details.reviews')} ({reviews?.length || 0})
               </h3>
@@ -240,8 +243,7 @@ export default function ProviderDetailModal({
               ) : (
                 <p className="text-gray-500">{t('details.noReviews')}</p>
               )}
-            </div>
-          )}
+          </div>
 
           {/* Contact CTA */}
           {showCreateRequestCta && (

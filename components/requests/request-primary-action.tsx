@@ -174,14 +174,16 @@ export default function RequestPrimaryAction({
 }: RequestPrimaryActionProps) {
   const t = useTranslations('requestStatus.actions');
   const isClosed = request.status === RequestStatus.CLOSED;
-  // Client rates the specialist via a Review record; the specialist rates the client via
-  // Request.clientRating, already present on the request — no extra fetch needed for that side.
-  const { data: existingReview } = useReviewByRequestId(request.id, role === 'client' && isClosed);
-  const alreadyReviewed = isClosed
-    ? role === 'client'
-      ? !!existingReview
-      : request.clientRating !== null && request.clientRating !== undefined
-    : false;
+  // List/card contexts (where this component mostly lives) don't carry `request.myReview` — only
+  // single-request detail responses do (see types/index.ts) — so "did I already review this?" is
+  // fetched per-card by direction: CLIENT_TO_PROVIDER for the client role, PROVIDER_TO_CLIENT for
+  // the provider role (both sides moderated Review records post bidirectional-reviews redesign).
+  const { data: existingReview } = useReviewByRequestId(
+    request.id,
+    isClosed,
+    role === 'client' ? 'CLIENT_TO_PROVIDER' : 'PROVIDER_TO_CLIENT',
+  );
+  const alreadyReviewed = isClosed ? !!existingReview : false;
   const action = getPrimaryAction(request.status, role, {
     interestCount: request.interestsCount,
     alreadyReviewed,

@@ -27,13 +27,25 @@ export default function ApplicationsList({ applications, locale }: ApplicationsL
               href={`/${locale}/specialist/requests/${application.requestId}`}
               data-testid="application-row"
               data-interest-status={application.interestStatus}
-              className={`flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 transition-shadow hover:shadow-sm ${
+              className={`flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-shadow hover:shadow-sm ${
                 meta?.muted ? 'opacity-60' : ''
               }`}
             >
-              <p className="truncate pr-3 text-[13px] text-gray-800">
-                {application.title || application.description}
-              </p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] text-gray-800">
+                  {application.title || application.description}
+                </p>
+                {/* Client's aggregate rating "in context" (REVIEWS_REDESIGN.md section 2) — only
+                    averageRating/totalReviews travel on this compact list item; the curated
+                    featuredReviews only populate on the request detail response. */}
+                {!!application.fullRequest?.client?.averageRating && (
+                  <p className="mt-0.5 flex items-center gap-1 text-[11px] text-gray-500">
+                    <span className="text-yellow-500">★</span>
+                    {application.fullRequest.client.averageRating.toFixed(1)} (
+                    {application.fullRequest.client.totalReviews ?? 0})
+                  </p>
+                )}
+              </div>
               <span
                 className={`flex-shrink-0 rounded px-2 py-0.5 text-[11px] font-medium ${
                   meta?.badgeClass ?? 'bg-gray-100 text-gray-500'
