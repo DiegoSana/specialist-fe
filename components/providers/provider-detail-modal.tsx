@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { UnifiedProvider } from '@/hooks/use-providers';
-import { useProfessionalReviews } from '@/hooks/use-reviews';
+import { useServiceProviderReviews } from '@/hooks/use-reviews';
 import { isAuthenticated } from '@/lib/auth';
 
 interface ProviderDetailModalProps {
@@ -35,17 +35,10 @@ export default function ProviderDetailModal({
     setIsLoggedIn(isAuthenticated());
   }, []);
 
-  // NOTE: the `provider.type === 'PROFESSIONAL'` gate below is still needed at the data-fetching
-  // level (unlike the display-level one removed above, REVIEWS_REDESIGN.md section 4.3): the
-  // backend endpoint this hook calls (`GET /professionals/:professionalId/reviews`,
-  // `ProfessionalReviewsController.findByProfessionalId`) resolves the id via
-  // `ProfessionalService.getByIdOrFail`, which throws 404 for a Company id — confirmed still true
-  // on `specialist-be`'s `feat/bidirectional-reviews` branch (only `ReviewService` grew a generic
-  // `findByServiceProviderId`; the controller route was never rewired to use it). Passing a
-  // Company's id here would 404 instead of returning its reviews. Fixing this for real needs a
-  // backend change (e.g. rewiring that route to `findByServiceProviderId`, or a new
-  // `/providers/:id/reviews` endpoint) — out of scope for this FE-only pass.
-  const { data: reviews } = useProfessionalReviews(provider.type === 'PROFESSIONAL' ? provider.id : '');
+  // GET /providers/:serviceProviderId/reviews (ServiceProviderReviewsController, added
+  // specialist-be feat/bidirectional-reviews commit bb15051) works for both Professional and
+  // Company — takes the ServiceProvider id, not the Professional/Company's own id.
+  const { data: reviews } = useServiceProviderReviews(provider.serviceProviderId);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

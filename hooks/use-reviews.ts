@@ -46,6 +46,12 @@ export function useCreateReview() {
   });
 }
 
+/**
+ * @deprecated Kept for back-compat (existing callers relying on Professional-id semantics) — the
+ * backend's `GET /professionals/:professionalId/reviews` 404s for a Company id, since it resolves
+ * via `ProfessionalService.getByIdOrFail`. Use `useServiceProviderReviews` instead, which works
+ * for both Professional and Company.
+ */
 export function useProfessionalReviews(professionalId: string) {
   return useQuery({
     queryKey: ['reviews', 'professional', professionalId],
@@ -54,6 +60,23 @@ export function useProfessionalReviews(professionalId: string) {
       return response.data;
     },
     enabled: !!professionalId,
+  });
+}
+
+/**
+ * Approved reviews for a service provider (Professional or Company), by **ServiceProvider id**
+ * (`provider.serviceProviderId` on `UnifiedProvider`, not `provider.id`) — `GET
+ * /providers/:serviceProviderId/reviews`. Public endpoint, works for both provider types (unlike
+ * `useProfessionalReviews` above).
+ */
+export function useServiceProviderReviews(serviceProviderId: string) {
+  return useQuery({
+    queryKey: ['reviews', 'provider', serviceProviderId],
+    queryFn: async (): Promise<Review[]> => {
+      const response = await apiClient.get<Review[]>(`/providers/${serviceProviderId}/reviews`);
+      return response.data;
+    },
+    enabled: !!serviceProviderId,
   });
 }
 
