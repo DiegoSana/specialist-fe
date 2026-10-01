@@ -45,3 +45,17 @@ export function useUpdateProfessionalVisibility() {
   });
 }
 
+export function useUpdateProfessionalMatchNotification() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (notifyOnNewMatchingRequest: boolean): Promise<Professional> => {
+      const response = await apiClient.patch<Professional>('/professionals/me', { notifyOnNewMatchingRequest });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['professional', 'me'] });
+    },
+  });
+}
+

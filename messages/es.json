@@ -431,7 +431,11 @@
       "subtitle": "Trabajos disponibles que coinciden con tus habilidades",
       "empty": {
         "title": "No hay trabajos disponibles",
-        "description": "Los trabajos publicados por clientes en tu zona aparecerán aquí"
+        "description": "Los trabajos publicados por clientes en tu zona aparecerán aquí. Todavía estamos en etapa inicial sumando usuarios."
+      },
+      "notifyToggle": {
+        "label": "Avisame por WhatsApp cuando haya un pedido para mí",
+        "enabledHelp": "Te vamos a avisar apenas aparezca un pedido en tu rubro. No hace falta que vuelvas a revisar."
       },
       "filters": {
         "all": "Todas",
