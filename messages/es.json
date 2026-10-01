@@ -811,7 +811,40 @@
       "clientStep2": "Coordiná el trabajo",
       "clientStep2Desc": "Acordá los detalles con el especialista elegido.",
       "clientStep3": "Calificá",
-      "clientStep3Desc": "Al terminar, dejá tu reseña para ayudar a otros clientes."
+      "clientStep3Desc": "Al terminar, dejá tu reseña para ayudar a otros clientes.",
+      "phoneDemo": {
+        "caption": "Así se ve en el celular: el trabajo se coordina por WhatsApp, fuera de la app.",
+        "screen1": {
+          "header": "Mis Solicitudes",
+          "tabLabel": "Te toca a vos",
+          "tabCount": "8",
+          "card1": {
+            "badge": "Contacto liberado",
+            "title": "Porcelanato en cocina",
+            "subtitle": "Con Jorge Fernández",
+            "cta": "Abrir WhatsApp"
+          },
+          "card2": {
+            "badge": "Publicado en la bolsa",
+            "title": "Reparación de cañería",
+            "subtitle": "2 especialistas interesados",
+            "cta": "Ver interesados y elegir"
+          }
+        },
+        "screen2": {
+          "back": "Mis Solicitudes",
+          "badge": "Contacto liberado",
+          "title": "Porcelanato en cocina",
+          "contactName": "Jorge Fernández",
+          "cta": "Abrir WhatsApp",
+          "agreementNote": "Ya nos pusimos de acuerdo: empezar el trabajo"
+        },
+        "screen3": {
+          "header": "WhatsApp",
+          "botMessage": "Hola, ¿lograste ponerte de acuerdo con Jorge Fernández para \"Reparación de cañería\"? Contanos cómo va.",
+          "clientReply": "Sí, ya quedamos para mañana a las 10hs"
+        }
+      }
     },
     "finalCta": {
       "title": "¿Listo para elegir tus trabajos?",

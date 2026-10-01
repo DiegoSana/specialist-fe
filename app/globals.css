@@ -52,3 +52,15 @@ body {
     text-wrap: balance;
   }
 }
+
+@keyframes wa-screen-fade {
+  0% { opacity: 0; transform: translateY(6px); }
+  6% { opacity: 1; transform: translateY(0); }
+  28% { opacity: 1; transform: translateY(0); }
+  34% { opacity: 0; transform: translateY(-6px); }
+  100% { opacity: 0; transform: translateY(-6px); }
+}
+
+.wa-phone-screen {
+  animation: wa-screen-fade 9s ease-in-out infinite;
+}

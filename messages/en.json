@@ -914,7 +914,40 @@
       "clientStep2": "Coordinate the work",
       "clientStep2Desc": "Agree on details with your chosen specialist.",
       "clientStep3": "Rate",
-      "clientStep3Desc": "When done, leave a review to help other clients."
+      "clientStep3Desc": "When done, leave a review to help other clients.",
+      "phoneDemo": {
+        "caption": "This is what it looks like on the phone: the work gets coordinated over WhatsApp, outside the app.",
+        "screen1": {
+          "header": "My Requests",
+          "tabLabel": "Your turn",
+          "tabCount": "8",
+          "card1": {
+            "badge": "Contact released",
+            "title": "Kitchen tile work",
+            "subtitle": "With Jorge Fernández",
+            "cta": "Open WhatsApp"
+          },
+          "card2": {
+            "badge": "Posted to the job board",
+            "title": "Pipe repair",
+            "subtitle": "2 specialists interested",
+            "cta": "View interested & choose"
+          }
+        },
+        "screen2": {
+          "back": "My Requests",
+          "badge": "Contact released",
+          "title": "Kitchen tile work",
+          "contactName": "Jorge Fernández",
+          "cta": "Open WhatsApp",
+          "agreementNote": "We already agreed: start the job"
+        },
+        "screen3": {
+          "header": "WhatsApp",
+          "botMessage": "Hi, did you manage to agree with Jorge Fernández on \"Pipe repair\"? Tell us how it's going.",
+          "clientReply": "Yes, we're set for tomorrow at 10am"
+        }
+      }
     },
     "finalCta": {
       "title": "Ready to choose your jobs?",
