@@ -1,4 +1,10 @@
-import { RequestInterestStatus, RequestStatus } from '@/types';
+import {
+  isPendingReview,
+  PendingCounterpartReview,
+  RequestInterestStatus,
+  RequestReviewSummary,
+  RequestStatus,
+} from '@/types';
 
 /**
  * Single source of truth for how each RequestStatus is presented and who "owns the ball",
@@ -264,6 +270,27 @@ export function getHintKey(
     return 'PUBLISHED_NO_INTERESTS';
   }
   return status;
+}
+
+/** Whose turn it is to rate on a CLOSED request, from the viewer's own review state. */
+export type ClosedReviewState =
+  | { kind: 'NOT_REVIEWED' }
+  | { kind: 'WAITING_COUNTERPART' }
+  | { kind: 'REVIEWED'; counterpartRating: number };
+
+/**
+ * `myReview`/`counterpartReview` are only populated for CLOSED requests (see `Request` in
+ * types/index.ts) — callers should only use this once `status === RequestStatus.CLOSED`.
+ */
+export function getClosedReviewState(request: {
+  myReview?: RequestReviewSummary | null;
+  counterpartReview?: RequestReviewSummary | PendingCounterpartReview | null;
+}): ClosedReviewState {
+  if (!request.myReview) return { kind: 'NOT_REVIEWED' };
+  if (!request.counterpartReview || isPendingReview(request.counterpartReview)) {
+    return { kind: 'WAITING_COUNTERPART' };
+  }
+  return { kind: 'REVIEWED', counterpartRating: request.counterpartReview.rating };
 }
 
 export interface InterestStatusMeta {

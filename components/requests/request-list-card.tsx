@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Request, RequestStatus } from '@/types';
 import { getCounterpart } from '@/lib/request-participants';
-import { getHintKey, getRequestBucket, RequestRole } from '@/lib/request-status';
+import { getClosedReviewState, getHintKey, getRequestBucket, RequestRole } from '@/lib/request-status';
 import RequestStatusBadge from '@/components/requests/request-status-badge';
 import RequestPrimaryAction from '@/components/requests/request-primary-action';
 
@@ -22,6 +22,11 @@ export default function RequestListCard({ request, role, locale }: RequestListCa
   const bucket = getRequestBucket(request.status, role, { interestCount });
   const hintKey = getHintKey(request.status, role, { interestCount });
   const isYours = bucket === 'yours';
+  // Closed requests get a review-state-aware hint instead of the static "dejá tu calificación":
+  // not yet rated by the viewer (default hint text, unchanged) / rated and waiting on the other
+  // side / both rated (show the rating the viewer received instead of a CTA).
+  const closedReviewState =
+    request.status === RequestStatus.CLOSED ? getClosedReviewState(request) : null;
   const counterpart = getCounterpart(request, role);
   const href = `/${locale}/${role === 'client' ? 'client' : 'specialist'}/requests/${request.id}`;
   const showInterests =
@@ -64,8 +69,21 @@ export default function RequestListCard({ request, role, locale }: RequestListCa
         <span
           className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${isYours ? 'bg-blue-600' : 'bg-gray-400'}`}
         />
-        <span className={`text-xs font-medium ${isYours ? 'text-blue-600' : 'text-gray-500'}`}>
-          {t(`hints.${role === 'client' ? 'client' : 'provider'}.${hintKey}`)}
+        <span
+          data-testid="status-hint"
+          className={`text-xs font-medium ${isYours ? 'text-blue-600' : 'text-gray-500'}`}
+        >
+          {closedReviewState?.kind === 'WAITING_COUNTERPART' ? (
+            t(`hints.${role === 'client' ? 'client' : 'provider'}.CLOSED_WAITING_COUNTERPART`)
+          ) : closedReviewState?.kind === 'REVIEWED' ? (
+            <span data-testid="closed-received-rating">
+              {t(`hints.${role === 'client' ? 'client' : 'provider'}.CLOSED_RATED`)}{' '}
+              {'★'.repeat(closedReviewState.counterpartRating)}
+              {'☆'.repeat(5 - closedReviewState.counterpartRating)}
+            </span>
+          ) : (
+            t(`hints.${role === 'client' ? 'client' : 'provider'}.${hintKey}`)
+          )}
         </span>
       </div>
 
