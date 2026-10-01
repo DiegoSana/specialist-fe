@@ -100,7 +100,39 @@
       "emailRequired": "El correo es requerido",
       "emailInvalid": "El correo no es válido",
       "passwordRequired": "La contraseña es requerida",
-      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres"
+      "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "forgotPasswordLink": "¿Olvidaste tu contraseña?"
+    },
+    "forgotPassword": {
+      "title": "Recuperar contraseña",
+      "subtitle": "Ingresá tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña",
+      "email": "Correo electrónico",
+      "submit": "Enviar enlace",
+      "submitting": "Enviando...",
+      "emailRequired": "El correo es requerido",
+      "emailInvalid": "El correo no es válido",
+      "success": "Si existe una cuenta con ese correo, te enviamos un enlace para restablecer tu contraseña. Revisá tu bandeja de entrada.",
+      "error": "Ocurrió un error. Por favor intenta de nuevo.",
+      "backToLogin": "Volver a iniciar sesión"
+    },
+    "resetPassword": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Ingresá tu nueva contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar nueva contraseña",
+      "submit": "Restablecer contraseña",
+      "submitting": "Restableciendo...",
+      "newPasswordRequired": "La nueva contraseña es requerida",
+      "newPasswordMinLength": "La contraseña debe tener al menos 6 caracteres",
+      "confirmPasswordRequired": "Por favor confirma tu nueva contraseña",
+      "passwordsNotMatch": "Las contraseñas no coinciden",
+      "success": "Tu contraseña fue restablecida correctamente.",
+      "goToLogin": "Iniciar sesión",
+      "invalidTokenError": "Este enlace para restablecer tu contraseña es inválido o ya expiró. Solicitá uno nuevo.",
+      "invalidLinkTitle": "Enlace inválido",
+      "invalidLinkMessage": "El enlace para restablecer tu contraseña no es válido o le falta información. Solicitá uno nuevo.",
+      "requestNewLink": "Solicitar un nuevo enlace",
+      "error": "Ocurrió un error. Por favor intenta de nuevo."
     },
     "register": {
       "title": "Crear cuenta",
