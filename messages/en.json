@@ -580,7 +580,11 @@
       "subtitle": "Available jobs matching your skills",
       "empty": {
         "title": "No jobs available",
-        "description": "Jobs posted by clients in your area will appear here"
+        "description": "Jobs posted by clients in your area will appear here. We're still in an early stage, growing our user base."
+      },
+      "notifyToggle": {
+        "label": "Notify me on WhatsApp when there's a request for me",
+        "enabledHelp": "We'll notify you as soon as a request in your trade appears. No need to keep checking back."
       },
       "filters": {
         "all": "All",

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useAvailableRequests, useExpressInterest, useRemoveInterest, useMyInterest } from '@/hooks/use-requests';
+import { useMyProfessionalProfile, useUpdateProfessionalMatchNotification } from '@/hooks/use-professional-profile';
 import ProtectedLayout from '@/components/layout/protected-layout';
 import { Request } from '@/types';
 
@@ -102,6 +103,12 @@ export default function JobBoardPage() {
 
   // Fetch available requests for professionals
   const { data: requests, isLoading } = useAvailableRequests();
+  const { data: professionalProfile } = useMyProfessionalProfile();
+  const updateMatchNotification = useUpdateProfessionalMatchNotification();
+
+  const handleToggleMatchNotification = () => {
+    updateMatchNotification.mutate(!professionalProfile?.notifyOnNewMatchingRequest);
+  };
 
   return (
     <ProtectedLayout requiredProfileType="provider" noProfileRedirectPath={`/${locale}/login`}>
@@ -212,6 +219,29 @@ export default function JobBoardPage() {
             <p className="text-gray-500 max-w-sm mx-auto">
               {t('empty.description')}
             </p>
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <span className="text-sm text-gray-600">{t('notifyToggle.label')}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={professionalProfile?.notifyOnNewMatchingRequest ?? false}
+                aria-label={t('notifyToggle.label')}
+                onClick={handleToggleMatchNotification}
+                disabled={updateMatchNotification.isPending}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${
+                  professionalProfile?.notifyOnNewMatchingRequest ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    professionalProfile?.notifyOnNewMatchingRequest ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+            {professionalProfile?.notifyOnNewMatchingRequest && (
+              <p className="text-xs text-gray-400 max-w-sm mx-auto mt-2">{t('notifyToggle.enabledHelp')}</p>
+            )}
           </div>
         )}
       </div>

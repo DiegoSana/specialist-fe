@@ -148,6 +148,7 @@ export interface Professional {
   combinedGallery?: string[]; // Gallery + completed work photos
   active: boolean;
   isVisible: boolean; // Whether this professional appears in public search/listing results
+  notifyOnNewMatchingRequest?: boolean; // Whether to notify this professional via WhatsApp on new matching requests
   user?: {
     id: string;
     firstName: string;
