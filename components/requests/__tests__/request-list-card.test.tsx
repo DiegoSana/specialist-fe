@@ -170,6 +170,72 @@ describe('RequestListCard', () => {
     );
     expect(screen.queryByText('Calificar')).toBeNull();
   });
+
+  // Regression: the CLOSED hint used to be a static "Cerrado — dejá tu calificación" regardless
+  // of whether the viewer had already rated — see root cause in lib/request-status.ts
+  // getClosedReviewState().
+  describe('CLOSED hint reflects review state (not a static "dejá tu calificación")', () => {
+    it('client: no myReview yet — shows the rate-CTA hint', () => {
+      render(
+        <RequestListCard
+          request={make({ status: RequestStatus.CLOSED, myReview: null, counterpartReview: null })}
+          role="client"
+          locale="es"
+        />,
+      );
+      expect(screen.getByTestId('status-hint').textContent).toBe('Cerrado — dejá tu calificación');
+    });
+
+    it('client: already rated, counterpart review still pending — shows "esperando" hint, not the rate CTA', () => {
+      render(
+        <RequestListCard
+          request={make({
+            status: RequestStatus.CLOSED,
+            myReview: { id: 'rev-1', rating: 5, comment: null, status: 'APPROVED', revealedAt: null, createdAt: '2026-09-01T00:00:00.000Z' },
+            counterpartReview: { pending: true },
+          })}
+          role="client"
+          locale="es"
+        />,
+      );
+      expect(screen.getByTestId('status-hint').textContent).toBe(
+        'Ya calificaste — esperando la calificación del especialista',
+      );
+      expect(screen.queryByText('Cerrado — dejá tu calificación')).toBeNull();
+    });
+
+    it('client: both rated and revealed — shows the received rating as stars instead of a CTA', () => {
+      render(
+        <RequestListCard
+          request={make({
+            status: RequestStatus.CLOSED,
+            myReview: { id: 'rev-1', rating: 5, comment: null, status: 'APPROVED', revealedAt: '2026-09-02T00:00:00.000Z', createdAt: '2026-09-01T00:00:00.000Z' },
+            counterpartReview: { id: 'rev-2', rating: 4, comment: 'Buen trabajo', status: 'APPROVED', revealedAt: '2026-09-02T00:00:00.000Z', createdAt: '2026-09-01T12:00:00.000Z' },
+          })}
+          role="client"
+          locale="es"
+        />,
+      );
+      const rating = screen.getByTestId('closed-received-rating');
+      expect(rating.textContent).toBe('Te calificó con ★★★★☆');
+      expect(screen.queryByText('Cerrado — dejá tu calificación')).toBeNull();
+    });
+
+    it('provider: both rated and revealed uses the provider-facing wording', () => {
+      render(
+        <RequestListCard
+          request={make({
+            status: RequestStatus.CLOSED,
+            myReview: { id: 'rev-1', rating: 3, comment: null, status: 'APPROVED', revealedAt: '2026-09-02T00:00:00.000Z', createdAt: '2026-09-01T00:00:00.000Z' },
+            counterpartReview: { id: 'rev-2', rating: 2, comment: null, status: 'APPROVED', revealedAt: '2026-09-02T00:00:00.000Z', createdAt: '2026-09-01T12:00:00.000Z' },
+          })}
+          role="provider"
+          locale="es"
+        />,
+      );
+      expect(screen.getByTestId('closed-received-rating').textContent).toBe('Te calificó con ★★☆☆☆');
+    });
+  });
 });
 
 describe('FinalRequestsStrip', () => {

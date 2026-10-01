@@ -185,14 +185,15 @@ export interface Request {
   /**
    * The viewer's own review for this request (client's review of the provider, or provider's
    * review of the client, depending on who is asking). Always visible to its author regardless
-   * of reveal state. Only populated on single-request detail responses (GET/PATCH /requests/:id,
-   * POST /requests/:id/rate-client) — undefined on list endpoints.
+   * of reveal state. Populated on single-request detail responses (GET/PATCH /requests/:id,
+   * POST /requests/:id/rate-client) and on GET /requests (list) but, on the list, only for CLOSED
+   * items — undefined for every other status there, to avoid a review lookup per row.
    */
   myReview?: RequestReviewSummary | null;
   /**
    * The counterpart's review. Hidden behind `{ pending: true }` until both parties rated or the
-   * reveal timeout elapsed (doble-ciego con timeout). Only populated on single-request detail
-   * responses — undefined on list endpoints.
+   * reveal timeout elapsed (doble-ciego con timeout). Same CLOSED-only coverage on GET /requests
+   * (list) as `myReview` above.
    */
   counterpartReview?: RequestReviewSummary | PendingCounterpartReview | null;
   // Reason for NOT_COMPLETED / INTERRUPTED (or a support resolution note).
