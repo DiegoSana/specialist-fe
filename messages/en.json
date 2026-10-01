@@ -99,7 +99,39 @@
       "emailRequired": "Email is required",
       "emailInvalid": "Email is invalid",
       "passwordRequired": "Password is required",
-      "passwordMinLength": "Password must be at least 6 characters"
+      "passwordMinLength": "Password must be at least 6 characters",
+      "forgotPasswordLink": "Forgot your password?"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a link to reset your password",
+      "email": "Email address",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "success": "If an account exists with that email, we've sent a link to reset your password. Check your inbox.",
+      "error": "An error occurred. Please try again.",
+      "backToLogin": "Back to sign in"
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "subtitle": "Enter your new password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Reset password",
+      "submitting": "Resetting...",
+      "newPasswordRequired": "New password is required",
+      "newPasswordMinLength": "Password must be at least 6 characters",
+      "confirmPasswordRequired": "Please confirm your new password",
+      "passwordsNotMatch": "Passwords do not match",
+      "success": "Your password has been reset successfully.",
+      "goToLogin": "Sign in",
+      "invalidTokenError": "This password reset link is invalid or has expired. Please request a new one.",
+      "invalidLinkTitle": "Invalid link",
+      "invalidLinkMessage": "This password reset link is invalid or missing information. Please request a new one.",
+      "requestNewLink": "Request a new link",
+      "error": "An error occurred. Please try again."
     },
     "register": {
       "title": "Create your account",
