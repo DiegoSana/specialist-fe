@@ -101,8 +101,15 @@ export function useReviewByRequestId(
     queryKey: ['review', 'request', requestId, direction ?? 'CLIENT_TO_PROVIDER'],
     queryFn: async (): Promise<Review | null> => {
       const params = direction ? `requestId=${requestId}&direction=${direction}` : `requestId=${requestId}`;
-      const response = await apiClient.get<Review | null>(`/reviews?${params}`);
-      return response.data ?? null;
+      try {
+        const response = await apiClient.get<Review | null>(`/reviews?${params}`);
+        return response.data ?? null;
+      } catch (err) {
+        if ((err as { response?: { status?: number } })?.response?.status === 404) {
+          return null;
+        }
+        throw err;
+      }
     },
     enabled: enabled && !!requestId,
     retry: false,
