@@ -98,7 +98,7 @@ export default function LoginPage() {
       } else if (error.message) {
         setErrors({ general: error.message });
       } else {
-        setErrors({ general: t('error') || 'An error occurred. Please try again.' });
+        setErrors({ general: t('error') });
       }
     }
   };

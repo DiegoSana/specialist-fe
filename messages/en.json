@@ -100,7 +100,8 @@
       "emailInvalid": "Email is invalid",
       "passwordRequired": "Password is required",
       "passwordMinLength": "Password must be at least 6 characters",
-      "forgotPasswordLink": "Forgot your password?"
+      "forgotPasswordLink": "Forgot your password?",
+      "error": "An error occurred. Please try again."
     },
     "forgotPassword": {
       "title": "Reset your password",
@@ -147,7 +148,6 @@
       "lastName": "Last Name",
       "email": "Email address",
       "phone": "WhatsApp",
-      "phoneOptional": "(optional)",
       "password": "Password",
       "confirmPassword": "Confirm Password",
       "createAccount": "Create account",
@@ -238,11 +238,9 @@
       "specialists": "Specialists",
       "noResults": "No results found",
       "selectedTrade": "Selected specialty",
-      "selectedProfessional": "Selected specialist",
       "browseByTrade": "Browse by specialty",
       "requestDetails": "Job details",
       "selectTrade": "Select trade type",
-      "selectProfessional": "Select a professional",
       "titlePlaceholder": "E.g.: Bathroom pipe repair",
       "description": "Description",
       "descriptionPlaceholder": "Describe the work you need done...",
@@ -292,7 +290,6 @@
       "create": "Create request",
       "creating": "Creating...",
       "noTrades": "No trades available",
-      "noProfessionals": "No professionals available for this trade",
       "reviews": "reviews",
       "selected": "Selected",
       "changeSpecialist": "Change specialist",
@@ -301,7 +298,6 @@
         "description": "Once the request is created, we will put you in contact with the specialist via WhatsApp to coordinate the details."
       },
       "errors": {
-        "selectProfessional": "You must select a professional",
         "titleRequired": "Title is required",
         "titleMinLength": "Title must be at least 5 characters",
         "descriptionRequired": "Description is required",
@@ -338,8 +334,7 @@
         "requestNotFound": "Request not found",
         "notRequestOwner": "You can only review requests you created",
         "requestNotCompleted": "Request must be completed before reviewing",
-        "requestAlreadyReviewed": "This request already has a review",
-        "professionalNotFound": "Professional not found"
+        "requestAlreadyReviewed": "This request already has a review"
       },
       "title": "Request details",
       "back": "Back",
@@ -387,164 +382,6 @@
       },
       "forbidden": "You don't have access to this request",
       "forbiddenDescription": "You can only view requests you are part of."
-    }
-  },
-  "professional": {
-    "setup": {
-      "title": "Complete professional profile",
-      "subtitle": "Fill in your information to start offering services",
-      "trade": "Trade",
-      "trades": "Trades",
-      "selectTrade": "Select your trade",
-      "selectMultiple": "(you can select multiple)",
-      "primary": "Primary",
-      "selectedTrades": "Selected trades",
-      "firstIsPrimary": "The first one will be the primary trade",
-      "description": "Description",
-      "descriptionPlaceholder": "Describe your experience and services you offer...",
-      "experienceYears": "Years of experience",
-      "experienceYearsPlaceholder": "E.g.: 5",
-      "city": "City",
-      "zone": "Zone",
-      "zonePlaceholder": "E.g.: Downtown, North District",
-      "address": "Address",
-      "addressPlaceholder": "E.g.: Av. San Martín 123",
-      "whatsapp": "WhatsApp",
-      "create": "Create profile",
-      "creating": "Creating...",
-      "skip": "Skip for now",
-      "errors": {
-        "tradeRequired": "You must select a trade",
-        "general": "An error occurred. Please try again."
-      }
-    },
-    "dashboard": {
-      "title": "My Jobs",
-      "subtitle": "Manage your jobs and requests",
-      "profileStatus": "Profile status",
-      "sections": {
-        "available": "Available jobs",
-        "pending": "Pending",
-        "inProgress": "In Progress",
-        "completed": "Completed"
-      },
-      "status": {
-        "pending": "Pending",
-        "accepted": "Accepted",
-        "inProgress": "In Progress",
-        "done": "Done",
-        "cancelled": "Cancelled",
-        "verified": "Verified",
-        "pendingVerification": "Pending verification",
-        "rejected": "Rejected"
-      },
-      "requestFrom": "Request from",
-      "quote": "Quote",
-      "new": "New",
-      "viewAllInJobBoard": "View all in the job board",
-      "empty": {
-        "title": "You have no requests",
-        "description": "Client requests will appear here when they contact you"
-      }
-    },
-    "requestDetail": {
-      "title": "Request Details",
-      "back": "Back",
-      "backToDashboard": "Back to dashboard",
-      "notFound": "Request not found",
-      "requestStatus": "Request status",
-      "created": "Created",
-      "client": "Client",
-      "requestFrom": "Request from",
-      "description": "Description",
-      "address": "Address",
-      "availability": "Availability",
-      "photos": "Work Photos",
-      "quoteSent": "Quote sent",
-      "sendQuote": "Send Quote",
-      "sending": "Sending...",
-      "amount": "Amount",
-      "notes": "Notes",
-      "notesPlaceholder": "Additional quote details, estimated time, etc.",
-      "actions": "Actions",
-      "markInProgress": "Mark as In Progress",
-      "markCompleted": "Mark as Completed",
-      "updating": "Updating...",
-      "completedMessage": "Work completed! The client can now rate your work.",
-      "photosDescription": "Share photos and videos of the work. Both you and the client can add photos.",
-      "addPhoto": "Add photo/video",
-      "removePhoto": "Remove",
-      "noPhotos": "No photos yet. Add the first photo of the work.",
-      "uploadError": "Error uploading image",
-      "removeError": "Error removing image",
-      "cancel": "Cancel",
-      "directRequestReceived": "You have a direct request!",
-      "directRequestDescription": "The client has chosen you specifically. Accept the request to start working.",
-      "acceptRequest": "Accept Request",
-      "accepting": "Accepting...",
-      "interestedInJob": "Interested in this job?",
-      "interestedDescription": "Show your interest to the client and you can contact them if they choose you",
-      "expressInterest": "I'm interested",
-      "expressInterestTitle": "Express interest",
-      "messageOptional": "Message (optional)",
-      "messagePlaceholder": "Introduce yourself to the client or share relevant information about your experience...",
-      "confirmInterest": "Confirm interest",
-      "interestExpressed": "You've expressed interest!",
-      "interestExpressedDescription": "The client has been notified. They will contact you if they choose you.",
-      "removeInterest": "Remove interest",
-      "removing": "Removing...",
-      "status": {
-        "pending": "Pending",
-        "accepted": "Accepted",
-        "inProgress": "In Progress",
-        "done": "Done",
-        "cancelled": "Cancelled"
-      },
-      "errors": {
-        "general": "An error occurred. Please try again."
-      }
-    },
-    "profile": {
-      "title": "My Professional Profile",
-      "subtitle": "Manage your professional information",
-      "edit": "Edit profile",
-      "save": "Save",
-      "saving": "Saving...",
-      "cancel": "Cancel",
-      "profileStatus": "Profile status",
-      "statusDescription": "Your profile must be verified to receive requests",
-      "trades": "Trades",
-      "selectMultiple": "(you can select multiple)",
-      "primary": "Primary",
-      "selectedTrades": "Selected trades",
-      "firstIsPrimary": "The first one will be the primary trade",
-      "description": "Description",
-      "descriptionPlaceholder": "Describe your experience and services you offer...",
-      "experienceYears": "Years of experience",
-      "experienceYearsPlaceholder": "E.g.: 5",
-      "years": "years",
-      "city": "City",
-      "zone": "Zone",
-      "zonePlaceholder": "E.g.: Downtown, North District",
-      "address": "Address",
-      "addressPlaceholder": "E.g.: Av. San Martín 123",
-      "whatsapp": "WhatsApp",
-      "website": "Website",
-      "location": "Location",
-      "contact": "Contact",
-      "noContact": "No contact information",
-      "rating": "Rating",
-      "reviews": "reviews",
-      "noTrades": "No trades selected",
-      "status": {
-        "verified": "Verified",
-        "pendingVerification": "Pending verification",
-        "rejected": "Rejected"
-      },
-      "errors": {
-        "tradeRequired": "You must select at least one trade",
-        "general": "An error occurred. Please try again."
-      }
     }
   },
   "specialist": {
@@ -732,10 +569,6 @@
       "newRequest": "New Request",
       "badge": "Client"
     },
-    "professional": {
-      "dashboard": "My Jobs",
-      "badge": "Professional"
-    },
     "specialist": {
       "dashboard": "My Jobs",
       "jobBoard": "Job Board",
@@ -745,7 +578,6 @@
       "dashboard": "Company Dashboard",
       "badge": "Company"
     },
-    "professionals": "Specialists",
     "specialists": "Specialists",
     "profile": "My Profile",
     "notifications": "Notifications",
@@ -774,14 +606,12 @@
     "profiles": {
       "label": "Profiles",
       "client": "Client",
-      "professional": "Professional",
       "admin": "Admin",
       "none": "No profiles"
     },
     "tabs": {
       "user": "User",
-      "client": "Client",
-      "professional": "Professional"
+      "client": "Client"
     },
     "user": {
       "title": "Personal Information",
@@ -817,34 +647,6 @@
       "hiddenMessage": "Your profile is hidden from public search results",
       "showError": "Error showing your profile. Please try again.",
       "hideError": "Error hiding your profile. Please try again."
-    },
-    "professional": {
-      "title": "Professional Profile",
-      "subtitle": "Manage your professional information",
-      "statusLabel": "Profile status",
-      "trades": "Trades",
-      "selectMultiple": "(you can select multiple)",
-      "primary": "Primary",
-      "description": "Description",
-      "descriptionPlaceholder": "Describe your experience and services you offer...",
-      "experienceYears": "Years of experience",
-      "years": "years",
-      "city": "City",
-      "zone": "Zone",
-      "address": "Address",
-      "whatsapp": "WhatsApp",
-      "website": "Website",
-      "location": "Location",
-      "contact": "Contact",
-      "rating": "Rating",
-      "reviews": "reviews",
-      "noProfile": "You don't have a professional profile created",
-      "createProfile": "Create professional profile",
-      "status": {
-        "verified": "Verified",
-        "pendingVerification": "Pending verification",
-        "rejected": "Rejected"
-      }
     },
     "errors": {
       "firstNameRequired": "First name is required",

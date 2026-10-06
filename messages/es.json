@@ -14,7 +14,6 @@
     "search": "Buscar",
     "filter": "Filtrar",
     "close": "Cerrar",
-    "or": "o",
     "sending": "Enviando...",
     "verifying": "Verificando..."
   },
@@ -101,7 +100,8 @@
       "emailInvalid": "El correo no es válido",
       "passwordRequired": "La contraseña es requerida",
       "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
-      "forgotPasswordLink": "¿Olvidaste tu contraseña?"
+      "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+      "error": "Ocurrió un error. Por favor intenta de nuevo."
     },
     "forgotPassword": {
       "title": "Recuperar contraseña",
@@ -238,7 +238,6 @@
       "specialists": "Especialistas",
       "noResults": "No se encontraron resultados",
       "selectedTrade": "Especialidad seleccionada",
-      "selectedSpecialist": "Especialista seleccionado",
       "browseByTrade": "Explorar por especialidad",
       "requestDetails": "Detalles de la solicitud",
       "selectTrade": "Selecciona el tipo de oficio",
@@ -294,7 +293,6 @@
       "createDirect": "Enviar al especialista",
       "creating": "Creando...",
       "noTrades": "No hay oficios disponibles",
-      "noSpecialists": "No hay especialistas disponibles para este oficio",
       "reviews": "reseñas",
       "selected": "Seleccionado",
       "changeSpecialist": "Cambiar especialista",
@@ -336,22 +334,15 @@
         "requestNotFound": "Solicitud no encontrada",
         "notRequestOwner": "Solo puedes calificar solicitudes que creaste",
         "requestNotCompleted": "La solicitud debe estar completada antes de calificar",
-        "requestAlreadyReviewed": "Esta solicitud ya tiene una calificación",
-        "specialistNotFound": "Especialista no encontrado"
+        "requestAlreadyReviewed": "Esta solicitud ya tiene una calificación"
       },
       "title": "Detalle de solicitud",
       "back": "Volver",
       "requestStatus": "Estado de la solicitud",
-      "requestType": "Tipo de solicitud",
-      "publicRequest": "Bolsa de Trabajo",
-      "directRequest": "Directa",
       "created": "Creada",
       "description": "Descripción",
-      "specialist": "Especialista",
       "professional": "Especialista",
       "company": "Empresa",
-      "noSpecialistYet": "Aún sin especialista asignado",
-      "waitingForProposals": "Esperando propuestas de especialistas...",
       "reviews": "reseñas",
       "contactWhatsApp": "Contactar por WhatsApp",
       "unassign": "Desasignar",
@@ -526,56 +517,6 @@
       },
       "forbidden": "No tenés acceso a esta solicitud",
       "forbiddenDescription": "Solo podés ver solicitudes en las que participás."
-    },
-    "profile": {
-      "title": "Mi Perfil de Especialista",
-      "subtitle": "Gestiona tu información como especialista",
-      "edit": "Editar perfil",
-      "save": "Guardar",
-      "saving": "Guardando...",
-      "cancel": "Cancelar",
-      "profileStatus": "Estado del perfil",
-      "statusDescription": "Tu perfil debe estar verificado para recibir solicitudes",
-      "trades": "Oficios",
-      "selectMultiple": "(puedes seleccionar varios)",
-      "primary": "Principal",
-      "selectedTrades": "Oficios seleccionados",
-      "firstIsPrimary": "El primero será el oficio principal",
-      "description": "Descripción",
-      "descriptionPlaceholder": "Describe tu experiencia y servicios que ofreces...",
-      "experienceYears": "Años de experiencia",
-      "experienceYearsPlaceholder": "Ej: 5",
-      "years": "años",
-      "city": "Ciudad",
-      "zone": "Zona",
-      "zonePlaceholder": "Ej: Centro, Barrio Norte",
-      "address": "Dirección",
-      "addressPlaceholder": "Ej: Av. San Martín 123",
-      "whatsapp": "WhatsApp",
-      "website": "Sitio web",
-      "gallery": {
-        "label": "Galería de trabajos",
-        "description": "Sube fotos y videos de tus trabajos realizados para mostrar tu experiencia",
-        "addPhoto": "Agregar foto/video",
-        "remove": "Eliminar",
-        "uploadError": "Error al subir la imagen",
-        "removeError": "Error al eliminar la imagen"
-      },
-      "location": "Ubicación",
-      "contact": "Contacto",
-      "noContact": "No hay información de contacto",
-      "rating": "Calificación",
-      "reviews": "reseñas",
-      "noTrades": "No hay oficios seleccionados",
-      "status": {
-        "verified": "Verificado",
-        "pendingVerification": "Pendiente de verificación",
-        "rejected": "Rechazado"
-      },
-      "errors": {
-        "tradeRequired": "Debes seleccionar al menos un oficio",
-        "general": "Ocurrió un error. Por favor intenta de nuevo."
-      }
     }
   },
   "professionals": {
@@ -601,7 +542,6 @@
         "button": "Iniciar sesión"
       }
     },
-    "noSpecialists": "No se encontraron especialistas",
     "details": {
       "info": "Información",
       "trades": "Oficios",
@@ -666,14 +606,12 @@
     "profiles": {
       "label": "Perfiles",
       "client": "Cliente",
-      "specialist": "Especialista",
       "admin": "Administrador",
       "none": "Sin perfiles"
     },
     "tabs": {
       "user": "Usuario",
-      "client": "Cliente",
-      "specialist": "Especialista"
+      "client": "Cliente"
     },
     "user": {
       "title": "Información Personal",
@@ -709,34 +647,6 @@
       "hiddenMessage": "Tu perfil está oculto de las búsquedas públicas",
       "showError": "Error al mostrar el perfil. Por favor intenta de nuevo.",
       "hideError": "Error al ocultar el perfil. Por favor intenta de nuevo."
-    },
-    "specialist": {
-      "title": "Perfil de Especialista",
-      "subtitle": "Gestiona tu información como especialista",
-      "statusLabel": "Estado del perfil",
-      "trades": "Oficios",
-      "selectMultiple": "(puedes seleccionar varios)",
-      "primary": "Principal",
-      "description": "Descripción",
-      "descriptionPlaceholder": "Describe tu experiencia y servicios que ofreces...",
-      "experienceYears": "Años de experiencia",
-      "years": "años",
-      "city": "Ciudad",
-      "zone": "Zona",
-      "address": "Dirección",
-      "whatsapp": "WhatsApp",
-      "website": "Sitio web",
-      "location": "Ubicación",
-      "contact": "Contacto",
-      "rating": "Calificación",
-      "reviews": "reseñas",
-      "noProfile": "No tienes un perfil de especialista creado",
-      "createProfile": "Crear perfil de especialista",
-      "status": {
-        "verified": "Verificado",
-        "pendingVerification": "Pendiente de verificación",
-        "rejected": "Rechazado"
-      }
     },
     "errors": {
       "firstNameRequired": "El nombre es requerido",
