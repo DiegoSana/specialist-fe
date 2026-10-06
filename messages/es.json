@@ -388,7 +388,9 @@
         "assigning": "Asignando...",
         "interestedSince": "Interesado desde",
         "viewProfile": "Ver perfil"
-      }
+      },
+      "forbidden": "No tenés acceso a esta solicitud",
+      "forbiddenDescription": "Solo podés ver solicitudes en las que participás."
     }
   },
   "specialist": {
@@ -521,7 +523,9 @@
       },
       "errors": {
         "general": "Ocurrió un error. Por favor intenta de nuevo."
-      }
+      },
+      "forbidden": "No tenés acceso a esta solicitud",
+      "forbiddenDescription": "Solo podés ver solicitudes en las que participás."
     },
     "profile": {
       "title": "Mi Perfil de Especialista",
@@ -615,7 +619,8 @@
       "title": "¿Querés contactar a este especialista?",
       "description": "Para ver los datos de contacto del especialista, primero necesitás crear una solicitud describiendo el trabajo que necesitás.",
       "createRequest": "Crear Solicitud"
-    }
+    },
+    "noProfessionals": "No se encontraron especialistas"
   },
   "navigation": {
     "dashboard": "Panel",

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { isAxiosError } from 'axios';
 import Link from 'next/link';
 import { useRequest, useCancelRequest, useStartRequest } from '@/hooks/use-requests';
 import { useCreateReview } from '@/hooks/use-reviews';
@@ -39,7 +40,8 @@ export default function RequestDetailPage() {
   const requestId = params.id as string;
   const locale = pathname?.split('/')[1] || 'es';
 
-  const { data: request, isLoading } = useRequest(requestId);
+  const { data: request, isLoading, error } = useRequest(requestId);
+  const isForbidden = isAxiosError(error) && error.response?.status === 403;
   const createReview = useCreateReview();
   const cancel = useCancelRequest();
   const start = useStartRequest();
@@ -60,7 +62,8 @@ export default function RequestDetailPage() {
       <ProtectedLayout requireProfile={false}>
         <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <h2 className="mb-4 text-2xl font-bold text-gray-800">{t('notFound')}</h2>
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">{isForbidden ? t('forbidden') : t('notFound')}</h2>
+            {isForbidden && <p className="mb-4 text-gray-600">{t('forbiddenDescription')}</p>}
             <Link href={`/${locale}/client/dashboard`} className="text-blue-600 hover:text-blue-700">
               {t('backToDashboard')}
             </Link>

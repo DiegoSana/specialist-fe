@@ -164,7 +164,8 @@
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
       "phoneInvalid": "Phone number is invalid",
-      "error": "An error occurred. Please try again."
+      "error": "An error occurred. Please try again.",
+      "phoneRequired": "Phone number is required"
     }
   },
   "dashboard": {
@@ -307,8 +308,12 @@
         "descriptionMinLength": "Description must be at least 10 characters",
         "addressRequired": "Address is required",
         "fileTooLarge": "{names} wasn't added because it exceeds the maximum allowed size (10MB for photos, 100MB for videos).",
-        "general": "An error occurred. Please try again."
-      }
+        "general": "An error occurred. Please try again.",
+        "selectSpecialist": "You must select a specialist"
+      },
+      "selectSpecialist": "Select a specialist",
+      "createPublic": "Post to job board",
+      "createDirect": "Send to specialist"
     },
     "requestDetail": {
       "accepting": "Accepting...",
@@ -379,7 +384,9 @@
         "assigning": "Assigning...",
         "interestedSince": "Interested since",
         "viewProfile": "View profile"
-      }
+      },
+      "forbidden": "You don't have access to this request",
+      "forbiddenDescription": "You can only view requests you are part of."
     }
   },
   "professional": {
@@ -626,7 +633,8 @@
         "title": "You have no requests",
         "description": "Client requests will appear here when they contact you"
       },
-      "emptyTab": "No requests in “{tab}”"
+      "emptyTab": "No requests in “{tab}”",
+      "viewAllInJobBoard": "View all in the job board"
     },
     "requestDetail": {
       "title": "Request Details",
@@ -669,7 +677,9 @@
       },
       "errors": {
         "general": "An error occurred. Please try again."
-      }
+      },
+      "forbidden": "You don't have access to this request",
+      "forbiddenDescription": "You can only view requests you are part of."
     }
   },
   "professionals": {
